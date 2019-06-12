@@ -2,7 +2,6 @@
 #define APOLLON_TEXT_FIELD_H
 #include "window.h"
 #include "window_component.h"
-#include <glad/glad.h> 
 
 
 typedef struct TEXT_FIELD_STRUCT

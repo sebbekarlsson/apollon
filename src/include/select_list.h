@@ -4,6 +4,7 @@
 #include "window_component.h"
 #include <coelum/dynamic_list.h>
 #include <glad/glad.h> 
+#include <GLFW/glfw3.h>
 
 
 typedef struct SELECT_LIST_ITEM_STRUCT

@@ -44,9 +44,10 @@ void text_field_draw(actor_T* self)
     window_component_T* window_component = (window_component_T*) text_field;
     state_T* state = (state_T*) scene_manager_get_current_scene(THEATRE->scene_manager);
 
-    draw_2D_positioned_2D_mesh(
+    draw_positioned_2D_mesh(
         self->x,
         self->y,
+        0.0f,
         text_field->width,
         text_field->height,
         255,
@@ -80,9 +81,10 @@ void text_field_draw(actor_T* self)
 
     if (window_component->focused)
     {
-        draw_2D_positioned_2D_mesh(
+        draw_positioned_2D_mesh(
             self->x,
             self->y + text_field->height,
+            0.0f,
             text_field->width,
             text_field->height / 4,
             COLOR_CONTRAST[0],

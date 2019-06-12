@@ -25,7 +25,7 @@ window_T* window_constructor(window_T* window, float x, float y, float width, fl
     window->height = height;
     actor_constructor((actor_T*) window, x, y, 0.0f, tick, draw, type_name);
     window->state = init_state();
-    state_constructor(window->state, (void*)0, (void*)0, width, height);
+    state_constructor(window->state, width, height, 2);
     window->focus_index = 0;
     window->on_close = on_close;
 
@@ -82,9 +82,10 @@ void window_draw(actor_T* self)
     scene_T* scene = scene_manager_get_current_scene(THEATRE->scene_manager);
     state_T* state = (state_T*) scene;
 
-    draw_2D_positioned_2D_mesh(
+    draw_positioned_2D_mesh(
         self->x - (window->width / 2),
         self->y - (window->height / 2),
+        0.0f,
         window->width,
         window->height,
         COLOR_BG_DARK[0],
@@ -93,9 +94,10 @@ void window_draw(actor_T* self)
         state
     );
 
-    draw_2D_positioned_2D_mesh(
+    draw_positioned_2D_mesh(
         self->x - (window->width / 2),
         self->y - (window->height / 2),
+        0.0f,
         window->width,
         64,
         COLOR_BG_DARK_BRIGHT[0],

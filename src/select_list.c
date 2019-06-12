@@ -76,9 +76,10 @@ void select_list_draw(actor_T* self)
 
     const float* color = COLOR_BG_DARK_BRIGHT;
 
-    draw_2D_positioned_2D_mesh(
+    draw_positioned_2D_mesh(
         self->x,
         self->y,
+        0.0f,
         select_list->width,
         select_list->height,
         color[0],
@@ -99,9 +100,10 @@ void select_list_draw(actor_T* self)
         {
             text_color = COLOR_BG_BRIGHT;
 
-            draw_2D_positioned_2D_mesh(
+            draw_positioned_2D_mesh(
                 self->x,
                 self->y + (i * 32) - select_list->scroll_position,
+                0.0f,
                 select_list->width,
                 32,
                 COLOR_BG_DARK[0],

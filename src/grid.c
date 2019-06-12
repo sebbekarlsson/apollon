@@ -96,9 +96,10 @@ void grid_draw(grid_T* grid)
 
             if (grid->cursor_x == x && grid->cursor_y == y)
             {
-                draw_2D_positioned_2D_mesh(
+                draw_positioned_2D_mesh(
                     cell_x,
                     cell_y,
+                    0.0f,
                     16,
                     16,
                     r,
@@ -110,9 +111,10 @@ void grid_draw(grid_T* grid)
             else
             if (cell->selected)
             {
-                draw_2D_positioned_2D_mesh(
+                draw_positioned_2D_mesh(
                     cell_x,
                     cell_y,
+                    0.0f,
                     16,
                     16,
                     r,

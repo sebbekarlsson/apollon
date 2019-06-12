@@ -50,9 +50,10 @@ void label_draw(actor_T* self)
             state
         );
 
-        draw_2D_positioned_2D_mesh(
+        draw_positioned_2D_mesh(
             self->x,
             self->y + size + (size / 2) + 2,
+            0.0f,
             strlen(label->value) * (size + spacing) + spacing,
             size / 4,
             COLOR_FG[0],

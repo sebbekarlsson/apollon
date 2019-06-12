@@ -2,7 +2,6 @@
 #define APOLLON_LABEL_H
 #include "window.h"
 #include "window_component.h"
-#include <glad/glad.h> 
 
 
 typedef struct LABEL_STRUCT

@@ -35,7 +35,7 @@ scene_main_T* init_scene_main()
     scene_main_T* s_main = calloc(1, sizeof(struct SCENE_MAIN_STRUCT));
     scene_T* s = (scene_T*) s_main;
 
-    scene_constructor(s, scene_main_tick, scene_main_draw);
+    scene_constructor(s, scene_main_tick, scene_main_draw, 2);
 
     s->bg_r = COLOR_BG_BRIGHT[0];
     s->bg_g = COLOR_BG_BRIGHT[1];
@@ -150,10 +150,9 @@ void window_insert_close_callback(window_T* window, scene_T* scene)
     printf("Insert window closed!\n");
 }
 
-void handle_inputs(state_T* self)
+void handle_inputs(scene_T* self)
 {
-    scene_T* scene = (scene_T*) self;
-    scene_main_T* s_main = (scene_main_T*) scene;
+    scene_main_T* s_main = (scene_main_T*) self;
 
     if (KEYBOARD_STATE->keys[GLFW_KEY_UP])
         s_main->grid->cursor_y -= 1;
@@ -207,7 +206,7 @@ void handle_inputs(state_T* self)
         window_T* window_to_close = s_main->window_manager->windows->items[s_main->window_manager->windows->size - 1];
 
         if (window_to_close->on_close)
-            window_to_close->on_close(window_to_close, scene);
+            window_to_close->on_close(window_to_close, self);
 
         dynamic_list_remove(
             s_main->window_manager->windows,
@@ -237,7 +236,7 @@ void handle_inputs(state_T* self)
 }
 
 
-void scene_main_tick(state_T* self)
+void scene_main_tick(scene_T* self)
 {
     scene_T* scene = (scene_T*) self;
     scene_main_T* s_main = (scene_main_T*) scene;
@@ -251,7 +250,7 @@ void scene_main_tick(state_T* self)
     grid_tick(s_main->grid); 
 }
 
-void scene_main_draw(state_T* self)
+void scene_main_draw(scene_T* self)
 {
     scene_T* scene = (scene_T*) self;
     scene_main_T* s_main = (scene_main_T*) self;
