@@ -139,8 +139,7 @@ void window_insert_close_callback(window_T* window, scene_T* scene)
     {
         actor_T* ac = init_actor(actor_x, actor_y, 0.0f);
         actor_constructor(ac, actor_x, actor_y, 0.0f, actor_tick, actor_draw, actor_type_name);
-        texture_T* texture = get_texture(actor_texture_path, GL_RGBA);
-        ac->texture = texture->renderable_texture;
+        ac->sprite = init_sprite_from_file(actor_texture_path, GL_RGBA, 1.0f, actor_width, actor_height);
         ac->width = actor_width;
         ac->height = actor_height;
 
