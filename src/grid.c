@@ -2,7 +2,6 @@
 #include <coelum/theatre.h>
 #include <coelum/scene_manager.h>
 #include <coelum/draw_utils.h>
-#include <coelum/utils.h>
 #include <stdlib.h>
 
 
@@ -71,7 +70,7 @@ void grid_draw(actor_T* self)
         {
             float cell_y = self->y + (y * grid->cell_size);
 
-            if (cell_x == 0)
+            if (cell_x == self->x)
             {
                 // draw lines sideways
                 draw_line(
