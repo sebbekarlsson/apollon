@@ -12,6 +12,8 @@ typedef struct GRID_STRUCT
     float r;
     float g;
     float b;
+    int cursor_x;
+    int cursor_y;
 } grid_T;
 
 grid_T* init_grid(
