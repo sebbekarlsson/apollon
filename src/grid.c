@@ -1,139 +1,85 @@
 #include "include/grid.h"
-#include <coelum/draw_utils.h>
 #include <coelum/theatre.h>
-#include <coelum/utils.h>
+#include <coelum/scene_manager.h>
+#include <coelum/draw_utils.h>
+#include <stdlib.h>
 
 
 extern theatre_T* THEATRE;
 
-extern const float COLOR_BG_DARK[3];
-
-grid_T* init_grid()
+grid_T* init_grid(
+    float x,
+    float y,
+    float z,
+    float width,
+    float height,
+    float cell_size,
+    float r,
+    float g,
+    float b
+)
 {
     grid_T* grid = calloc(1, sizeof(struct GRID_STRUCT));
+    actor_T* actor = (actor_T*) grid;
 
-    for (int x = 0; x < WINDOW_WIDTH / 16; x++)
-    {
-        for (int y = 0; y < WINDOW_HEIGHT/ 16; y++)
-        {
-            grid->cells[x][y] = init_cell(16, 16);
-        }
-    }
+    actor_constructor(actor, x, y, z, grid_tick, grid_draw, "grid");
 
-    grid->cursor_x = (WINDOW_WIDTH / 16) / 2;
-    grid->cursor_y = (WINDOW_HEIGHT / 16) / 2;
+    grid->width = width;
+    grid->height = height;
+    grid->cell_size = cell_size;
+    grid->r = r;
+    grid->g = g;
+    grid->b = b;
 
     return grid;
 }
 
-void grid_tick(grid_T* grid)
+void grid_tick(actor_T* self)
 {
-    // just for the goofs and giggles, testing stuff
-    /*for (int x = 0; x < WINDOW_WIDTH / 16; x++)
-    {
-        for (int y = 0; y < WINDOW_HEIGHT/ 16; y++)
-        {
-            cell_T* cell = grid->cells[x][y];
-
-            if (random_int(0, 3) == 0)
-            {
-                if (!cell->selected)
-                    cell->selected = 1;
-                else
-                    cell->selected = 0;
-            }
-        }
-    }*/
 }
 
-void grid_draw(grid_T* grid)
+void grid_draw(actor_T* self)
 {
+    grid_T* grid = (grid_T*) self;
+
     scene_T* scene = scene_manager_get_current_scene(THEATRE->scene_manager);
     state_T* state = (state_T*) scene;
 
-    for (int x = 0; x < WINDOW_WIDTH / 16; x++)
+    // draw lines downwards
+    for (int x = 0; x < grid->width / grid->cell_size; x++)
     {
-        float cell_x = x * 16;
-
-        float r = COLOR_BG_DARK[0];
-        float g = COLOR_BG_DARK[1];
-        float b = COLOR_BG_DARK[2];
+        float cell_x = self->x + (x * grid->cell_size);
 
         draw_line(
             cell_x,
-            0.0f,
+            self->y,
             0.0f,
             cell_x,
-            WINDOW_HEIGHT,
+            self->y + grid->height,
             0.0f,
-            r,
-            g,
-            b,
+            grid->r,
+            grid->g,
+            grid->b,
+            state
+        ); 
+    }
+
+    // draw lines sideways
+    for (int y = 0; y < grid->height / grid->cell_size; y++)
+    {
+        float cell_y = self->y + (y * grid->cell_size);
+
+        draw_line(
+            self->x,
+            cell_y,
+            0.0f,
+            self->x + grid->width,
+            cell_y,
+            0.0f,
+            grid->r,
+            grid->g,
+            grid->b,
             state
         );
-
-        for (int y = 0; y < WINDOW_HEIGHT/ 16; y++)
-        {
-            cell_T* cell = grid->cells[x][y];
-
-            float cell_y = y * 16;
-
-            if (cell_x == 0)
-            {
-                draw_line(
-                    0.0,
-                    cell_y,
-                    0.0f,
-                    WINDOW_WIDTH,
-                    cell_y,
-                    0.0f,
-                    r,
-                    g,
-                    b,
-                    state
-                );
-            }
-
-            if (grid->cursor_x == x && grid->cursor_y == y)
-            {
-                draw_positioned_2D_mesh(
-                    cell_x,
-                    cell_y,
-                    0.0f,
-                    16,
-                    16,
-                    r,
-                    g,
-                    b,
-                    state
-                );
-            }
-            else
-            if (cell->selected)
-            {
-                draw_positioned_2D_mesh(
-                    cell_x,
-                    cell_y,
-                    0.0f,
-                    16,
-                    16,
-                    r,
-                    g,
-                    b,
-                    state
-                );
-            }
-        }
-    }
-}
-
-void grid_unselect(grid_T* grid)
-{
-    for (int x = 0; x < WINDOW_WIDTH / 16; x++)
-    {
-        for (int y = 0; y < WINDOW_HEIGHT/ 16; y++)
-        {
-            grid->cells[x][y]->selected = 0;
-        }
     }
 }
