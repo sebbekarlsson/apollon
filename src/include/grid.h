@@ -23,6 +23,7 @@ typedef struct GRID_STRUCT
     int cursor_x;
     int cursor_y;
     grid_cell_T*** cells;
+    unsigned int focused;
 } grid_T;
 
 grid_T* init_grid(

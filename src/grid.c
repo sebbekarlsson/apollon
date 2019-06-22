@@ -54,6 +54,8 @@ grid_T* init_grid(
         }
     }
 
+    grid->focused = 0;
+
     return grid;
 }
 
@@ -112,7 +114,7 @@ void grid_draw(actor_T* self)
         }
     }
 
-    for (int x = 0; x < grid->width; x++)
+    for (int x = 0; x < grid->width + 1; x++)
     {
         float cell_x = self->x + (x * grid->cell_size);
 
@@ -130,7 +132,7 @@ void grid_draw(actor_T* self)
             state
         ); 
 
-        for (int y = 0; y < grid->height; y++)
+        for (int y = 0; y < grid->height + 1; y++)
         {
 
             float cell_y = self->y + (y * grid->cell_size);
@@ -152,7 +154,7 @@ void grid_draw(actor_T* self)
                 );
             } 
 
-            if (grid->cursor_x == x && grid->cursor_y == y)
+            if (grid->cursor_x == x && grid->cursor_y == y && grid->focused)
             {
                 draw_positioned_2D_mesh(
                     cell_x,

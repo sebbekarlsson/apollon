@@ -7,6 +7,8 @@
 typedef struct SCENE_SPRITE_EDITOR_STRUCT {
     scene_T base;
     grid_T* grid;
+    grid_T* grid_color_selector;
+    grid_T* grid_color_mixer;
 } scene_sprite_editor_T;
 
 scene_sprite_editor_T* init_scene_sprite_editor();

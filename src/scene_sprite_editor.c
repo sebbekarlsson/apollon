@@ -22,8 +22,8 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     s->bg_b = 255;
 
     s_sprite_editor->grid = init_grid(
-        0.0f,
-        0.0f,
+        (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
+        (WINDOW_HEIGHT / 2) - ((16 * 16) / 2),
         0.0f,
         16,
         16,
@@ -33,7 +33,77 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         0       
     );
 
+    // this one is starts as focused
+    s_sprite_editor->grid->focused = 1;
+
+    s_sprite_editor->grid_color_selector = init_grid(
+        ((WINDOW_WIDTH / 2) - ((16 * 16) / 2)) + ((16 * 16) + 16),
+        ((WINDOW_HEIGHT / 2) - ((16 * 16) / 2)),
+        0.0f,
+        4,
+        8,
+        16,
+        0,
+        0,
+        0       
+    );
+
+
+    float r, g, b = 255.0f;
+
+    for (int x = 0; x < s_sprite_editor->grid_color_selector->width; x++)
+    {
+        for (int y = 0; y < s_sprite_editor->grid_color_selector->height; y++)
+        {
+            if (x == 0)
+            {
+                r = 255 - (y * (255 / 8));
+                g = 0;
+                b = 0;
+            }
+            else
+            if (x == 1)
+            {
+                r = 0;
+                g = 255 - (y * (255 / 8));
+                b = 0;
+            }
+            else
+            if (x == 2)
+            {
+                r = 0;
+                g = 0;
+                b = 255 - (y * (255 / 8));
+            }
+            else
+            if (x == 3)
+            {
+                r = 255 - (y * (255 / 8));
+                g = 255 - (y * (255 / 8));
+                b = 255 - (y * (255 / 8));
+            }
+
+            s_sprite_editor->grid_color_selector->cells[x][y]->r = r;
+            s_sprite_editor->grid_color_selector->cells[x][y]->g = g;
+            s_sprite_editor->grid_color_selector->cells[x][y]->b = b;
+        }
+    }
+
+    s_sprite_editor->grid_color_mixer = init_grid(
+        ((WINDOW_WIDTH / 2) - ((16 * 16) / 2)) + ((16 * 16) + 16),
+        ((WINDOW_HEIGHT / 2) - ((16 * 16) / 2)) + ((16 * 8) + 16),
+        0.0f,
+        8,
+        7,
+        16,
+        0,
+        0,
+        0       
+    );
+
     dynamic_list_append(state->actors, s_sprite_editor->grid);
+    dynamic_list_append(state->actors, s_sprite_editor->grid_color_selector);
+    dynamic_list_append(state->actors, s_sprite_editor->grid_color_mixer);
 
     return s_sprite_editor;
 }
@@ -71,9 +141,9 @@ void scene_sprite_editor_tick(scene_T* self)
     {
         if (
            grid->cursor_x < 0 ||
-           grid->cursor_x > grid->width ||
+           grid->cursor_x > grid->width - 1 ||
            grid->cursor_y < 0 ||
-           grid->cursor_y > grid->height
+           grid->cursor_y > grid->height - 1
         )
         {
             return;
