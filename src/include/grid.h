@@ -35,7 +35,8 @@ grid_T* init_grid(
     float cell_size,
     float r,
     float g,
-    float b
+    float b,
+    char* type_name
 );
 
 void grid_tick(actor_T* self);

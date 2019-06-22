@@ -26,13 +26,14 @@ grid_T* init_grid(
     float cell_size,
     float r,
     float g,
-    float b
+    float b,
+    char* type_name
 )
 {
     grid_T* grid = calloc(1, sizeof(struct GRID_STRUCT));
     actor_T* actor = (actor_T*) grid;
 
-    actor_constructor(actor, x, y, z, grid_tick, grid_draw, "grid");
+    actor_constructor(actor, x, y, z, grid_tick, grid_draw, type_name);
 
     grid->width = width;
     grid->height = height;
@@ -126,7 +127,7 @@ void grid_draw(actor_T* self)
             cell_x,
             self->y + (grid->height * grid->cell_size),
             0.0f,
-            grid->r,
+            grid->r + x == 0 || x == grid->width ? grid->focused * 255 : 0,
             grid->g,
             grid->b,
             state
@@ -147,7 +148,7 @@ void grid_draw(actor_T* self)
                     self->x + (grid->width * grid->cell_size),
                     cell_y,
                     0.0f,
-                    grid->r,
+                    grid->r + y == 0 || y == grid->height ? grid->focused * 255 : 0,
                     grid->g,
                     grid->b,
                     state

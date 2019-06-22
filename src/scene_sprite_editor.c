@@ -30,7 +30,8 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         16,
         0,
         0,
-        0       
+        0,
+        "grid_canvas"
     );
 
     // this one is starts as focused
@@ -45,7 +46,8 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         16,
         0,
         0,
-        0       
+        0,
+        "grid_color_selector"
     );
 
 
@@ -98,12 +100,25 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         16,
         0,
         0,
-        0       
+        0,
+        "grid_color_mixer"
     );
 
     dynamic_list_append(state->actors, s_sprite_editor->grid);
     dynamic_list_append(state->actors, s_sprite_editor->grid_color_selector);
     dynamic_list_append(state->actors, s_sprite_editor->grid_color_mixer);
+
+    s_sprite_editor->focusables = init_dynamic_list(sizeof(struct GRID_STRUCT));
+
+    dynamic_list_append(s_sprite_editor->focusables, s_sprite_editor->grid);
+    dynamic_list_append(s_sprite_editor->focusables, s_sprite_editor->grid_color_selector);
+    dynamic_list_append(s_sprite_editor->focusables, s_sprite_editor->grid_color_mixer);
+
+    s_sprite_editor->focus_index = 0;
+
+    s_sprite_editor->r = 0.0f;
+    s_sprite_editor->g = 0.0f;
+    s_sprite_editor->b = 0.0f;
 
     return s_sprite_editor;
 }
@@ -111,7 +126,27 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 void scene_sprite_editor_tick(scene_T* self)
 {
     scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) self;
-    grid_T* grid = s_sprite_editor->grid;
+
+    if (KEYBOARD_STATE->keys[GLFW_KEY_TAB] && !KEYBOARD_STATE->key_locks[GLFW_KEY_TAB])
+    {
+        if (s_sprite_editor->focus_index < s_sprite_editor->focusables->size - 1)
+        {
+            s_sprite_editor->focus_index += 1;
+        }
+        else
+        {
+            s_sprite_editor->focus_index = 0;
+        }
+
+        KEYBOARD_STATE->key_locks[GLFW_KEY_TAB] = 1;
+    }
+
+    for (int i = 0; i < s_sprite_editor->focusables->size; i++)
+        ((grid_T*)s_sprite_editor->focusables->items[i])->focused = 0;
+
+    grid_T* grid = (grid_T*) s_sprite_editor->focusables->items[s_sprite_editor->focus_index];
+    actor_T* grid_actor = (actor_T*) grid;
+    grid->focused = 1;
 
     if (KEYBOARD_STATE->keys[GLFW_KEY_UP] && !KEYBOARD_STATE->key_locks[GLFW_KEY_UP])
     {
@@ -137,21 +172,75 @@ void scene_sprite_editor_tick(scene_T* self)
         KEYBOARD_STATE->key_locks[GLFW_KEY_RIGHT] = 1;
     }
 
-    if (KEYBOARD_STATE->keys[GLFW_KEY_SPACE])
+    if (strcmp(grid_actor->type_name, "grid_canvas") == 0)
     {
-        if (
-           grid->cursor_x < 0 ||
-           grid->cursor_x > grid->width - 1 ||
-           grid->cursor_y < 0 ||
-           grid->cursor_y > grid->height - 1
-        )
+        if (KEYBOARD_STATE->keys[GLFW_KEY_SPACE])
         {
-            return;
-        }
+            if (
+               grid->cursor_x < 0 ||
+               grid->cursor_x > grid->width - 1 ||
+               grid->cursor_y < 0 ||
+               grid->cursor_y > grid->height - 1
+            )
+            {
+                return;
+            }
 
-        grid->cells[grid->cursor_x][grid->cursor_y]->r = random_int(0, 255);
-        grid->cells[grid->cursor_x][grid->cursor_y]->g = random_int(0, 255);
-        grid->cells[grid->cursor_x][grid->cursor_y]->b = random_int(0, 255);
+            grid->cells[grid->cursor_x][grid->cursor_y]->r = s_sprite_editor->r;
+            grid->cells[grid->cursor_x][grid->cursor_y]->g = s_sprite_editor->g;
+            grid->cells[grid->cursor_x][grid->cursor_y]->b = s_sprite_editor->b;
+        }
+    }
+    else
+    if (strcmp(grid_actor->type_name, "grid_color_selector") == 0 || strcmp(grid_actor->type_name, "grid_color_mixer") == 0)
+    {
+        if (KEYBOARD_STATE->keys[GLFW_KEY_G])
+        {
+            if (
+               grid->cursor_x < 0 ||
+               grid->cursor_x > grid->width - 1 ||
+               grid->cursor_y < 0 ||
+               grid->cursor_y > grid->height - 1
+            )
+            {
+                return;
+            }
+
+            s_sprite_editor->r = grid->cells[grid->cursor_x][grid->cursor_y]->r;
+            s_sprite_editor->g = grid->cells[grid->cursor_x][grid->cursor_y]->g;
+            s_sprite_editor->b = grid->cells[grid->cursor_x][grid->cursor_y]->b;
+        }
+    }
+
+    if (strcmp(grid_actor->type_name, "grid_color_mixer") == 0)
+    {
+        if (KEYBOARD_STATE->keys[GLFW_KEY_SPACE])
+        {
+            if (
+               grid->cursor_x < 0 ||
+               grid->cursor_x > grid->width - 1 ||
+               grid->cursor_y < 0 ||
+               grid->cursor_y > grid->height - 1
+            )
+            {
+                return;
+            }
+
+            if (
+                grid->cells[grid->cursor_x][grid->cursor_y]->r == 255 &&
+                grid->cells[grid->cursor_x][grid->cursor_y]->g == 255 &&
+                grid->cells[grid->cursor_x][grid->cursor_y]->b == 255
+            )
+            {
+                grid->cells[grid->cursor_x][grid->cursor_y]->r = 0;
+                grid->cells[grid->cursor_x][grid->cursor_y]->g = 0;
+                grid->cells[grid->cursor_x][grid->cursor_y]->b = 0;
+            }
+
+            grid->cells[grid->cursor_x][grid->cursor_y]->r += s_sprite_editor->r;
+            grid->cells[grid->cursor_x][grid->cursor_y]->g += s_sprite_editor->g;
+            grid->cells[grid->cursor_x][grid->cursor_y]->b += s_sprite_editor->b;
+        }
     }
 }
 
