@@ -214,7 +214,7 @@ void scene_sprite_editor_tick(scene_T* self)
 
     if (strcmp(grid_actor->type_name, "grid_color_mixer") == 0)
     {
-        if (KEYBOARD_STATE->keys[GLFW_KEY_SPACE])
+        if (KEYBOARD_STATE->keys[GLFW_KEY_SPACE] && ! KEYBOARD_STATE->key_locks[GLFW_KEY_SPACE])
         {
             if (
                grid->cursor_x < 0 ||
@@ -237,9 +237,11 @@ void scene_sprite_editor_tick(scene_T* self)
                 grid->cells[grid->cursor_x][grid->cursor_y]->b = 0;
             }
 
-            grid->cells[grid->cursor_x][grid->cursor_y]->r += s_sprite_editor->r;
-            grid->cells[grid->cursor_x][grid->cursor_y]->g += s_sprite_editor->g;
-            grid->cells[grid->cursor_x][grid->cursor_y]->b += s_sprite_editor->b;
+            grid->cells[grid->cursor_x][grid->cursor_y]->r = (s_sprite_editor->r + grid->cells[grid->cursor_x][grid->cursor_y]->r) / 2;
+            grid->cells[grid->cursor_x][grid->cursor_y]->g = (s_sprite_editor->g + grid->cells[grid->cursor_x][grid->cursor_y]->g) / 2;
+            grid->cells[grid->cursor_x][grid->cursor_y]->b = (s_sprite_editor->b + grid->cells[grid->cursor_x][grid->cursor_y]->b) / 2;
+
+            KEYBOARD_STATE->key_locks[GLFW_KEY_SPACE] = 1;
         }
     }
 }
