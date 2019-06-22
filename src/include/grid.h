@@ -2,6 +2,14 @@
 #define APOLLON_GRID_H
 #include <coelum/actor.h>
 
+typedef struct GRID_CELL_STRUCT
+{
+    float r;
+    float g;
+    float b;
+} grid_cell_T;
+
+grid_cell_T* init_grid_cell();
 
 typedef struct GRID_STRUCT
 {
@@ -14,6 +22,7 @@ typedef struct GRID_STRUCT
     float b;
     int cursor_x;
     int cursor_y;
+    grid_cell_T*** cells;
 } grid_T;
 
 grid_T* init_grid(

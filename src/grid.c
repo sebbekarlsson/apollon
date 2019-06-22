@@ -7,6 +7,16 @@
 
 extern theatre_T* THEATRE;
 
+grid_cell_T* init_grid_cell()
+{
+    grid_cell_T* cell = calloc(1, sizeof(struct GRID_CELL_STRUCT));
+    cell->r = 255;
+    cell->g = 255;
+    cell->b = 255;
+
+    return cell;
+}
+
 grid_T* init_grid(
     float x,
     float y,
@@ -30,8 +40,19 @@ grid_T* init_grid(
     grid->r = r;
     grid->g = g;
     grid->b = b;
-    grid->cursor_x = (grid->width / grid->cell_size) / 2;
-    grid->cursor_y = (grid->height / grid->cell_size) / 2;
+    grid->cursor_x = width / 2;
+    grid->cursor_y = height / 2;
+
+    grid->cells = calloc(grid->width, sizeof(struct GRID_CELL_STRUCT***));
+    for (int x = 0; x < grid->width; x++)
+    {
+        grid->cells[x] = calloc(grid->height, sizeof(struct GRID_CELL_STRUCT**));
+
+        for (int y = 0; y < grid->height; y++)
+        {
+            grid->cells[x][y] = init_grid_cell();
+        }
+    }
 
     return grid;
 }
@@ -39,6 +60,26 @@ grid_T* init_grid(
 void grid_tick(actor_T* self)
 {
     grid_T* grid = (grid_T*) self;
+
+    if (grid->cursor_x > grid->width - 1)
+    {
+        grid->cursor_x = 0;
+    }
+    else
+    if (grid->cursor_x < 0)
+    {
+        grid->cursor_x = grid->width - 1;
+    }
+
+    if (grid->cursor_y > grid->height - 1)
+    {
+        grid->cursor_y = 0;
+    }
+    else
+    if (grid->cursor_y < 0)
+    {
+        grid->cursor_y = grid->height - 1;
+    }
 }
 
 void grid_draw(actor_T* self)
@@ -48,7 +89,30 @@ void grid_draw(actor_T* self)
     scene_T* scene = scene_manager_get_current_scene(THEATRE->scene_manager);
     state_T* state = (state_T*) scene;
 
-    for (int x = 0; x < grid->width / grid->cell_size; x++)
+    // fill each square
+    for (int x = 0; x < grid->width; x++)
+    {
+        float cell_x = self->x + (x * grid->cell_size);
+
+        for (int y = 0; y < grid->height; y++)
+        {
+            float cell_y = self->y + (y * grid->cell_size);
+
+            draw_positioned_2D_mesh(
+                cell_x,
+                cell_y,
+                0.0f,
+                grid->cell_size,
+                grid->cell_size,
+                grid->cells[x][y]->r,
+                grid->cells[x][y]->g,
+                grid->cells[x][y]->b,
+                state
+            );
+        }
+    }
+
+    for (int x = 0; x < grid->width; x++)
     {
         float cell_x = self->x + (x * grid->cell_size);
 
@@ -58,7 +122,7 @@ void grid_draw(actor_T* self)
             self->y,
             0.0f,
             cell_x,
-            self->y + grid->height,
+            self->y + (grid->height * grid->cell_size),
             0.0f,
             grid->r,
             grid->g,
@@ -66,8 +130,9 @@ void grid_draw(actor_T* self)
             state
         ); 
 
-        for (int y = 0; y < grid->height / grid->cell_size; y++)
+        for (int y = 0; y < grid->height; y++)
         {
+
             float cell_y = self->y + (y * grid->cell_size);
 
             if (cell_x == self->x)
@@ -77,7 +142,7 @@ void grid_draw(actor_T* self)
                     self->x,
                     cell_y,
                     0.0f,
-                    self->x + grid->width,
+                    self->x + (grid->width * grid->cell_size),
                     cell_y,
                     0.0f,
                     grid->r,
@@ -85,7 +150,7 @@ void grid_draw(actor_T* self)
                     grid->b,
                     state
                 );
-            }
+            } 
 
             if (grid->cursor_x == x && grid->cursor_y == y)
             {
