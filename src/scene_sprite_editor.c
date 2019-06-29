@@ -172,6 +172,12 @@ void scene_sprite_editor_tick(scene_T* self)
         KEYBOARD_STATE->key_locks[GLFW_KEY_RIGHT] = 1;
     }
 
+    if (KEYBOARD_STATE->keys[GLFW_KEY_S] && !KEYBOARD_STATE->key_locks[GLFW_KEY_S])
+    {
+        grid_create_image(s_sprite_editor->grid, "sheet.png");
+        KEYBOARD_STATE->key_locks[GLFW_KEY_S] = 1;
+    }
+
     if (strcmp(grid_actor->type_name, "grid_canvas") == 0)
     {
         if (KEYBOARD_STATE->keys[GLFW_KEY_SPACE])

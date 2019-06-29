@@ -41,4 +41,6 @@ grid_T* init_grid(
 
 void grid_tick(actor_T* self);
 void grid_draw(actor_T* self);
+
+int grid_create_image(grid_T* grid, const char* filename);
 #endif

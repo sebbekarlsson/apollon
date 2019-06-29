@@ -1,8 +1,9 @@
 #include <coelum/main.h>
+#include <coelum/theatre.h>
 #include "include/scene_menu.h"
 #include "include/scene_sprite_editor.h"
 #include "include/colors.h"
-#include <coelum/theatre.h>
+#include "include/image_utils.h"
 
 
 extern theatre_T* THEATRE;

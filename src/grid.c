@@ -3,6 +3,8 @@
 #include <coelum/scene_manager.h>
 #include <coelum/draw_utils.h>
 #include <stdlib.h>
+#include <png.h>
+#include "include/image_utils.h"
 
 
 extern theatre_T* THEATRE;
@@ -171,4 +173,46 @@ void grid_draw(actor_T* self)
             }
         }
     } 
+}
+
+int grid_create_image(grid_T* grid, const char* filename)
+{
+    bitmap_t grid_img;
+    int x;
+    int y;
+    int status;
+
+    status = 0;
+
+    /* Create an image. */
+
+    grid_img.width = grid->width;
+    grid_img.height = grid->height;
+
+    grid_img.pixels = calloc (grid_img.width * grid_img.height, sizeof (pixel_t));
+
+    if (!grid_img.pixels)
+    {
+        return -1;
+    }
+
+    for (y = 0; y < grid_img.height; y++) {
+        for (x = 0; x < grid_img.width; x++) {
+            pixel_t * pixel = pixel_at (& grid_img, x, y);
+            pixel->red = grid->cells[x][y]->r;
+            pixel->green = grid->cells[x][y]->g;
+            pixel->blue = grid->cells[x][y]->b;
+        }
+    }
+
+    /* Write the image to a file 'grid_img.png'. */
+
+    if (save_png_to_file (& grid_img, filename)) {
+        fprintf (stderr, "Error writing file.\n");
+        status = -1;
+    }
+
+    free (grid_img.pixels);
+
+    return status;
 }
