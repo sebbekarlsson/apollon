@@ -190,9 +190,7 @@ int grid_create_image(grid_T* grid, const char* filename)
     grid_img.pixels = calloc(grid_img.width * grid_img.height, sizeof(pixel_t));
 
     if (!grid_img.pixels)
-    {
         return -1;
-    }
 
     for (y = 0; y < grid_img.height; y++)
     {
