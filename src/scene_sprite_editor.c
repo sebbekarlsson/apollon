@@ -3,6 +3,7 @@
 #include <coelum/actor_text.h>
 #include <coelum/input.h>
 #include <coelum/utils.h>
+#include <coelum/draw_utils.h>
 #include <string.h>
 
 
@@ -291,6 +292,24 @@ void scene_sprite_editor_tick(scene_T* self)
 
 void scene_sprite_editor_draw(scene_T* self)
 {
+    state_T* state = (state_T*) self;
+    scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) self;
+
+    char grid_index_str[16];
+    sprintf(grid_index_str, "%d / %d", s_sprite_editor->grid_index, s_sprite_editor->grids->size - 1);
+
+    draw_text(
+        grid_index_str,
+        ((actor_T*)s_sprite_editor->grid)->x + (16 / 2),
+        ((actor_T*)s_sprite_editor->grid)->y - (16 / 2),
+        0,
+        0, // r
+        0, // g
+        0, // b
+        6,
+        6,
+        state
+    );
 }
 
 void scene_sprite_editor_goto_next(scene_sprite_editor_T* self)
