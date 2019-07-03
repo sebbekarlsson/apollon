@@ -213,3 +213,16 @@ int grid_create_image(grid_T* grid, const char* filename)
 
     return status;
 }
+
+void grid_copy(grid_T* source_grid, grid_T* target_grid)
+{
+    for (int x = 0; x < source_grid->width; x++)
+    {
+        for (int y = 0; y < source_grid->height; y++)
+        {
+            target_grid->cells[x][y]->r = source_grid->cells[x][y]->r;
+            target_grid->cells[x][y]->g = source_grid->cells[x][y]->g;
+            target_grid->cells[x][y]->b = source_grid->cells[x][y]->b;
+        }
+    }
+}

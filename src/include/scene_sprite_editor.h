@@ -5,13 +5,16 @@
 #include "grid.h"
 
 
-typedef struct SCENE_SPRITE_EDITOR_STRUCT {
+typedef struct SCENE_SPRITE_EDITOR_STRUCT
+{
     scene_T base;
     grid_T* grid;
     grid_T* grid_color_selector;
     grid_T* grid_color_mixer;
     dynamic_list_T* focusables;
+    dynamic_list_T* grids;  // sprite frames
     unsigned int focus_index;
+    unsigned int grid_index;
     float r;
     float g;
     float b;
@@ -22,4 +25,10 @@ scene_sprite_editor_T* init_scene_sprite_editor();
 void scene_sprite_editor_tick(scene_T* self);
 
 void scene_sprite_editor_draw(scene_T* self);
+
+void scene_sprite_editor_goto_next(scene_sprite_editor_T* self);
+
+void scene_sprite_editor_goto_prev(scene_sprite_editor_T* self);
+
+void scene_sprite_editor_refresh_grid(scene_sprite_editor_T* self);
 #endif

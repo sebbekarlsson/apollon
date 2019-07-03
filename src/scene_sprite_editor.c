@@ -37,6 +37,8 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     // this one is starts as focused
     s_sprite_editor->grid->focused = 1;
 
+    s_sprite_editor->grids = init_dynamic_list(sizeof(struct GRID_STRUCT));
+
     s_sprite_editor->grid_color_selector = init_grid(
         ((WINDOW_WIDTH / 2) - ((16 * 16) / 2)) + ((16 * 16) + 16),
         ((WINDOW_HEIGHT / 2) - ((16 * 16) / 2)),
@@ -50,6 +52,22 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         "grid_color_selector"
     );
 
+    // state representation of first grid in frame list.
+    dynamic_list_append(
+        s_sprite_editor->grids,
+        init_grid(
+            (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
+            (WINDOW_HEIGHT / 2) - ((16 * 16) / 2),
+            0.0f,
+            16,
+            16,
+            16,
+            0,
+            0,
+            0,
+            "grid_canvas"
+        )
+    );
 
     float r, g, b = 255.0f;
 
@@ -115,6 +133,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     dynamic_list_append(s_sprite_editor->focusables, s_sprite_editor->grid_color_mixer);
 
     s_sprite_editor->focus_index = 0;
+    s_sprite_editor->grid_index = 0;
 
     s_sprite_editor->r = 0.0f;
     s_sprite_editor->g = 0.0f;
@@ -172,6 +191,18 @@ void scene_sprite_editor_tick(scene_T* self)
         KEYBOARD_STATE->key_locks[GLFW_KEY_RIGHT] = 1;
     }
 
+    if (KEYBOARD_STATE->keys[GLFW_KEY_Z] && !KEYBOARD_STATE->key_locks[GLFW_KEY_Z])
+    {
+        scene_sprite_editor_goto_prev(s_sprite_editor);
+        KEYBOARD_STATE->key_locks[GLFW_KEY_Z] = 1;
+    }
+
+    if (KEYBOARD_STATE->keys[GLFW_KEY_X] && !KEYBOARD_STATE->key_locks[GLFW_KEY_X])
+    {
+        scene_sprite_editor_goto_next(s_sprite_editor);
+        KEYBOARD_STATE->key_locks[GLFW_KEY_X] = 1;
+    }
+
     if (KEYBOARD_STATE->keys[GLFW_KEY_S] && !KEYBOARD_STATE->key_locks[GLFW_KEY_S])
     {
         grid_create_image(s_sprite_editor->grid, "sheet.png");
@@ -196,6 +227,12 @@ void scene_sprite_editor_tick(scene_T* self)
             grid->cells[grid->cursor_x][grid->cursor_y]->g = s_sprite_editor->g;
             grid->cells[grid->cursor_x][grid->cursor_y]->b = s_sprite_editor->b;
         }
+
+        // save current state of the grid into the representation in our state list.
+        grid_copy(
+            s_sprite_editor->grid,
+            s_sprite_editor->grids->items[s_sprite_editor->grid_index]
+        );
     }
     else
     if (strcmp(grid_actor->type_name, "grid_color_selector") == 0 || strcmp(grid_actor->type_name, "grid_color_mixer") == 0)
@@ -254,4 +291,53 @@ void scene_sprite_editor_tick(scene_T* self)
 
 void scene_sprite_editor_draw(scene_T* self)
 {
+}
+
+void scene_sprite_editor_goto_next(scene_sprite_editor_T* self)
+{
+    self->grid_index += 1;
+
+    if (self->grids->size-1 < self->grid_index)
+    {
+        printf("Created another grid state representation!\n");
+
+        dynamic_list_append(
+            self->grids,
+            init_grid(
+                (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
+                (WINDOW_HEIGHT / 2) - ((16 * 16) / 2),
+                0.0f,
+                16,
+                16,
+                16,
+                0,
+                0,
+                0,
+                "grid_canvas"
+            )
+        );
+    }
+
+    scene_sprite_editor_refresh_grid(self);
+}
+
+void scene_sprite_editor_goto_prev(scene_sprite_editor_T* self)
+{
+    if (self->grid_index > 0)
+        self->grid_index -= 1;
+
+    scene_sprite_editor_refresh_grid(self);
+}
+
+void scene_sprite_editor_refresh_grid(scene_sprite_editor_T* self)
+{
+    grid_T* current_grid_state = (grid_T*) self->grids->items[self->grid_index];
+
+    if (!current_grid_state)
+    {
+        printf("Current grid state is broken\n");
+        exit(1);
+    }
+
+    grid_copy(current_grid_state, self->grid);
 }
