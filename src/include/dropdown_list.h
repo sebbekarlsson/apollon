@@ -8,6 +8,7 @@ typedef struct DROPDOWN_LIST_STRUCT
     actor_T base;
     dynamic_list_T* options;
     unsigned int focused;
+    unsigned int option_index;
 } dropdown_list_T;
 
 dropdown_list_T* init_dropdown_list(float x, float y, float z);
