@@ -1,6 +1,7 @@
 #ifndef APOLLON_SCENE_SCENE_EDITOR_H
 #define APOLLON_SCENE_SCENE_EDITOR_H
 #include <coelum/scene.h>
+#include "dropdown_list.h"
 #include "grid.h"
 
 
@@ -8,6 +9,7 @@ typedef struct SCENE_SCENE_EDITOR_STRUCT
 {
     scene_T base;
     grid_T* grid;
+    dropdown_list_T* dropdown_list;
 } scene_scene_editor_T;
 
 scene_scene_editor_T* init_scene_scene_editor();
