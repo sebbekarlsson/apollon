@@ -16,6 +16,11 @@ void press()
     printf("Press\n");
 }
 
+void press_scene_editor()
+{
+    scene_manager_goto(THEATRE->scene_manager, "scene_editor");
+}
+
 void press_sprite_editor()
 {
     scene_manager_goto(THEATRE->scene_manager, "sprite_editor");
@@ -36,7 +41,7 @@ scene_menu_T* init_scene_menu()
 
     s_menu->select_list = init_select_list(state);
 
-    select_list_register_option(s_menu->select_list, "Scene Editor", press);
+    select_list_register_option(s_menu->select_list, "Scene Editor", press_scene_editor);
     select_list_register_option(s_menu->select_list, "Actor Editor", press);
     select_list_register_option(s_menu->select_list, "Sprite Editor", press_sprite_editor);
     select_list_register_option(s_menu->select_list, "Quit", press);

@@ -1,4 +1,5 @@
 #include "include/scene_sprite_editor.h"
+#include "include/etc.h"
 #include <coelum/constants.h>
 #include <coelum/actor_text.h>
 #include <coelum/input.h>
@@ -145,6 +146,8 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
 void scene_sprite_editor_tick(scene_T* self)
 {
+    go_back_on_escape();
+
     scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) self;
 
     if (KEYBOARD_STATE->keys[GLFW_KEY_TAB] && !KEYBOARD_STATE->key_locks[GLFW_KEY_TAB])
