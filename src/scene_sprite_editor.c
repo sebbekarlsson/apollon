@@ -204,6 +204,12 @@ void scene_sprite_editor_tick(scene_T* self)
         KEYBOARD_STATE->key_locks[GLFW_KEY_X] = 1;
     }
 
+    if (KEYBOARD_STATE->keys[GLFW_KEY_C] && !KEYBOARD_STATE->key_locks[GLFW_KEY_C])
+    {
+        scene_sprite_editor_delete_current_frame(s_sprite_editor);
+        KEYBOARD_STATE->key_locks[GLFW_KEY_C] = 1;
+    }
+
     if (KEYBOARD_STATE->keys[GLFW_KEY_S] && !KEYBOARD_STATE->key_locks[GLFW_KEY_S])
     {
         grid_create_image(s_sprite_editor->grid, "sheet.png");
@@ -344,6 +350,28 @@ void scene_sprite_editor_goto_prev(scene_sprite_editor_T* self)
 {
     if (self->grid_index > 0)
         self->grid_index -= 1;
+
+    scene_sprite_editor_refresh_grid(self);
+}
+
+void _grid_free(void* item)
+{
+    grid_free((grid_T*) item);
+}
+
+void scene_sprite_editor_delete_current_frame(scene_sprite_editor_T* self)
+{
+    if (self->grid_index == 0)
+    {
+        printf("Cannot delete first frame\n");
+        return;
+    }
+    
+    grid_T* current_grid_state = (grid_T*) self->grids->items[self->grid_index];
+
+    dynamic_list_remove(self->grids, current_grid_state, _grid_free);
+
+    self->grid_index -= 1;
 
     scene_sprite_editor_refresh_grid(self);
 }

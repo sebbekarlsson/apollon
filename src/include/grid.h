@@ -45,4 +45,6 @@ void grid_draw(actor_T* self);
 int grid_create_image(grid_T* grid, const char* filename);
 
 void grid_copy(grid_T* source_grid, grid_T* target_grid);
+
+void grid_free(grid_T* grid);
 #endif

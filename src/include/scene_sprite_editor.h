@@ -30,5 +30,7 @@ void scene_sprite_editor_goto_next(scene_sprite_editor_T* self);
 
 void scene_sprite_editor_goto_prev(scene_sprite_editor_T* self);
 
+void scene_sprite_editor_delete_current_frame(scene_sprite_editor_T* self);
+
 void scene_sprite_editor_refresh_grid(scene_sprite_editor_T* self);
 #endif

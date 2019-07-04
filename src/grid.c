@@ -226,3 +226,18 @@ void grid_copy(grid_T* source_grid, grid_T* target_grid)
         }
     }
 }
+
+void grid_free(grid_T* grid)
+{
+    for (int x = 0; x < grid->width; x++)
+    {
+        for (int y = 0; y < grid->height; y++)
+        {
+            free(grid->cells[x][y]);
+        }
+
+        free(grid->cells[x]);
+    }
+
+    free(grid);
+}
