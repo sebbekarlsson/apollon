@@ -1,5 +1,6 @@
 #include "include/scene_actor_editor.h"
 #include "include/etc.h"
+#include <string.h>
 
 
 scene_actor_editor_T* init_scene_actor_editor()
@@ -16,7 +17,8 @@ scene_actor_editor_T* init_scene_actor_editor()
     scene->bg_b = 255;
 
     s_actor_editor->test_input = init_input_field(120, 120, 0.0f);
-    s_actor_editor->test_input->value = "hello world";
+    s_actor_editor->test_input->value = calloc(strlen("hello world\0"), sizeof(char));
+    strcpy(s_actor_editor->test_input->value, "hello world\0");
     s_actor_editor->test_input->focused = 1;
 
     dynamic_list_append(state->actors, s_actor_editor->test_input);

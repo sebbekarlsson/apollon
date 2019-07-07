@@ -8,6 +8,7 @@ typedef struct INPUT_FIELD_STRUCT
     actor_T base;
     char* value;
     unsigned int focused;
+    unsigned int caret_position;
 } input_field_T;
 
 input_field_T* init_input_field(float x, float y, float z);
