@@ -9,6 +9,8 @@ typedef struct INPUT_FIELD_STRUCT
     char* value;
     unsigned int focused;
     unsigned int caret_position;
+    unsigned int font_size;
+    unsigned int font_spacing;
 } input_field_T;
 
 input_field_T* init_input_field(float x, float y, float z);

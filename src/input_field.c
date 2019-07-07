@@ -15,6 +15,8 @@ input_field_T* init_input_field(float x, float y, float z)
 
     input_field->focused = 0;
     input_field->value = '\0';
+    input_field->font_size = 8;
+    input_field->font_spacing = input_field->font_size + 4;
 
     input_field->caret_position = 0;
 
@@ -34,17 +36,17 @@ void input_field_draw(actor_T* self)
         0,
         0,
         0,
-        12,
-        16,
+        input_field->font_size,
+        input_field->font_spacing,
         state
     );
 
     draw_positioned_2D_mesh(
-        self->x + ((12 + 16) * (float) input_field->caret_position - ((12 + 16) / 2)),
-        self->y - 12,
+        self->x + ((input_field->font_size + input_field->font_spacing) * (float) input_field->caret_position - ((input_field->font_size + input_field->font_spacing) / 2)),
+        self->y - input_field->font_size,
         self->z,
         4,
-        (12 * 2),
+        (input_field->font_size * 2),
         0,
         0,
         0,
