@@ -1,13 +1,11 @@
 #include "include/grid.h"
-#include <coelum/theatre.h>
+#include <coelum/current.h>
 #include <coelum/scene_manager.h>
 #include <coelum/draw_utils.h>
 #include <stdlib.h>
 #include <png.h>
 #include "include/image_utils.h"
 
-
-extern theatre_T* THEATRE;
 
 grid_cell_T* init_grid_cell()
 {
@@ -91,7 +89,7 @@ void grid_draw(actor_T* self)
 {
     grid_T* grid = (grid_T*) self;
 
-    scene_T* scene = scene_manager_get_current_scene(THEATRE->scene_manager);
+    scene_T* scene = get_current_scene();
     state_T* state = (state_T*) scene;
 
     // fill each square

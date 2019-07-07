@@ -1,4 +1,5 @@
 #include "include/scene_actor_editor.h"
+#include "include/etc.h"
 
 
 scene_actor_editor_T* init_scene_actor_editor()
@@ -25,6 +26,7 @@ scene_actor_editor_T* init_scene_actor_editor()
 
 void scene_actor_editor_tick(scene_T* self)
 {
+    go_back_on_escape();
 }
 
 void scene_actor_editor_draw(scene_T* self)
