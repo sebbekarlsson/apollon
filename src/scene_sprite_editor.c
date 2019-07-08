@@ -305,7 +305,7 @@ void scene_sprite_editor_draw(scene_T* self)
     scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) self;
 
     char grid_index_str[16];
-    sprintf(grid_index_str, "%d / %d", s_sprite_editor->grid_index, s_sprite_editor->grids->size - 1);
+    sprintf(grid_index_str, "%d / %d", (int)s_sprite_editor->grid_index, (int)s_sprite_editor->grids->size - 1);
 
     draw_text(
         grid_index_str,

@@ -62,7 +62,6 @@ select_list_option_T* select_list_register_option(select_list_T* select_list, ch
         if (strcmp(actor->type_name, "text") == 0)
         {
             nr_texts += 1;
-            actor_text_T* actor_text = (actor_text_T*) actor;
         }
     }
 
@@ -73,7 +72,6 @@ select_list_option_T* select_list_register_option(select_list_T* select_list, ch
 
         if (strcmp(actor->type_name, "text") == 0)
         {
-            actor_text_T* actor_text = (actor_text_T*) actor;
             actor->y = (text_y_spacing / 2) + (((WINDOW_HEIGHT / 2) - ((nr_texts * text_y_spacing) / 2) + (i*text_y_spacing)));
         }
     }
