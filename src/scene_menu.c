@@ -1,4 +1,5 @@
 #include "include/scene_menu.h"
+#include <coelum/main.h>
 #include <coelum/constants.h>
 #include <coelum/actor_text.h>
 #include <coelum/theatre.h>
@@ -31,6 +32,11 @@ void press_sprite_editor()
     scene_manager_goto(THEATRE->scene_manager, "sprite_editor");
 }
 
+void press_quit()
+{
+    coelum_terminate();
+}
+
 scene_menu_T* init_scene_menu()
 {
     scene_menu_T* s_menu = calloc(1, sizeof(struct SCENE_MENU_STRUCT));
@@ -49,7 +55,7 @@ scene_menu_T* init_scene_menu()
     select_list_register_option(s_menu->select_list, "Scene Editor", press_scene_editor);
     select_list_register_option(s_menu->select_list, "Actor Editor", press_actor_editor);
     select_list_register_option(s_menu->select_list, "Sprite Editor", press_sprite_editor);
-    select_list_register_option(s_menu->select_list, "Quit", press);
+    select_list_register_option(s_menu->select_list, "Quit", press_quit);
 
     return s_menu;
 }

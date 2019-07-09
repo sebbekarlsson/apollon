@@ -7,6 +7,8 @@
 
 extern keyboard_state_T* KEYBOARD_STATE;
 
+extern const float COLOR_BG_BRIGHT[3];
+
 input_field_T* init_input_field(float x, float y, float z)
 {
     input_field_T* input_field = calloc(1, sizeof(struct INPUT_FIELD_STRUCT));
@@ -17,8 +19,13 @@ input_field_T* init_input_field(float x, float y, float z)
     input_field->value = '\0';
     input_field->font_size = 8;
     input_field->font_spacing = input_field->font_size + 4;
+    input_field->width = 256;
+    input_field->height = 32;
 
     input_field->caret_position = 0;
+    input_field->draw_caret = 1;
+
+    gettimeofday(&input_field->timer, 0);
 
     return input_field;
 }
@@ -28,10 +35,22 @@ void input_field_draw(actor_T* self)
     input_field_T* input_field = (input_field_T*) self;
     state_T* state = (state_T*) get_current_scene();
 
-    draw_text(
-        input_field->value,
+    draw_positioned_2D_mesh(
         self->x,
         self->y,
+        self->z,
+        input_field->width,
+        input_field->height,
+        COLOR_BG_BRIGHT[0],
+        COLOR_BG_BRIGHT[1],
+        COLOR_BG_BRIGHT[2],
+        state 
+    );
+
+    draw_text(
+        input_field->value,
+        self->x + ((input_field->font_size + input_field->font_spacing) / 2),
+        self->y + (input_field->height / 2),
         self->z,
         0,
         0,
@@ -41,16 +60,31 @@ void input_field_draw(actor_T* self)
         state
     );
 
+    if (input_field->draw_caret)
+    {
+        draw_positioned_2D_mesh(
+            self->x + ((input_field->font_size + input_field->font_spacing) * (float) input_field->caret_position - ((input_field->font_size + input_field->font_spacing) / 2)) + ((input_field->font_size + input_field->font_spacing) / 2),
+            self->y - (input_field->font_size) + (input_field->height / 2),
+            self->z,
+            4,
+            (input_field->font_size * 2),
+            0,
+            0,
+            0,
+            state        
+        );
+    } 
+
     draw_positioned_2D_mesh(
-        self->x + ((input_field->font_size + input_field->font_spacing) * (float) input_field->caret_position - ((input_field->font_size + input_field->font_spacing) / 2)),
-        self->y - input_field->font_size,
+        self->x,
+        self->y + input_field->height,
         self->z,
+        input_field->width,
         4,
-        (input_field->font_size * 2),
         0,
         0,
         0,
-        state        
+        state 
     );
 }
 
@@ -77,5 +111,24 @@ void input_field_tick(actor_T* self)
         char_str[1] = '\0';
 
         strcat(input_field->value, char_str);
+    }
+
+    struct timeval end;
+    gettimeofday(&end, 0);
+
+    float time_spent = (double)(end.tv_usec - input_field->timer.tv_usec) / 1000000 + (double)(end.tv_sec - input_field->timer.tv_sec);
+
+    if (time_spent >= 0.5f)
+    {
+        if (input_field->draw_caret)
+        {
+            input_field->draw_caret = 0;
+        }
+        else
+        {
+            input_field->draw_caret = 1;
+        }
+
+        gettimeofday(&input_field->timer, 0);
     }
 }
