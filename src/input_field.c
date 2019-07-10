@@ -57,7 +57,7 @@ void input_field_draw(actor_T* self)
     {
         if (strlen(input_field->value))
         {
-            float available_space = input_field->width / (input_field->font_size + input_field->font_spacing);
+            int available_space = input_field->width / (input_field->font_size + input_field->font_spacing);
             int chars_off = strlen(input_field->value) - available_space;
 
             scroll = chars_off > 0 ? chars_off * (input_field->font_size + input_field->font_spacing) : 0;
