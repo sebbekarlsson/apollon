@@ -18,7 +18,6 @@ dropdown_list_T* init_dropdown_list(float x, float y, float z)
     actor_constructor(actor, x, y, z, dropdown_list_tick, dropdown_list_draw, "dropdown_list");
 
     dropdown_list->options = init_dynamic_list(sizeof(struct DROPDOWN_LIST_OPTION_STRUCT));
-    dropdown_list->focused = 0;
     dropdown_list->option_index = 0;
 
     return dropdown_list;
@@ -27,8 +26,9 @@ dropdown_list_T* init_dropdown_list(float x, float y, float z)
 void dropdown_list_tick(actor_T* self)
 {
     dropdown_list_T* dropdown_list = (dropdown_list_T*) self;
+    actor_focusable_T* actor_focusable = (actor_focusable_T*) dropdown_list;
 
-    if (!dropdown_list->focused)
+    if (!actor_focusable->focused)
         return;
 
     if (KEYBOARD_STATE->keys[GLFW_KEY_UP] && !KEYBOARD_STATE->key_locks[GLFW_KEY_UP])
@@ -51,8 +51,9 @@ void dropdown_list_tick(actor_T* self)
 void dropdown_list_draw(actor_T* self)
 {
     dropdown_list_T* dropdown_list = (dropdown_list_T*) self;
+    actor_focusable_T* actor_focusable = (actor_focusable_T*) dropdown_list;
 
-    if (!dropdown_list->focused)
+    if (!actor_focusable->focused)
         return;
 
     scene_T* scene = scene_manager_get_current_scene(THEATRE->scene_manager);

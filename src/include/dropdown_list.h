@@ -1,11 +1,11 @@
 #ifndef APOLLON_DROPDOWN_LIST_H
 #define APOLLON_DROPDOWN_LIST_H
-#include <coelum/actor.h>
+#include "actor_focusable.h"
 
 
 typedef struct DROPDOWN_LIST_STRUCT
 {
-    actor_T base;
+    actor_focusable_T base;
     dynamic_list_T* options;
     unsigned int focused;
     unsigned int option_index;

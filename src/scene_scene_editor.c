@@ -84,11 +84,12 @@ void scene_scene_editor_tick(scene_T* self)
     {
         ((actor_T*)s_scene_editor->dropdown_list)->x = (grid->cursor_x * grid->cell_size) + grid->cell_size * 2;
         ((actor_T*)s_scene_editor->dropdown_list)->y = grid->cursor_y * grid->cell_size + grid->cell_size * 2;
+        actor_focusable_T* dropdown_list_focusable = (actor_focusable_T*) s_scene_editor->dropdown_list;
 
-        if (!s_scene_editor->dropdown_list->focused)
-            s_scene_editor->dropdown_list->focused = 1;
+        if (!dropdown_list_focusable->focused)
+            dropdown_list_focusable->focused = 1;
         else
-            s_scene_editor->dropdown_list->focused = 0;
+            dropdown_list_focusable->focused = 0;
 
         KEYBOARD_STATE->key_locks[GLFW_KEY_I] = 1;
     }
