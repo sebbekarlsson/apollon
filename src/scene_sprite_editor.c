@@ -37,7 +37,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     );
 
     // this one is starts as focused
-    s_sprite_editor->grid->focused = 1;
+    ((actor_focusable_T*)s_sprite_editor->grid)->focused = 1;
 
     s_sprite_editor->grids = init_dynamic_list(sizeof(struct GRID_STRUCT));
 
@@ -128,13 +128,12 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     dynamic_list_append(state->actors, s_sprite_editor->grid_color_selector);
     dynamic_list_append(state->actors, s_sprite_editor->grid_color_mixer);
 
-    s_sprite_editor->focusables = init_dynamic_list(sizeof(struct GRID_STRUCT));
+    s_sprite_editor->focus_manager = init_focus_manager();
 
-    dynamic_list_append(s_sprite_editor->focusables, s_sprite_editor->grid);
-    dynamic_list_append(s_sprite_editor->focusables, s_sprite_editor->grid_color_selector);
-    dynamic_list_append(s_sprite_editor->focusables, s_sprite_editor->grid_color_mixer);
+    dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->grid);
+    dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->grid_color_selector);
+    dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->grid_color_mixer);
 
-    s_sprite_editor->focus_index = 0;
     s_sprite_editor->grid_index = 0;
 
     s_sprite_editor->r = 0.0f;
@@ -149,27 +148,13 @@ void scene_sprite_editor_tick(scene_T* self)
     go_back_on_escape();
 
     scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) self;
+    
+    focus_manager_tick(s_sprite_editor->focus_manager);
 
-    if (KEYBOARD_STATE->keys[GLFW_KEY_TAB] && !KEYBOARD_STATE->key_locks[GLFW_KEY_TAB])
-    {
-        if (s_sprite_editor->focus_index < s_sprite_editor->focusables->size - 1)
-        {
-            s_sprite_editor->focus_index += 1;
-        }
-        else
-        {
-            s_sprite_editor->focus_index = 0;
-        }
-
-        KEYBOARD_STATE->key_locks[GLFW_KEY_TAB] = 1;
-    }
-
-    for (int i = 0; i < s_sprite_editor->focusables->size; i++)
-        ((grid_T*)s_sprite_editor->focusables->items[i])->focused = 0;
-
-    grid_T* grid = (grid_T*) s_sprite_editor->focusables->items[s_sprite_editor->focus_index];
-    actor_T* grid_actor = (actor_T*) grid;
-    grid->focused = 1;
+    actor_focusable_T* actor_focusable = (actor_focusable_T*) s_sprite_editor->focus_manager->focusables->items[s_sprite_editor->focus_manager->focus_index];
+    actor_T* grid_actor = (actor_T*) actor_focusable;
+    grid_T* grid = (grid_T*) grid_actor;
+    actor_focusable->focused = 1;
 
     if (KEYBOARD_STATE->keys[GLFW_KEY_UP] && !KEYBOARD_STATE->key_locks[GLFW_KEY_UP])
     {

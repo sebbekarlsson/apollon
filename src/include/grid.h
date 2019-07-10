@@ -1,6 +1,7 @@
 #ifndef APOLLON_GRID_H
 #define APOLLON_GRID_H
-#include <coelum/actor.h>
+#include "actor_focusable.h"
+
 
 typedef struct GRID_CELL_STRUCT
 {
@@ -13,7 +14,7 @@ grid_cell_T* init_grid_cell();
 
 typedef struct GRID_STRUCT
 {
-    actor_T base;
+    actor_focusable_T base;
     float width;
     float height;
     float cell_size;
@@ -23,7 +24,6 @@ typedef struct GRID_STRUCT
     int cursor_x;
     int cursor_y;
     grid_cell_T*** cells;
-    unsigned int focused;
 } grid_T;
 
 grid_T* init_grid(

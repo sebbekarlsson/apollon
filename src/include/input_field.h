@@ -1,14 +1,13 @@
 #ifndef APOLLON_INPUT_FIELD_H
 #define APOLLON_INPUT_FIELD_H
-#include <coelum/actor.h>
+#include "actor_focusable.h"
 #include <sys/time.h>
 
 
 typedef struct INPUT_FIELD_STRUCT
 {
-    actor_T base;
+    actor_focusable_T base;
     char* value;
-    unsigned int focused;
     unsigned int caret_position;
     unsigned int font_size;
     unsigned int font_spacing;

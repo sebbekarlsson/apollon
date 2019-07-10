@@ -3,6 +3,7 @@
 #include <coelum/scene.h>
 #include <coelum/dynamic_list.h>
 #include "grid.h"
+#include "focus_manager.h"
 
 
 typedef struct SCENE_SPRITE_EDITOR_STRUCT
@@ -11,13 +12,12 @@ typedef struct SCENE_SPRITE_EDITOR_STRUCT
     grid_T* grid;
     grid_T* grid_color_selector;
     grid_T* grid_color_mixer;
-    dynamic_list_T* focusables;
     dynamic_list_T* grids;  // sprite frames
-    unsigned int focus_index;
     unsigned int grid_index;
     float r;
     float g;
     float b;
+    focus_manager_T* focus_manager;
 } scene_sprite_editor_T;
 
 scene_sprite_editor_T* init_scene_sprite_editor();

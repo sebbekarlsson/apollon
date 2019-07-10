@@ -35,6 +35,10 @@ grid_T* init_grid(
 
     actor_constructor(actor, x, y, z, grid_tick, grid_draw, type_name);
 
+    actor_focusable_T* actor_focusable = (actor_focusable_T*) grid;
+
+    actor_focusable_constructor(actor_focusable);
+
     grid->width = width;
     grid->height = height;
     grid->cell_size = cell_size;
@@ -54,8 +58,6 @@ grid_T* init_grid(
             grid->cells[x][y] = init_grid_cell();
         }
     }
-
-    grid->focused = 0;
 
     return grid;
 }
@@ -88,6 +90,7 @@ void grid_tick(actor_T* self)
 void grid_draw(actor_T* self)
 {
     grid_T* grid = (grid_T*) self;
+    actor_focusable_T* actor_focusable = (actor_focusable_T*) grid;
 
     scene_T* scene = get_current_scene();
     state_T* state = (state_T*) scene;
@@ -127,7 +130,7 @@ void grid_draw(actor_T* self)
             cell_x,
             self->y + (grid->height * grid->cell_size),
             0.0f,
-            grid->r + x == 0 || x == grid->width ? grid->focused * 255 : 0,
+            grid->r + x == 0 || x == grid->width ? actor_focusable->focused * 255 : 0,
             grid->g,
             grid->b,
             state
@@ -148,14 +151,14 @@ void grid_draw(actor_T* self)
                     self->x + (grid->width * grid->cell_size),
                     cell_y,
                     0.0f,
-                    grid->r + y == 0 || y == grid->height ? grid->focused * 255 : 0,
+                    grid->r + y == 0 || y == grid->height ? actor_focusable->focused * 255 : 0,
                     grid->g,
                     grid->b,
                     state
                 );
             } 
 
-            if (grid->cursor_x == x && grid->cursor_y == y && grid->focused)
+            if (grid->cursor_x == x && grid->cursor_y == y && actor_focusable->focused)
             {
                 draw_positioned_2D_mesh(
                     cell_x,
