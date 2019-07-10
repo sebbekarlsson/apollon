@@ -2,6 +2,7 @@
 #include <coelum/draw_utils.h>
 #include <coelum/current.h>
 #include <coelum/input.h>
+#include <coelum/constants.h>
 #include <string.h>
 
 
@@ -50,13 +51,23 @@ void input_field_draw(actor_T* self)
         state 
     );
 
+    float scroll = 0;
+
     if (input_field->value)
     {
         if (strlen(input_field->value))
         {
+            float available_space = input_field->width / (input_field->font_size + input_field->font_spacing);
+            int chars_off = strlen(input_field->value) - available_space;
+
+            scroll = chars_off > 0 ? chars_off * (input_field->font_size + input_field->font_spacing) : 0;
+
+            glEnable(GL_SCISSOR_TEST);
+            glScissor((int)self->x, (int)(WINDOW_HEIGHT - self->y - input_field->height), (int)input_field->width, (int)input_field->height); 
+            
             draw_text(
                 input_field->value,
-                self->x + ((input_field->font_size + input_field->font_spacing) / 2),
+                self->x + (((input_field->font_size + input_field->font_spacing) / 2) - scroll),
                 self->y + (input_field->height / 2),
                 self->z,
                 0,
@@ -66,13 +77,14 @@ void input_field_draw(actor_T* self)
                 input_field->font_spacing,
                 state
             );
+            glDisable(GL_SCISSOR_TEST);
         }
     }
 
     if (input_field->draw_caret && actor_focusable->focused)
     {
         draw_positioned_2D_mesh(
-            self->x + ((input_field->font_size + input_field->font_spacing) * (float) input_field->caret_position - ((input_field->font_size + input_field->font_spacing) / 2)) + ((input_field->font_size + input_field->font_spacing) / 2),
+            self->x + ((input_field->font_size + input_field->font_spacing) * (float) input_field->caret_position - ((input_field->font_size + input_field->font_spacing) / 2)) + ((input_field->font_size + input_field->font_spacing) / 2) - scroll,
             self->y - (input_field->font_size) + (input_field->height / 2),
             self->z,
             4,

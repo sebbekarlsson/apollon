@@ -2,6 +2,7 @@
 #define APOLLON_INPUT_FIELD_H
 #include "actor_focusable.h"
 #include <sys/time.h>
+#include <glad/glad.h>
 
 
 typedef struct INPUT_FIELD_STRUCT
