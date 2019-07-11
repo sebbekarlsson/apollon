@@ -4,6 +4,7 @@
 #include <coelum/dynamic_list.h>
 #include "grid.h"
 #include "focus_manager.h"
+#include "dropdown_list.h"
 
 
 typedef struct SCENE_SPRITE_EDITOR_STRUCT
@@ -13,6 +14,7 @@ typedef struct SCENE_SPRITE_EDITOR_STRUCT
     grid_T* grid_color_selector;
     grid_T* grid_color_mixer;
     dynamic_list_T* grids;  // sprite frames
+    dropdown_list_T* dropdown_list_sprite;
     unsigned int grid_index;
     float r;
     float g;

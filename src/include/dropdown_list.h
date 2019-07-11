@@ -12,6 +12,7 @@ typedef struct DROPDOWN_LIST_STRUCT
     unsigned int expanded;
     unsigned int visible;
     unsigned int selected_index;
+    unsigned int width;
 } dropdown_list_T;
 
 dropdown_list_T* init_dropdown_list(float x, float y, float z);

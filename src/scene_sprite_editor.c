@@ -123,12 +123,25 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         0,
         "grid_color_mixer"
     );
+    
+    sprite_T* mock_sprite = init_sprite_from_file("res/img/tomato.png", GL_RGBA, 1, 16, 16);
 
     dynamic_list_append(state->actors, s_sprite_editor->grid);
     dynamic_list_append(state->actors, s_sprite_editor->grid_color_selector);
     dynamic_list_append(state->actors, s_sprite_editor->grid_color_mixer);
 
     s_sprite_editor->focus_manager = init_focus_manager();
+
+    s_sprite_editor->dropdown_list_sprite = init_dropdown_list(((WINDOW_WIDTH / 2) - ((16 * 16) / 2)) - (24 + 16), (WINDOW_HEIGHT / 2) - ((16 * 16) / 2), 0.0f);
+    s_sprite_editor->dropdown_list_sprite->expanded = 0;
+    s_sprite_editor->dropdown_list_sprite->width = 24;
+    ((actor_T*)s_sprite_editor->dropdown_list_sprite)->z = 1;
+    dynamic_list_append(s_sprite_editor->dropdown_list_sprite->options, init_dropdown_list_option(mock_sprite, (void*) 0, (void*) 0));
+    dynamic_list_append(s_sprite_editor->dropdown_list_sprite->options, init_dropdown_list_option(mock_sprite, (void*) 0, (void*) 0));
+    dynamic_list_append(s_sprite_editor->dropdown_list_sprite->options, init_dropdown_list_option(mock_sprite, (void*) 0, (void*) 0));
+
+    dynamic_list_append(s_sprite_editor->focus_manager->focusables, (actor_focusable_T*) s_sprite_editor->dropdown_list_sprite);
+    dynamic_list_append(state->actors, s_sprite_editor->dropdown_list_sprite);
 
     dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->grid);
     dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->grid_color_selector);

@@ -2,6 +2,7 @@
 #include <coelum/theatre.h>
 #include <coelum/draw_utils.h>
 #include <coelum/input.h>
+#include <string.h>
 
 
 extern theatre_T* THEATRE;
@@ -22,6 +23,7 @@ dropdown_list_T* init_dropdown_list(float x, float y, float z)
     dropdown_list->expanded = 0;
     dropdown_list->visible = 1;
     dropdown_list->selected_index = 0;
+    dropdown_list->width = 200;
 
     return dropdown_list;
 }
@@ -75,7 +77,7 @@ void dropdown_list_option_draw(int i, dropdown_list_option_T* option, dropdown_l
             self->x,
             (self->y + (i * 32)),
             0.0f,
-            200,
+            dropdown_list->width,
             32,
             COLOR_BG_DARK_BRIGHT[0],
             COLOR_BG_DARK_BRIGHT[1],
@@ -101,18 +103,24 @@ void dropdown_list_option_draw(int i, dropdown_list_option_T* option, dropdown_l
         text_padding = 16;
     }
 
-    draw_text(
-        option->key,
-        self->x + (32 / 2) + text_padding,
-        (self->y + (i * 32)) + (32 / 2),
-        0,
-        COLOR_FG[0], // r
-        COLOR_FG[1], // g
-        COLOR_FG[2], // b
-        6,
-        6,
-        state
-    );
+    if (option->key)
+    {
+        if (strlen(option->key))
+        {
+            draw_text(
+                option->key,
+                self->x + (32 / 2) + text_padding,
+                (self->y + (i * 32)) + (32 / 2),
+                0,
+                COLOR_FG[0], // r
+                COLOR_FG[1], // g
+                COLOR_FG[2], // b
+                6,
+                6,
+                state
+            );
+        }
+    }
 }
 
 void dropdown_list_draw(actor_T* self)
@@ -129,7 +137,7 @@ void dropdown_list_draw(actor_T* self)
         self->x,
         self->y,
         0.0f,
-        200,
+        dropdown_list->width,
         32 * (dropdown_list->expanded ? dropdown_list->options->size : 1),
         COLOR_BG_DARK[0],
         COLOR_BG_DARK[1],
