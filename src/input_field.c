@@ -115,7 +115,9 @@ void input_field_tick(actor_T* self)
     actor_focusable_T* actor_focusable = (actor_focusable_T*) input_field;
 
     if (!actor_focusable->focused)
+    {
         return;
+    }
 
     if (input_field->value)
     {

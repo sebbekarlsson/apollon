@@ -3,6 +3,7 @@
 #include <coelum/scene.h>
 #include <coelum/dynamic_list.h>
 #include "input_field.h"
+#include "dropdown_list.h"
 #include "focus_manager.h"
 
 
@@ -11,6 +12,7 @@ typedef struct SCENE_ACTOR_EDITOR_STRUCT
     scene_T base;
     input_field_T* input_field_type_name;
     input_field_T* input_field_tick_script;
+    dropdown_list_T* dropdown_list_sprites;
     focus_manager_T* focus_manager;
 } scene_actor_editor_T;
 

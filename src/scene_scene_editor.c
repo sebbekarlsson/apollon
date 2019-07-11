@@ -39,9 +39,10 @@ scene_scene_editor_T* init_scene_scene_editor()
     // this one is starts as focused
     ((actor_focusable_T*)s_scene_editor->grid)->focused = 1;
     s_scene_editor->dropdown_list = init_dropdown_list(0.0f, 0.0f, 0.0f);
-    dynamic_list_append(s_scene_editor->dropdown_list->options, init_dropdown_list_option("item 0", (void*) 0));
-    dynamic_list_append(s_scene_editor->dropdown_list->options, init_dropdown_list_option("item 1", (void*) 0));
-    dynamic_list_append(s_scene_editor->dropdown_list->options, init_dropdown_list_option("item 2", (void*) 0));
+    s_scene_editor->dropdown_list->visible = 0;
+    dynamic_list_append(s_scene_editor->dropdown_list->options, init_dropdown_list_option((void*) 0, "item 0", (void*) 0));
+    dynamic_list_append(s_scene_editor->dropdown_list->options, init_dropdown_list_option((void*) 0, "item 1", (void*) 0));
+    dynamic_list_append(s_scene_editor->dropdown_list->options, init_dropdown_list_option((void*) 0, "item 2", (void*) 0));
     
     dynamic_list_append(state->actors, s_scene_editor->grid);
     dynamic_list_append(state->actors, s_scene_editor->dropdown_list);
@@ -87,9 +88,15 @@ void scene_scene_editor_tick(scene_T* self)
         actor_focusable_T* dropdown_list_focusable = (actor_focusable_T*) s_scene_editor->dropdown_list;
 
         if (!dropdown_list_focusable->focused)
+        {
             dropdown_list_focusable->focused = 1;
+            s_scene_editor->dropdown_list->visible = 1;
+        }
         else
+        {
             dropdown_list_focusable->focused = 0;
+            s_scene_editor->dropdown_list->visible = 0;
+        }
 
         KEYBOARD_STATE->key_locks[GLFW_KEY_I] = 1;
     }

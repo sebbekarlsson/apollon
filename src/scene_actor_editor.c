@@ -20,14 +20,25 @@ scene_actor_editor_T* init_scene_actor_editor()
     scene->bg_b = 255;
 
     s_actor_editor->input_field_type_name = init_input_field(120, 120, 0.0f);
-    s_actor_editor->input_field_tick_script = init_input_field(120, 120 + 64, 0.0f);
+
+    s_actor_editor->dropdown_list_sprites = init_dropdown_list(120, 120 + 64, 0.0f);
+    s_actor_editor->dropdown_list_sprites->expanded = 0;
+
+    sprite_T* mock_sprite = init_sprite_from_file("res/img/tomato.png", GL_RGBA, 1, 16, 16);
+    dynamic_list_append(s_actor_editor->dropdown_list_sprites->options, init_dropdown_list_option(mock_sprite, "item 0", (void*) 0));
+    dynamic_list_append(s_actor_editor->dropdown_list_sprites->options, init_dropdown_list_option(mock_sprite, "item 1", (void*) 0));
+    dynamic_list_append(s_actor_editor->dropdown_list_sprites->options, init_dropdown_list_option(mock_sprite, "item 2", (void*) 0));
+
+    s_actor_editor->input_field_tick_script = init_input_field(120, 120 + 64 + 64 + 64, 0.0f);
 
     s_actor_editor->focus_manager = init_focus_manager();
 
     dynamic_list_append(s_actor_editor->focus_manager->focusables, (actor_focusable_T*) s_actor_editor->input_field_type_name);
+    dynamic_list_append(s_actor_editor->focus_manager->focusables, (actor_focusable_T*) s_actor_editor->dropdown_list_sprites);
     dynamic_list_append(s_actor_editor->focus_manager->focusables, (actor_focusable_T*) s_actor_editor->input_field_tick_script);
 
     dynamic_list_append(state->actors, s_actor_editor->input_field_type_name);
+    dynamic_list_append(state->actors, s_actor_editor->dropdown_list_sprites);
     dynamic_list_append(state->actors, s_actor_editor->input_field_tick_script);
 
     return s_actor_editor;
