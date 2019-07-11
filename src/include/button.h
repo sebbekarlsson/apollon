@@ -17,9 +17,10 @@ typedef struct BUTTON_STRUCT
     unsigned int bg_b;
     unsigned int font_size;
     unsigned int font_spacing;
+    void (*press)();
 } button_T;
 
-button_T* init_button(float x, float y, float z, char* text);
+button_T* init_button(float x, float y, float z, char* text, void (*press)());
 
 void button_tick(actor_T* self);
 
