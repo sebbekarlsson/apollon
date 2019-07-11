@@ -18,7 +18,7 @@ select_list_T* init_select_list(state_T* state)
 {
     select_list_T* select_list = calloc(1, sizeof(struct SELECT_LIST_STRUCT));
 
-    select_list->options = init_dynamic_list(sizeof(struct SCENE_MENU_OPTION_STRUCT));
+    select_list->options = init_dynamic_list(sizeof(struct SCENE_MENU_OPTION_STRUCT*));
     select_list->option_index = 0;
     select_list->state = state;
 

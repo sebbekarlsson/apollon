@@ -10,7 +10,7 @@ focus_manager_T* init_focus_manager()
 {
     focus_manager_T* focus_manager = calloc(1, sizeof(struct FOCUS_MANAGER_STRUCT));
 
-    focus_manager->focusables = init_dynamic_list(sizeof(struct ACTOR_FOCUSABLE_STRUCT));
+    focus_manager->focusables = init_dynamic_list(sizeof(struct ACTOR_FOCUSABLE_STRUCT*));
     focus_manager->focus_index = 0;
 
     return focus_manager;

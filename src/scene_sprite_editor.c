@@ -39,7 +39,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     // this one is starts as focused
     ((actor_focusable_T*)s_sprite_editor->grid)->focused = 1;
 
-    s_sprite_editor->grids = init_dynamic_list(sizeof(struct GRID_STRUCT));
+    s_sprite_editor->grids = init_dynamic_list(sizeof(struct GRID_STRUCT*));
 
     s_sprite_editor->grid_color_selector = init_grid(
         ((WINDOW_WIDTH / 2) - ((16 * 16) / 2)) + ((16 * 16) + 16),

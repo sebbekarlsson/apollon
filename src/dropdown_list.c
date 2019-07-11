@@ -16,8 +16,8 @@ dropdown_list_T* init_dropdown_list(float x, float y, float z)
     dropdown_list_T* dropdown_list = calloc(1, sizeof(struct DROPDOWN_LIST_STRUCT));
     actor_T* actor = (actor_T*) dropdown_list;
     actor_constructor(actor, x, y, z, dropdown_list_tick, dropdown_list_draw, "dropdown_list");
-
-    dropdown_list->options = init_dynamic_list(sizeof(struct DROPDOWN_LIST_OPTION_STRUCT));
+    
+    dropdown_list->options = init_dynamic_list(sizeof(struct DROPDOWN_LIST_OPTION_STRUCT*));
     dropdown_list->option_index = 0;
     dropdown_list->expanded = 0;
     dropdown_list->visible = 1;
