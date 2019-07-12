@@ -1,19 +1,42 @@
 #include "include/scene_sprite_editor.h"
 #include "include/etc.h"
+#include "include/database.h"
 #include <coelum/constants.h>
 #include <coelum/actor_text.h>
 #include <coelum/input.h>
 #include <coelum/utils.h>
 #include <coelum/draw_utils.h>
+#include <coelum/current.h>
 #include <string.h>
 
 
 extern keyboard_state_T* KEYBOARD_STATE;
+extern database_T* DATABASE;
 
 
 void sprite_button_save_press()
 {
-    printf("Save!\n");
+    scene_T* scene = get_current_scene();
+    scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) scene;
+
+    if (s_sprite_editor->sprite_index == -1)
+    {
+        printf("Create new sprite\n");
+
+        sprite_T* sprite = init_sprite(
+            scene_sprite_editor_get_frames_as_textures(s_sprite_editor),
+            1,
+            16,
+            16
+        );
+
+        dynamic_list_append(DATABASE->sprites, sprite);
+        s_sprite_editor->sprite_index = DATABASE->sprites->size - 1;
+    }
+    else
+    {
+        printf("Modify sprite\n");
+    }
 }
 
 scene_sprite_editor_T* init_scene_sprite_editor()
@@ -192,6 +215,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->grid_color_mixer);
 
     s_sprite_editor->grid_index = 0;
+    s_sprite_editor->sprite_index = -1;
 
     s_sprite_editor->r = 0.0f;
     s_sprite_editor->g = 0.0f;
@@ -361,6 +385,23 @@ void scene_sprite_editor_draw(scene_T* self)
         6,
         state
     );
+
+    for (int i = 0; i < DATABASE->sprites->size; i++)
+    {
+        sprite_T* sprite = (sprite_T*) DATABASE->sprites->items[i];
+
+        draw_positioned_sprite(
+            sprite,
+            0,
+            0,
+            0,
+            64,
+            64,
+            state
+        );
+
+        break;
+    }
 }
 
 void scene_sprite_editor_goto_next(scene_sprite_editor_T* self)
@@ -432,4 +473,18 @@ void scene_sprite_editor_refresh_grid(scene_sprite_editor_T* self)
     }
 
     grid_copy(current_grid_state, self->grid);
+}
+
+dynamic_list_T* scene_sprite_editor_get_frames_as_textures(scene_sprite_editor_T* self)
+{
+    dynamic_list_T* frame_list = init_dynamic_list(sizeof(struct TEXTURE_STRUCT*));
+
+    for (int i = 0; i < self->grids->size; i++)
+    {
+        grid_T* grid = (grid_T*) self->grids->items[i];
+
+        dynamic_list_append(frame_list, grid_create_texture(grid));
+    }
+
+    return frame_list;
 }

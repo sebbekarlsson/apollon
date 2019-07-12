@@ -23,6 +23,7 @@ typedef struct SCENE_SPRITE_EDITOR_STRUCT
     input_field_T* input_field_name;
     button_T* button_save;
     unsigned int grid_index;
+    int sprite_index;
     float r;
     float g;
     float b;
@@ -42,4 +43,6 @@ void scene_sprite_editor_goto_prev(scene_sprite_editor_T* self);
 void scene_sprite_editor_delete_current_frame(scene_sprite_editor_T* self);
 
 void scene_sprite_editor_refresh_grid(scene_sprite_editor_T* self);
+
+dynamic_list_T* scene_sprite_editor_get_frames_as_textures(scene_sprite_editor_T* self);
 #endif

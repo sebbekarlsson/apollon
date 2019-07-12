@@ -4,6 +4,7 @@
 #include <coelum/draw_utils.h>
 #include <stdlib.h>
 #include <png.h>
+#include <glad/glad.h>
 #include "include/image_utils.h"
 
 
@@ -213,6 +214,27 @@ int grid_create_image(grid_T* grid, const char* filename)
     free(grid_img.pixels);
 
     return status;
+}
+
+texture_T* grid_create_texture(grid_T* grid)
+{
+    //unsigned char*** img = calloc(grid->width, sizeof(unsigned char));
+    GLubyte img[(int)grid->height][(int)grid->height][4];
+
+    int i, j;
+
+    for (i = 0; i < grid->height; i++)
+    {
+        for (j = 0; j < grid->width; j++)
+        {
+            img[i][j][0] = (GLubyte) grid->cells[j][i]->r;
+            img[i][j][1] = (GLubyte) grid->cells[j][i]->g;
+            img[i][j][2] = (GLubyte) grid->cells[j][i]->b;
+            img[i][j][3] = (GLubyte) 255;
+        }
+    }
+
+    return get_texture_from_data((unsigned char*)img, grid->width, grid->height, GL_RGBA);
 }
 
 void grid_copy(grid_T* source_grid, grid_T* target_grid)
