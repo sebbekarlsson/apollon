@@ -17,8 +17,8 @@ typedef struct SCENE_SPRITE_EDITOR_STRUCT
     grid_T* grid_color_selector;
     grid_T* grid_color_mixer;
     dynamic_list_T* grids;  // sprite frames
+    label_T* label_current_sprite;
     dropdown_list_T* dropdown_list_sprite;
-    dropdown_list_T* dropdown_list_frames;
     label_T* label_name;
     input_field_T* input_field_name;
     button_T* button_save;

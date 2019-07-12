@@ -45,12 +45,12 @@ scene_actor_editor_T* init_scene_actor_editor()
     /* ==== actor ==== */
     s_actor_editor->label_actor = init_label(ix, iy, 0.0f, "Actor");
     iy += label_margin;
-    s_actor_editor->dropdown_list_actor = init_dropdown_list(ix, iy, 0.0f);
+    s_actor_editor->dropdown_list_actor = init_dropdown_list(ix, iy, 0.0f, (void*) 0);
     s_actor_editor->dropdown_list_actor->expanded = 0;
     ((actor_T*)s_actor_editor->dropdown_list_actor)->z = 1;
-    dynamic_list_append(s_actor_editor->dropdown_list_actor->options, init_dropdown_list_option(mock_sprite, "item 0", (void*) 0));
-    dynamic_list_append(s_actor_editor->dropdown_list_actor->options, init_dropdown_list_option(mock_sprite, "item 1", (void*) 0));
-    dynamic_list_append(s_actor_editor->dropdown_list_actor->options, init_dropdown_list_option(mock_sprite, "item 2", (void*) 0));
+    dynamic_list_append(s_actor_editor->dropdown_list_actor->options, init_dropdown_list_option(mock_sprite, "item 0", (void*) 0, 0));
+    dynamic_list_append(s_actor_editor->dropdown_list_actor->options, init_dropdown_list_option(mock_sprite, "item 1", (void*) 0, 0));
+    dynamic_list_append(s_actor_editor->dropdown_list_actor->options, init_dropdown_list_option(mock_sprite, "item 2", (void*) 0, 0));
 
     dynamic_list_append(s_actor_editor->focus_manager->focusables, (actor_focusable_T*) s_actor_editor->dropdown_list_actor);
     dynamic_list_append(state->actors, s_actor_editor->label_actor);
@@ -80,12 +80,12 @@ scene_actor_editor_T* init_scene_actor_editor()
     /* ==== sprite ==== */
     s_actor_editor->label_sprite = init_label(jx, jy, 0.0f, "Sprite");
     jy += label_margin;
-    s_actor_editor->dropdown_list_sprite = init_dropdown_list(jx, jy, 0.0f);
+    s_actor_editor->dropdown_list_sprite = init_dropdown_list(jx, jy, 0.0f, (void*) 0);
     s_actor_editor->dropdown_list_sprite->expanded = 0;
     ((actor_T*)s_actor_editor->dropdown_list_sprite)->z = 1;
-    dynamic_list_append(s_actor_editor->dropdown_list_sprite->options, init_dropdown_list_option(mock_sprite, "item 0", (void*) 0));
-    dynamic_list_append(s_actor_editor->dropdown_list_sprite->options, init_dropdown_list_option(mock_sprite, "item 1", (void*) 0));
-    dynamic_list_append(s_actor_editor->dropdown_list_sprite->options, init_dropdown_list_option(mock_sprite, "item 2", (void*) 0));
+    dynamic_list_append(s_actor_editor->dropdown_list_sprite->options, init_dropdown_list_option(mock_sprite, "item 0", (void*) 0, 0));
+    dynamic_list_append(s_actor_editor->dropdown_list_sprite->options, init_dropdown_list_option(mock_sprite, "item 1", (void*) 0, 0));
+    dynamic_list_append(s_actor_editor->dropdown_list_sprite->options, init_dropdown_list_option(mock_sprite, "item 2", (void*) 0, 0));
 
     dynamic_list_append(s_actor_editor->focus_manager->focusables, (actor_focusable_T*) s_actor_editor->dropdown_list_sprite);
     dynamic_list_append(state->actors, s_actor_editor->label_sprite);

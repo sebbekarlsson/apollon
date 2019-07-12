@@ -12,7 +12,7 @@ extern float COLOR_BG_DARK[3];
 extern float COLOR_BG_DARK_BRIGHT[3];
 extern float COLOR_FG[3];
 
-dropdown_list_T* init_dropdown_list(float x, float y, float z)
+dropdown_list_T* init_dropdown_list(float x, float y, float z, void (*press)(void* option))
 {
     dropdown_list_T* dropdown_list = calloc(1, sizeof(struct DROPDOWN_LIST_STRUCT));
     actor_T* actor = (actor_T*) dropdown_list;
@@ -24,6 +24,7 @@ dropdown_list_T* init_dropdown_list(float x, float y, float z)
     dropdown_list->visible = 1;
     dropdown_list->selected_index = 0;
     dropdown_list->width = 200;
+    dropdown_list->press = press;
 
     return dropdown_list;
 }
@@ -63,6 +64,11 @@ void dropdown_list_tick(actor_T* self)
     {
         dropdown_list->selected_index = dropdown_list->option_index;
         KEYBOARD_STATE->key_locks[GLFW_KEY_ENTER] = 1;
+
+        if (dropdown_list->press)
+        {
+            dropdown_list->press(dropdown_list->options->items[dropdown_list->option_index]);
+        }
     }
 }
 
@@ -117,6 +123,7 @@ void dropdown_list_option_draw(int i, dropdown_list_option_T* option, dropdown_l
                 COLOR_FG[2], // b
                 6,
                 6,
+                option->text_limit,
                 state
             );
         }
@@ -169,12 +176,13 @@ void dropdown_list_draw(actor_T* self)
     }
 }
 
-dropdown_list_option_T* init_dropdown_list_option(sprite_T* sprite, char* key, void* value)
+dropdown_list_option_T* init_dropdown_list_option(sprite_T* sprite, char* key, void* value, unsigned int text_limit)
 {
     dropdown_list_option_T* option = calloc(1, sizeof(struct DROPDOWN_LIST_OPTION_STRUCT));
     option->sprite = sprite;
     option->key = key;
     option->value = value;
+    option->text_limit = text_limit;
 
     return option;
 }

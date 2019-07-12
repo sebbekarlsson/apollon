@@ -75,6 +75,7 @@ void input_field_draw(actor_T* self)
                 0,
                 input_field->font_size,
                 input_field->font_spacing,
+                0,
                 state
             );
             glDisable(GL_SCISSOR_TEST);

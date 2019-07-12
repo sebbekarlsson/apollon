@@ -82,6 +82,7 @@ void button_draw(actor_T* self)
         focused ? 255 : button->fg_b,
         button->font_size,
         button->font_spacing,
+        0,
         state
     );
 }

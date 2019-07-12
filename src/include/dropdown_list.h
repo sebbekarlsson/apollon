@@ -13,9 +13,10 @@ typedef struct DROPDOWN_LIST_STRUCT
     unsigned int visible;
     unsigned int selected_index;
     unsigned int width;
+    void (*press)(void* option);
 } dropdown_list_T;
 
-dropdown_list_T* init_dropdown_list(float x, float y, float z);
+dropdown_list_T* init_dropdown_list(float x, float y, float z, void (*press)(void* option));
 
 void dropdown_list_tick(actor_T* self);
 
@@ -26,7 +27,8 @@ typedef struct DROPDOWN_LIST_OPTION_STRUCT
     sprite_T* sprite;
     char* key;
     void* value;
+    unsigned int text_limit;
 } dropdown_list_option_T;
 
-dropdown_list_option_T* init_dropdown_list_option(sprite_T* sprite, char* key, void* value);
+dropdown_list_option_T* init_dropdown_list_option(sprite_T* sprite, char* key, void* value, unsigned int text_limit);
 #endif

@@ -38,11 +38,11 @@ scene_scene_editor_T* init_scene_scene_editor()
 
     // this one is starts as focused
     ((actor_focusable_T*)s_scene_editor->grid)->focused = 1;
-    s_scene_editor->dropdown_list = init_dropdown_list(0.0f, 0.0f, 0.0f);
+    s_scene_editor->dropdown_list = init_dropdown_list(0.0f, 0.0f, 0.0f, (void*) 0);
     s_scene_editor->dropdown_list->visible = 0;
-    dynamic_list_append(s_scene_editor->dropdown_list->options, init_dropdown_list_option((void*) 0, "item 0", (void*) 0));
-    dynamic_list_append(s_scene_editor->dropdown_list->options, init_dropdown_list_option((void*) 0, "item 1", (void*) 0));
-    dynamic_list_append(s_scene_editor->dropdown_list->options, init_dropdown_list_option((void*) 0, "item 2", (void*) 0));
+    dynamic_list_append(s_scene_editor->dropdown_list->options, init_dropdown_list_option((void*) 0, "item 0", (void*) 0, 0));
+    dynamic_list_append(s_scene_editor->dropdown_list->options, init_dropdown_list_option((void*) 0, "item 1", (void*) 0, 0));
+    dynamic_list_append(s_scene_editor->dropdown_list->options, init_dropdown_list_option((void*) 0, "item 2", (void*) 0, 0));
     
     dynamic_list_append(state->actors, s_scene_editor->grid);
     dynamic_list_append(state->actors, s_scene_editor->dropdown_list);

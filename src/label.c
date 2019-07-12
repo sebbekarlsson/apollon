@@ -40,6 +40,7 @@ void label_draw(actor_T* self)
         label->b,
         label->font_size,
         label->font_spacing,
+        0,
         state
     );
 }

@@ -30,13 +30,20 @@ void sprite_button_save_press()
             16
         );
 
-        dynamic_list_append(DATABASE->sprites, sprite);
+        database_sprite_T* database_sprite = init_database_sprite(sprite, s_sprite_editor->input_field_name->value);
+
+        dynamic_list_append(DATABASE->sprites, database_sprite);
         s_sprite_editor->sprite_index = DATABASE->sprites->size - 1;
     }
     else
     {
         printf("Modify sprite\n");
     }
+}
+
+void dropdown_list_sprite_press(void* option)
+{
+    printf("Selected a sprite!\n");
 }
 
 void sprite_button_new_press()
@@ -48,6 +55,12 @@ void sprite_button_new_press()
     s_sprite_editor->sprite_index = -1;
 
     scene_sprite_editor_clear_all_frames(s_sprite_editor);
+    
+    memset(
+        s_sprite_editor->input_field_name->value,
+        0,
+        sizeof(char) * strlen(s_sprite_editor->input_field_name->value)
+    );
 }
 
 scene_sprite_editor_T* init_scene_sprite_editor()
@@ -164,8 +177,6 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         "grid_color_mixer"
     );
     
-    sprite_T* mock_sprite = init_sprite_from_file("res/img/tomato.png", GL_RGBA, 1, 16, 16);
-
     dynamic_list_append(state->actors, s_sprite_editor->grid);
     dynamic_list_append(state->actors, s_sprite_editor->grid_color_selector);
     dynamic_list_append(state->actors, s_sprite_editor->grid_color_mixer);
@@ -207,26 +218,29 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     );
     dynamic_list_append(state->actors, s_sprite_editor->button_new);
     dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->button_new);
+    
+    int dropdown_list_sprite_width = 160;
+    s_sprite_editor->label_name = init_label(
+        ((WINDOW_WIDTH / 2) - ((16 * 16) / 2)) - (dropdown_list_sprite_width + 16),
+        (WINDOW_HEIGHT / 2) - ((16 * 16) / 2) - (8 + 8),
+        0.0f,
+        "Sprite"
+    );
+    dynamic_list_append(state->actors, s_sprite_editor->label_name);
 
-    s_sprite_editor->dropdown_list_sprite = init_dropdown_list(((WINDOW_WIDTH / 2) - ((16 * 16) / 2)) - (24 + 16 + 32), (WINDOW_HEIGHT / 2) - ((16 * 16) / 2), 0.0f);
+    s_sprite_editor->dropdown_list_sprite = init_dropdown_list(
+        (((WINDOW_WIDTH / 2) - ((16 * 16) / 2))) - (dropdown_list_sprite_width + 16),
+        (WINDOW_HEIGHT / 2) - ((16 * 16) / 2),
+        0.0f,
+        dropdown_list_sprite_press
+    );
     s_sprite_editor->dropdown_list_sprite->expanded = 0;
-    s_sprite_editor->dropdown_list_sprite->width = 24;
+    s_sprite_editor->dropdown_list_sprite->width = dropdown_list_sprite_width;
     ((actor_T*)s_sprite_editor->dropdown_list_sprite)->z = 1;
 
     dynamic_list_append(s_sprite_editor->focus_manager->focusables, (actor_focusable_T*) s_sprite_editor->dropdown_list_sprite);
     dynamic_list_append(state->actors, s_sprite_editor->dropdown_list_sprite);
 
-
-    s_sprite_editor->dropdown_list_frames = init_dropdown_list(((WINDOW_WIDTH / 2) - ((16 * 16) / 2)) - (24 + 16), (WINDOW_HEIGHT / 2) - ((16 * 16) / 2), 0.0f);
-    s_sprite_editor->dropdown_list_frames->expanded = 0;
-    s_sprite_editor->dropdown_list_frames->width = 24;
-    ((actor_T*)s_sprite_editor->dropdown_list_frames)->z = 1;
-    dynamic_list_append(s_sprite_editor->dropdown_list_frames->options, init_dropdown_list_option(mock_sprite, (void*) 0, (void*) 0));
-    dynamic_list_append(s_sprite_editor->dropdown_list_frames->options, init_dropdown_list_option(mock_sprite, (void*) 0, (void*) 0));
-    dynamic_list_append(s_sprite_editor->dropdown_list_frames->options, init_dropdown_list_option(mock_sprite, (void*) 0, (void*) 0));
-
-    dynamic_list_append(s_sprite_editor->focus_manager->focusables, (actor_focusable_T*) s_sprite_editor->dropdown_list_frames);
-    dynamic_list_append(state->actors, s_sprite_editor->dropdown_list_frames);
 
     dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->grid);
     dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->grid_color_selector);
@@ -386,10 +400,24 @@ void scene_sprite_editor_tick(scene_T* self)
     {
         for (int i = s_sprite_editor->dropdown_list_sprite->options->size; i < DATABASE->sprites->size; i++)
         {
-            sprite_T* sprite = DATABASE->sprites->items[i];
+            database_sprite_T* database_sprite = DATABASE->sprites->items[i];
+
+            char* name = calloc(strlen(database_sprite->name) + 1, sizeof(char));
+            strcpy(name, database_sprite->name);
+
+            // 20 = (sprite_width(16) + margin(4))
+            // 12 = (font_size + font_spacing)
+            unsigned int text_limit = ((s_sprite_editor->dropdown_list_sprite->width - 20) / (12)) - 1;
+
             dynamic_list_append(
                 s_sprite_editor->dropdown_list_sprite->options,
-                init_dropdown_list_option(sprite, (void*) 0, (void*) 0)
+                init_dropdown_list_option(
+                    database_sprite->sprite,
+                    name,
+                    (void*)
+                    0,
+                    text_limit
+                )
             );
         }
     }
@@ -413,25 +441,9 @@ void scene_sprite_editor_draw(scene_T* self)
         0, // b
         6,
         6,
+        0,
         state
     );
-
-    for (int i = 0; i < DATABASE->sprites->size; i++)
-    {
-        sprite_T* sprite = (sprite_T*) DATABASE->sprites->items[i];
-
-        draw_positioned_sprite(
-            sprite,
-            0,
-            0,
-            0,
-            64,
-            64,
-            state
-        );
-
-        break;
-    }
 }
 
 void scene_sprite_editor_goto_next(scene_sprite_editor_T* self)
