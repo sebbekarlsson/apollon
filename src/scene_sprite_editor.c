@@ -39,6 +39,17 @@ void sprite_button_save_press()
     }
 }
 
+void sprite_button_new_press()
+{
+    printf("New!\n");
+    scene_T* scene = get_current_scene();
+    scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) scene;
+
+    s_sprite_editor->sprite_index = -1;
+
+    scene_sprite_editor_clear_all_frames(s_sprite_editor);
+}
+
 scene_sprite_editor_T* init_scene_sprite_editor()
 {
     scene_sprite_editor_T* s_sprite_editor = calloc(1, sizeof(struct SCENE_SPRITE_EDITOR_STRUCT));
@@ -187,13 +198,20 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     dynamic_list_append(state->actors, s_sprite_editor->button_save);
     dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->button_save);
 
+    s_sprite_editor->button_new = init_button(
+        (WINDOW_WIDTH / 2) - ((16 * 16) / 2) + 216,
+        (WINDOW_HEIGHT / 2) + ((16 * 16) / 2) + 16,
+        0.0f,
+        "New",
+        sprite_button_new_press
+    );
+    dynamic_list_append(state->actors, s_sprite_editor->button_new);
+    dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->button_new);
+
     s_sprite_editor->dropdown_list_sprite = init_dropdown_list(((WINDOW_WIDTH / 2) - ((16 * 16) / 2)) - (24 + 16 + 32), (WINDOW_HEIGHT / 2) - ((16 * 16) / 2), 0.0f);
     s_sprite_editor->dropdown_list_sprite->expanded = 0;
     s_sprite_editor->dropdown_list_sprite->width = 24;
     ((actor_T*)s_sprite_editor->dropdown_list_sprite)->z = 1;
-    dynamic_list_append(s_sprite_editor->dropdown_list_sprite->options, init_dropdown_list_option(mock_sprite, (void*) 0, (void*) 0));
-    dynamic_list_append(s_sprite_editor->dropdown_list_sprite->options, init_dropdown_list_option(mock_sprite, (void*) 0, (void*) 0));
-    dynamic_list_append(s_sprite_editor->dropdown_list_sprite->options, init_dropdown_list_option(mock_sprite, (void*) 0, (void*) 0));
 
     dynamic_list_append(s_sprite_editor->focus_manager->focusables, (actor_focusable_T*) s_sprite_editor->dropdown_list_sprite);
     dynamic_list_append(state->actors, s_sprite_editor->dropdown_list_sprite);
@@ -363,6 +381,18 @@ void scene_sprite_editor_tick(scene_T* self)
             KEYBOARD_STATE->key_locks[GLFW_KEY_SPACE] = 1;
         }
     }
+
+    if (s_sprite_editor->dropdown_list_sprite->options->size < DATABASE->sprites->size)
+    {
+        for (int i = s_sprite_editor->dropdown_list_sprite->options->size; i < DATABASE->sprites->size; i++)
+        {
+            sprite_T* sprite = DATABASE->sprites->items[i];
+            dynamic_list_append(
+                s_sprite_editor->dropdown_list_sprite->options,
+                init_dropdown_list_option(sprite, (void*) 0, (void*) 0)
+            );
+        }
+    }
 }
 
 void scene_sprite_editor_draw(scene_T* self)
@@ -462,15 +492,28 @@ void scene_sprite_editor_delete_current_frame(scene_sprite_editor_T* self)
     scene_sprite_editor_refresh_grid(self);
 }
 
+void scene_sprite_editor_clear_all_frames(scene_sprite_editor_T* self)
+{
+    for (int i = 1; i < self->grids->size; i++)
+    { 
+        grid_T* grid_state = (grid_T*) self->grids->items[i];
+
+        dynamic_list_remove(self->grids, grid_state, _grid_free);
+
+        self->grid_index -= 1;
+        scene_sprite_editor_refresh_grid(self);
+    }
+    
+    scene_sprite_editor_refresh_grid(self);
+}
+
 void scene_sprite_editor_refresh_grid(scene_sprite_editor_T* self)
 {
-    grid_T* current_grid_state = (grid_T*) self->grids->items[self->grid_index];
 
-    if (!current_grid_state)
-    {
-        printf("Current grid state is broken\n");
-        exit(1);
-    }
+    grid_T* current_grid_state = (grid_T*) self->grids->items[self->grid_index]; 
+    
+    grid_clean(self->grid);
+    grid_clean(current_grid_state);
 
     grid_copy(current_grid_state, self->grid);
 }

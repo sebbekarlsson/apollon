@@ -49,5 +49,7 @@ texture_T* grid_create_texture(grid_T* grid);
 
 void grid_copy(grid_T* source_grid, grid_T* target_grid);
 
+void grid_clean(grid_T* grid);
+
 void grid_free(grid_T* grid);
 #endif

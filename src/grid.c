@@ -250,6 +250,19 @@ void grid_copy(grid_T* source_grid, grid_T* target_grid)
     }
 }
 
+void grid_clean(grid_T* grid)
+{
+    for (int x = 0; x < grid->width; x++)
+    {
+        for (int y = 0; y < grid->height; y++)
+        {
+            grid->cells[x][y]->r = 255;
+            grid->cells[x][y]->g = 255;
+            grid->cells[x][y]->b = 255;
+        }
+    }
+}
+
 void grid_free(grid_T* grid)
 {
     for (int x = 0; x < grid->width; x++)

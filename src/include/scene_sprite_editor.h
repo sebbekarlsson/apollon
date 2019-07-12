@@ -22,6 +22,7 @@ typedef struct SCENE_SPRITE_EDITOR_STRUCT
     label_T* label_name;
     input_field_T* input_field_name;
     button_T* button_save;
+    button_T* button_new;
     unsigned int grid_index;
     int sprite_index;
     float r;
@@ -41,6 +42,8 @@ void scene_sprite_editor_goto_next(scene_sprite_editor_T* self);
 void scene_sprite_editor_goto_prev(scene_sprite_editor_T* self);
 
 void scene_sprite_editor_delete_current_frame(scene_sprite_editor_T* self);
+
+void scene_sprite_editor_clear_all_frames(scene_sprite_editor_T* self);
 
 void scene_sprite_editor_refresh_grid(scene_sprite_editor_T* self);
 
