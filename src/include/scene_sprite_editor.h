@@ -5,6 +5,9 @@
 #include "grid.h"
 #include "focus_manager.h"
 #include "dropdown_list.h"
+#include "input_field.h"
+#include "label.h"
+#include "button.h"
 
 
 typedef struct SCENE_SPRITE_EDITOR_STRUCT
@@ -15,6 +18,10 @@ typedef struct SCENE_SPRITE_EDITOR_STRUCT
     grid_T* grid_color_mixer;
     dynamic_list_T* grids;  // sprite frames
     dropdown_list_T* dropdown_list_sprite;
+    dropdown_list_T* dropdown_list_frames;
+    label_T* label_name;
+    input_field_T* input_field_name;
+    button_T* button_save;
     unsigned int grid_index;
     float r;
     float g;

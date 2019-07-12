@@ -10,6 +10,12 @@
 
 extern keyboard_state_T* KEYBOARD_STATE;
 
+
+void sprite_button_save_press()
+{
+    printf("Save!\n");
+}
+
 scene_sprite_editor_T* init_scene_sprite_editor()
 {
     scene_sprite_editor_T* s_sprite_editor = calloc(1, sizeof(struct SCENE_SPRITE_EDITOR_STRUCT));
@@ -132,7 +138,33 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     s_sprite_editor->focus_manager = init_focus_manager();
 
-    s_sprite_editor->dropdown_list_sprite = init_dropdown_list(((WINDOW_WIDTH / 2) - ((16 * 16) / 2)) - (24 + 16), (WINDOW_HEIGHT / 2) - ((16 * 16) / 2), 0.0f);
+    s_sprite_editor->label_name = init_label(
+        (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
+        (WINDOW_HEIGHT / 2) - ((16 * 16) / 2) - 80,
+        0.0f,
+        "Name"
+    );
+    dynamic_list_append(state->actors, s_sprite_editor->label_name);
+
+    s_sprite_editor->input_field_name = init_input_field(
+        (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
+        (WINDOW_HEIGHT / 2) - ((16 * 16) / 2) - 64,
+        0.0f
+    );
+    dynamic_list_append(state->actors, s_sprite_editor->input_field_name);
+    dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->input_field_name);
+
+    s_sprite_editor->button_save = init_button(
+        (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
+        (WINDOW_HEIGHT / 2) + ((16 * 16) / 2) + 16,
+        0.0f,
+        "Save",
+        sprite_button_save_press
+    );
+    dynamic_list_append(state->actors, s_sprite_editor->button_save);
+    dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->button_save);
+
+    s_sprite_editor->dropdown_list_sprite = init_dropdown_list(((WINDOW_WIDTH / 2) - ((16 * 16) / 2)) - (24 + 16 + 32), (WINDOW_HEIGHT / 2) - ((16 * 16) / 2), 0.0f);
     s_sprite_editor->dropdown_list_sprite->expanded = 0;
     s_sprite_editor->dropdown_list_sprite->width = 24;
     ((actor_T*)s_sprite_editor->dropdown_list_sprite)->z = 1;
@@ -142,6 +174,18 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     dynamic_list_append(s_sprite_editor->focus_manager->focusables, (actor_focusable_T*) s_sprite_editor->dropdown_list_sprite);
     dynamic_list_append(state->actors, s_sprite_editor->dropdown_list_sprite);
+
+
+    s_sprite_editor->dropdown_list_frames = init_dropdown_list(((WINDOW_WIDTH / 2) - ((16 * 16) / 2)) - (24 + 16), (WINDOW_HEIGHT / 2) - ((16 * 16) / 2), 0.0f);
+    s_sprite_editor->dropdown_list_frames->expanded = 0;
+    s_sprite_editor->dropdown_list_frames->width = 24;
+    ((actor_T*)s_sprite_editor->dropdown_list_frames)->z = 1;
+    dynamic_list_append(s_sprite_editor->dropdown_list_frames->options, init_dropdown_list_option(mock_sprite, (void*) 0, (void*) 0));
+    dynamic_list_append(s_sprite_editor->dropdown_list_frames->options, init_dropdown_list_option(mock_sprite, (void*) 0, (void*) 0));
+    dynamic_list_append(s_sprite_editor->dropdown_list_frames->options, init_dropdown_list_option(mock_sprite, (void*) 0, (void*) 0));
+
+    dynamic_list_append(s_sprite_editor->focus_manager->focusables, (actor_focusable_T*) s_sprite_editor->dropdown_list_frames);
+    dynamic_list_append(state->actors, s_sprite_editor->dropdown_list_frames);
 
     dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->grid);
     dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->grid_color_selector);
