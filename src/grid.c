@@ -218,20 +218,19 @@ int grid_create_image(grid_T* grid, const char* filename)
 
 texture_T* grid_create_texture(grid_T* grid)
 {
-    //unsigned char*** img = calloc(grid->width, sizeof(unsigned char));
-    GLubyte img[(int)grid->height][(int)grid->height][4];
+    unsigned char* img = calloc((grid->width * grid->height) * 4, sizeof(unsigned char));
 
-    int i, j;
-
-    for (i = 0; i < grid->height; i++)
+    int x = 0;
+    int y = 0;
+    for (int i = 0; i < grid->width * grid->height; i+=1)
     {
-        for (j = 0; j < grid->width; j++)
-        {
-            img[i][j][0] = (GLubyte) grid->cells[j][i]->r;
-            img[i][j][1] = (GLubyte) grid->cells[j][i]->g;
-            img[i][j][2] = (GLubyte) grid->cells[j][i]->b;
-            img[i][j][3] = (GLubyte) 255;
-        }
+        y = i / (int) grid->width;
+        x = i % (int) grid->width;
+
+        img[(4 * i)] = grid->cells[x][y]->r;
+        img[(4 * i) + 1] = grid->cells[x][y]->g;
+        img[(4 * i) + 2] = grid->cells[x][y]->b;
+        img[(4 * i) + 3] = 255;
     }
 
     return get_texture_from_data((unsigned char*)img, grid->width, grid->height, GL_RGBA);

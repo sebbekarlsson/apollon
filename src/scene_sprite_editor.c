@@ -50,6 +50,7 @@ void dropdown_list_sprite_press(void* option)
     scene_T* scene = get_current_scene();
     scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) scene;
 
+    // Converting each texture in the sprite back into grids.
     for (int i = 0; i < sprite->textures->size; i++)
     {
         texture_T* texture = (texture_T*) sprite->textures->items[i];
@@ -69,25 +70,19 @@ void dropdown_list_sprite_press(void* option)
 
         int y, x;
 
-        printf("%12.6f ? %d    %12.6f ? %d\n", grid->width, texture->width, grid->height, texture->height);
         for (y = 0; y < grid->height; y++)
         {
             for (x = 0; x < grid->width; x++)
             { 
                 unsigned int channelCount = 4;
-                unsigned bytePerPixel = channelCount;
                 unsigned char* pixelOffset = texture->data + (y * (int)grid->width + x) * channelCount;
                 unsigned char r = pixelOffset[0];
                 unsigned char g = pixelOffset[1];
                 unsigned char b = pixelOffset[2];
-                //unsigned char a = channelCount >= 4 ? pixelOffset[3] : 0xff;
 
                 grid->cells[x][y]->r = r;
                 grid->cells[x][y]->g = g;
                 grid->cells[x][y]->b = b;
-                //grid->cells[y][x]->a = img[x][y][3] = (GLubyte) 255;
-
-                printf("%d %d %d\n", r, g, b);
             }
         }
         
@@ -390,11 +385,14 @@ void scene_sprite_editor_tick(scene_T* self)
             grid->cells[grid->cursor_x][grid->cursor_y]->b = s_sprite_editor->b;
         }
 
-        // save current state of the grid into the representation in our state list.
-        grid_copy(
-            s_sprite_editor->grid,
-            s_sprite_editor->grids->items[s_sprite_editor->grid_index]
-        );
+        if (s_sprite_editor->grids->size)
+        {
+            // save current state of the grid into the representation in our state list.
+            grid_copy(
+                s_sprite_editor->grid,
+                s_sprite_editor->grids->items[s_sprite_editor->grid_index]
+            );
+        }
     }
     else
     if (strcmp(grid_actor->type_name, "grid_color_selector") == 0 || strcmp(grid_actor->type_name, "grid_color_mixer") == 0)
