@@ -30,7 +30,9 @@ void sprite_button_save_press()
             16
         );
 
-        database_sprite_T* database_sprite = init_database_sprite(sprite, s_sprite_editor->input_field_name->value);
+        char* name = calloc(strlen(s_sprite_editor->input_field_name->value) + 1, sizeof(char));
+        strcpy(name, s_sprite_editor->input_field_name->value);
+        database_sprite_T* database_sprite = init_database_sprite(sprite, name);
 
         dynamic_list_append(DATABASE->sprites, database_sprite);
         s_sprite_editor->sprite_index = DATABASE->sprites->size - 1;
@@ -44,11 +46,14 @@ void sprite_button_save_press()
 
         dynamic_list_T* frame_textures = scene_sprite_editor_get_frames_as_textures(s_sprite_editor);
 
+        database_sprite->name = realloc(database_sprite->name, (strlen(s_sprite_editor->input_field_name->value) + 1) * sizeof(char));
+        strcpy(database_sprite->name, s_sprite_editor->input_field_name->value);
+
         for (int i = 0; i < frame_textures->size; i++)
         {
             texture_T* texture = (texture_T*) frame_textures->items[i];
 
-            if (i > sprite->textures->size)
+            if (i >= sprite->textures->size)
             {
                 printf("Adding a new texture to existing sprite\n");
                 dynamic_list_append(sprite->textures, texture);
@@ -56,7 +61,7 @@ void sprite_button_save_press()
             else
             {
                 printf("Modifying existing texture on sprite\n");
-                //texture_free(sprite->textures->items[i]);
+                texture_free(sprite->textures->items[i]);
                 sprite->textures->items[i] = texture;
             }
         }
@@ -71,6 +76,8 @@ void dropdown_list_sprite_press(void* option)
 
     scene_T* scene = get_current_scene();
     scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) scene;
+    
+    scene_sprite_editor_clear_all_frames(s_sprite_editor);
 
     for (int i = 0; i < DATABASE->sprites->size; i++)
     {
@@ -79,6 +86,9 @@ void dropdown_list_sprite_press(void* option)
         if (database_sprite->sprite == sprite)
         {
             s_sprite_editor->sprite_index = i;
+            s_sprite_editor->input_field_name->value = realloc(s_sprite_editor->input_field_name->value, (strlen(database_sprite->name) + 1) * sizeof(char));
+            printf("NAME: %s\n", database_sprite->name);
+            strcpy(s_sprite_editor->input_field_name->value, database_sprite->name);
             printf("sprite_index=%d\n", s_sprite_editor->sprite_index);
             break;
         }
@@ -138,6 +148,22 @@ void sprite_button_new_press()
     s_sprite_editor->sprite_index = -1;
 
     scene_sprite_editor_clear_all_frames(s_sprite_editor);
+
+    dynamic_list_append(
+        s_sprite_editor->grids,
+        init_grid(
+            (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
+            (WINDOW_HEIGHT / 2) - ((16 * 16) / 2),
+            0.0f,
+            16,
+            16,
+            16,
+            0,
+            0,
+            0,
+            "grid_canvas"
+        )
+    );
     
     memset(
         s_sprite_editor->input_field_name->value,
@@ -488,9 +514,6 @@ void scene_sprite_editor_tick(scene_T* self)
         {
             database_sprite_T* database_sprite = DATABASE->sprites->items[i];
 
-            char* name = calloc(strlen(database_sprite->name) + 1, sizeof(char));
-            strcpy(name, database_sprite->name);
-
             // 20 = (sprite_width(16) + margin(4))
             // 12 = (font_size + font_spacing)
             unsigned int text_limit = ((s_sprite_editor->dropdown_list_sprite->width - 20) / (12)) - 1;
@@ -499,7 +522,7 @@ void scene_sprite_editor_tick(scene_T* self)
                 s_sprite_editor->dropdown_list_sprite->options,
                 init_dropdown_list_option(
                     database_sprite->sprite,
-                    name,
+                    database_sprite->name,
                     database_sprite->sprite,
                     text_limit
                 )
@@ -619,22 +642,9 @@ void scene_sprite_editor_refresh_grid(scene_sprite_editor_T* self)
 {
     if (self->grids->size == 0)
     {
-        printf("Adding a new grid to the frame list because it is empty!\n");
-        dynamic_list_append(
-            self->grids,
-            init_grid(
-                (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
-                (WINDOW_HEIGHT / 2) - ((16 * 16) / 2),
-                0.0f,
-                16,
-                16,
-                16,
-                0,
-                0,
-                0,
-                "grid_canvas"
-            )
-        );
+        printf("Refreshing the grid is not possible since the frame list is empty.\n");
+        grid_clean(self->grid);
+        return;
     }
     
     grid_T* current_grid_state = (grid_T*) self->grids->items[self->grid_index]; 

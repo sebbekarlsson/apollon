@@ -1,10 +1,12 @@
 #include "include/scene_actor_editor.h"
 #include "include/etc.h"
+#include "include/database.h"
 #include <coelum/input.h>
 #include <string.h>
 
 
 extern keyboard_state_T* KEYBOARD_STATE;
+extern database_T* DATABASE;
 
 void button_new_actor_press()
 {
@@ -83,9 +85,6 @@ scene_actor_editor_T* init_scene_actor_editor()
     s_actor_editor->dropdown_list_sprite = init_dropdown_list(jx, jy, 0.0f, (void*) 0);
     s_actor_editor->dropdown_list_sprite->expanded = 0;
     ((actor_T*)s_actor_editor->dropdown_list_sprite)->z = 1;
-    dynamic_list_append(s_actor_editor->dropdown_list_sprite->options, init_dropdown_list_option(mock_sprite, "item 0", (void*) 0, 0));
-    dynamic_list_append(s_actor_editor->dropdown_list_sprite->options, init_dropdown_list_option(mock_sprite, "item 1", (void*) 0, 0));
-    dynamic_list_append(s_actor_editor->dropdown_list_sprite->options, init_dropdown_list_option(mock_sprite, "item 2", (void*) 0, 0));
 
     dynamic_list_append(s_actor_editor->focus_manager->focusables, (actor_focusable_T*) s_actor_editor->dropdown_list_sprite);
     dynamic_list_append(state->actors, s_actor_editor->label_sprite);
@@ -127,7 +126,30 @@ void scene_actor_editor_tick(scene_T* self)
 
     scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) self;
 
-    focus_manager_tick(s_actor_editor->focus_manager); 
+    focus_manager_tick(s_actor_editor->focus_manager);
+
+
+    if (s_actor_editor->dropdown_list_sprite->options->size < DATABASE->sprites->size)
+    {
+        for (int i = s_actor_editor->dropdown_list_sprite->options->size; i < DATABASE->sprites->size; i++)
+        {
+            database_sprite_T* database_sprite = DATABASE->sprites->items[i];
+
+            // 20 = (sprite_width(16) + margin(4))
+            // 12 = (font_size + font_spacing)
+            unsigned int text_limit = ((s_actor_editor->dropdown_list_sprite->width - 20) / (12)) - 1;
+
+            dynamic_list_append(
+                s_actor_editor->dropdown_list_sprite->options,
+                init_dropdown_list_option(
+                    database_sprite->sprite,
+                    database_sprite->name,
+                    database_sprite->sprite,
+                    text_limit
+                )
+            );
+        }
+    }
 }
 
 void scene_actor_editor_draw(scene_T* self)
