@@ -1,5 +1,6 @@
 #include "include/scene_scene_editor.h"
 #include "include/etc.h"
+#include "include/database.h"
 #include <coelum/constants.h>
 #include <coelum/actor_text.h>
 #include <coelum/input.h>
@@ -9,6 +10,7 @@
 
 
 extern keyboard_state_T* KEYBOARD_STATE;
+extern database_T* DATABASE;
 
 scene_scene_editor_T* init_scene_scene_editor()
 {
@@ -40,9 +42,6 @@ scene_scene_editor_T* init_scene_scene_editor()
     ((actor_focusable_T*)s_scene_editor->grid)->focused = 1;
     s_scene_editor->dropdown_list = init_dropdown_list(0.0f, 0.0f, 0.0f, (void*) 0);
     s_scene_editor->dropdown_list->visible = 0;
-    dynamic_list_append(s_scene_editor->dropdown_list->options, init_dropdown_list_option((void*) 0, "item 0", (void*) 0, 0));
-    dynamic_list_append(s_scene_editor->dropdown_list->options, init_dropdown_list_option((void*) 0, "item 1", (void*) 0, 0));
-    dynamic_list_append(s_scene_editor->dropdown_list->options, init_dropdown_list_option((void*) 0, "item 2", (void*) 0, 0));
     
     dynamic_list_append(state->actors, s_scene_editor->grid);
     dynamic_list_append(state->actors, s_scene_editor->dropdown_list);
@@ -99,6 +98,28 @@ void scene_scene_editor_tick(scene_T* self)
         }
 
         KEYBOARD_STATE->key_locks[GLFW_KEY_I] = 1;
+    }
+
+    if (s_scene_editor->dropdown_list->options->size < DATABASE->actor_definitions->size)
+    {
+        for (int i = s_scene_editor->dropdown_list->options->size; i < DATABASE->actor_definitions->size; i++)
+        {
+            database_actor_definition_T* database_actor_definition = (database_actor_definition_T*) DATABASE->actor_definitions->items[i];
+
+            // 20 = (sprite_width(16) + margin(4))
+            // 12 = (font_size + font_spacing)
+            unsigned int text_limit = ((s_scene_editor->dropdown_list->width - 20) / (12)) - 1;
+
+            dynamic_list_append(
+                s_scene_editor->dropdown_list->options,
+                init_dropdown_list_option(
+                    database_actor_definition->database_sprite->sprite,
+                    database_actor_definition->name,
+                    database_actor_definition,
+                    text_limit
+                )
+            );
+        }
     }
 }
 
