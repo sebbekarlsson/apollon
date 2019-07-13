@@ -44,6 +44,63 @@ void sprite_button_save_press()
 void dropdown_list_sprite_press(void* option)
 {
     printf("Selected a sprite!\n");
+    dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) option;
+    sprite_T* sprite = (sprite_T*) dropdown_list_option->value;
+    
+    scene_T* scene = get_current_scene();
+    scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) scene;
+    
+//    scene_sprite_editor_clear_all_frames(s_sprite_editor);
+        
+    printf("%d\n", (int)s_sprite_editor->grids->size);
+
+    for (int i = 0; i < sprite->textures->size; i++)
+    {
+        texture_T* texture = (texture_T*) sprite->textures->items[i];
+
+        grid_T* grid = init_grid(
+            (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
+            (WINDOW_HEIGHT / 2) - ((16 * 16) / 2),
+            0.0f,
+            16,
+            16,
+            16,
+            0,
+            0,
+            0,
+            "grid_canvas"
+        );
+
+        int y, x;
+
+        printf("%12.6f ? %d    %12.6f ? %d\n", grid->width, texture->width, grid->height, texture->height);
+
+        for (x = 0; x < grid->width; x++)
+        {
+            for (y = 0; y < grid->height; y++)
+            { 
+                unsigned int channelCount = 4;
+                unsigned bytePerPixel = channelCount;
+                unsigned char* pixelOffset = texture->data + (x + y * texture->width) * bytePerPixel;
+                unsigned char r = pixelOffset[0];
+                unsigned char g = pixelOffset[1];
+                unsigned char b = pixelOffset[2];
+                unsigned char a = channelCount >= 4 ? pixelOffset[3] : 0xff;
+
+                grid->cells[y][x]->r = r;
+                grid->cells[y][x]->g = g;
+                grid->cells[y][x]->b = b;
+                //grid->cells[y][x]->a = img[x][y][3] = (GLubyte) 255;
+
+                //printf("%d %d %d\n", r, g, b);
+            }
+        }
+        
+        dynamic_list_append(
+            s_sprite_editor->grids,
+            grid 
+        );
+    }
 }
 
 void sprite_button_new_press()
@@ -414,8 +471,7 @@ void scene_sprite_editor_tick(scene_T* self)
                 init_dropdown_list_option(
                     database_sprite->sprite,
                     name,
-                    (void*)
-                    0,
+                    database_sprite->sprite,
                     text_limit
                 )
             );
@@ -506,7 +562,7 @@ void scene_sprite_editor_delete_current_frame(scene_sprite_editor_T* self)
 
 void scene_sprite_editor_clear_all_frames(scene_sprite_editor_T* self)
 {
-    for (int i = 1; i < self->grids->size; i++)
+    for (int i = 0; i < self->grids->size; i++)
     { 
         grid_T* grid_state = (grid_T*) self->grids->items[i];
 
@@ -515,13 +571,13 @@ void scene_sprite_editor_clear_all_frames(scene_sprite_editor_T* self)
         self->grid_index -= 1;
         scene_sprite_editor_refresh_grid(self);
     }
-    
+
     scene_sprite_editor_refresh_grid(self);
 }
 
 void scene_sprite_editor_refresh_grid(scene_sprite_editor_T* self)
 {
-
+    printf("%d\n", (int)self->grids->size);
     grid_T* current_grid_state = (grid_T*) self->grids->items[self->grid_index]; 
     
     grid_clean(self->grid);
