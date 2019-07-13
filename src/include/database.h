@@ -12,9 +12,28 @@ typedef struct DATABASE_SPRITE_STRUCT
 
 database_sprite_T* init_database_sprite(sprite_T* sprite, char* name);
 
+typedef struct DATABASE_ACTOR_DEFINITION_STRUCT
+{
+    database_sprite_T* database_sprite;
+    char* name;
+    char* tick_script;
+    char* draw_script;
+} database_actor_definition_T;
+
+database_actor_definition_T* init_database_actor_definition(database_sprite_T* database_actor_definition, char* name, char* tick_script, char* draw_script);
+
+typedef struct DATABASE_ACTOR_INSTANCE_STRUCT
+{
+    database_actor_definition_T* database_actor_definition;
+    float x;
+    float y;
+    float z;
+} database_actor_instance_T;
+
 typedef struct DATABASE_STRUCT
 {
     dynamic_list_T* sprites;
+    dynamic_list_T* actor_definitions;
 } database_T;
 
 database_T* init_database();

@@ -2,6 +2,7 @@
 #include "include/etc.h"
 #include "include/database.h"
 #include <coelum/input.h>
+#include <coelum/current.h>
 #include <string.h>
 
 
@@ -16,6 +17,48 @@ void button_new_actor_press()
 void button_save_press()
 {
     printf("button_save_press\n");
+
+    scene_T* scene = get_current_scene();
+    scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) scene;
+
+    if (s_actor_editor->actor_index == -1)
+    {
+        printf("Save new actor\n");
+
+
+        char* name = calloc(strlen(s_actor_editor->input_field_type_name->value) + 1, sizeof(char));
+        strcpy(name, s_actor_editor->input_field_type_name->value);
+
+        char* tick_script = calloc(strlen(s_actor_editor->input_field_tick_script->value) + 1, sizeof(char));
+        strcpy(tick_script, s_actor_editor->input_field_tick_script->value);
+
+        char* draw_script = calloc(strlen(s_actor_editor->input_field_draw_script->value) + 1, sizeof(char));
+        strcpy(draw_script, s_actor_editor->input_field_draw_script->value);
+
+        database_actor_definition_T* database_actor_definition = init_database_actor_definition(
+            s_actor_editor->selected_database_sprite,
+            name,
+            tick_script,
+            draw_script
+        );
+
+        dynamic_list_append(DATABASE->actor_definitions, database_actor_definition);
+        s_actor_editor->actor_index = DATABASE->actor_definitions->size - 1;
+    }
+    else
+    {
+        printf("Modify existing actor\n");
+    }
+}
+
+void actor_editor_sprite_press(void* option)
+{
+    dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) option;
+
+    scene_T* scene = get_current_scene();
+    scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) scene;
+
+    s_actor_editor->selected_database_sprite = (database_sprite_T*) dropdown_list_option->value;
 }
 
 scene_actor_editor_T* init_scene_actor_editor()
@@ -31,10 +74,11 @@ scene_actor_editor_T* init_scene_actor_editor()
     scene->bg_g = 255;
     scene->bg_b = 255;
 
+    s_actor_editor->actor_index = -1;
+    s_actor_editor->selected_database_sprite = (void*) 0;
+
     s_actor_editor->focus_manager = init_focus_manager();
     
-    sprite_T* mock_sprite = init_sprite_from_file("res/img/tomato.png", GL_RGBA, 1, 16, 16);
-
     float margin = 64;
     float label_margin = 16; 
 
@@ -50,9 +94,6 @@ scene_actor_editor_T* init_scene_actor_editor()
     s_actor_editor->dropdown_list_actor = init_dropdown_list(ix, iy, 0.0f, (void*) 0);
     s_actor_editor->dropdown_list_actor->expanded = 0;
     ((actor_T*)s_actor_editor->dropdown_list_actor)->z = 1;
-    dynamic_list_append(s_actor_editor->dropdown_list_actor->options, init_dropdown_list_option(mock_sprite, "item 0", (void*) 0, 0));
-    dynamic_list_append(s_actor_editor->dropdown_list_actor->options, init_dropdown_list_option(mock_sprite, "item 1", (void*) 0, 0));
-    dynamic_list_append(s_actor_editor->dropdown_list_actor->options, init_dropdown_list_option(mock_sprite, "item 2", (void*) 0, 0));
 
     dynamic_list_append(s_actor_editor->focus_manager->focusables, (actor_focusable_T*) s_actor_editor->dropdown_list_actor);
     dynamic_list_append(state->actors, s_actor_editor->label_actor);
@@ -82,7 +123,7 @@ scene_actor_editor_T* init_scene_actor_editor()
     /* ==== sprite ==== */
     s_actor_editor->label_sprite = init_label(jx, jy, 0.0f, "Sprite");
     jy += label_margin;
-    s_actor_editor->dropdown_list_sprite = init_dropdown_list(jx, jy, 0.0f, (void*) 0);
+    s_actor_editor->dropdown_list_sprite = init_dropdown_list(jx, jy, 0.0f, actor_editor_sprite_press);
     s_actor_editor->dropdown_list_sprite->expanded = 0;
     ((actor_T*)s_actor_editor->dropdown_list_sprite)->z = 1;
 
@@ -144,7 +185,29 @@ void scene_actor_editor_tick(scene_T* self)
                 init_dropdown_list_option(
                     database_sprite->sprite,
                     database_sprite->name,
-                    database_sprite->sprite,
+                    database_sprite,
+                    text_limit
+                )
+            );
+        }
+    }
+
+    if (s_actor_editor->dropdown_list_actor->options->size < DATABASE->actor_definitions->size)
+    {
+        for (int i = s_actor_editor->dropdown_list_actor->options->size; i < DATABASE->actor_definitions->size; i++)
+        {
+            database_actor_definition_T* database_actor_definition = (database_actor_definition_T*) DATABASE->actor_definitions->items[i];
+
+            // 20 = (sprite_width(16) + margin(4))
+            // 12 = (font_size + font_spacing)
+            unsigned int text_limit = ((s_actor_editor->dropdown_list_actor->width - 20) / (12)) - 1;
+
+            dynamic_list_append(
+                s_actor_editor->dropdown_list_actor->options,
+                init_dropdown_list_option(
+                    database_actor_definition->database_sprite->sprite,
+                    database_actor_definition->name,
+                    database_actor_definition,
                     text_limit
                 )
             );

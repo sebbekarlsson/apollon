@@ -7,11 +7,17 @@
 #include "focus_manager.h"
 #include "label.h"
 #include "button.h"
+#include "database.h"
 
 
 typedef struct SCENE_ACTOR_EDITOR_STRUCT
 {
     scene_T base;
+
+    // the index of the current actor in database that is being edited.
+    int actor_index;
+
+    database_sprite_T* selected_database_sprite;
 
     /* ==== LEFt ==== */
 
