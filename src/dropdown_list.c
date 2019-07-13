@@ -2,6 +2,7 @@
 #include <coelum/theatre.h>
 #include <coelum/draw_utils.h>
 #include <coelum/input.h>
+#include "include/database.h"
 #include <string.h>
 
 

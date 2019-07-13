@@ -12,6 +12,30 @@ extern database_T* DATABASE;
 void button_new_actor_press()
 {
     printf("button_new_actor_press\n");
+
+    scene_T* scene = get_current_scene();
+    scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) scene;
+    s_actor_editor->actor_index = -1;
+
+    memset(
+        s_actor_editor->input_field_type_name->value,
+        0,
+        sizeof(char) * strlen(s_actor_editor->input_field_type_name->value)
+    );
+
+    s_actor_editor->selected_database_sprite = (void*) 0;
+
+    memset(
+        s_actor_editor->input_field_tick_script->value,
+        0,
+        sizeof(char) * strlen(s_actor_editor->input_field_tick_script->value)
+    );
+
+    memset(
+        s_actor_editor->input_field_draw_script->value,
+        0,
+        sizeof(char) * strlen(s_actor_editor->input_field_draw_script->value)
+    );
 }
 
 void button_save_press()
@@ -24,7 +48,6 @@ void button_save_press()
     if (s_actor_editor->actor_index == -1)
     {
         printf("Save new actor\n");
-
 
         char* name = calloc(strlen(s_actor_editor->input_field_type_name->value) + 1, sizeof(char));
         strcpy(name, s_actor_editor->input_field_type_name->value);
@@ -48,6 +71,20 @@ void button_save_press()
     else
     {
         printf("Modify existing actor\n");
+        database_actor_definition_T* database_actor_definition = (database_actor_definition_T*) DATABASE->actor_definitions->items[s_actor_editor->actor_index];
+
+        database_actor_definition->name = realloc(database_actor_definition->name, (strlen(s_actor_editor->input_field_type_name->value) + 1) * sizeof(char));
+        strcpy(database_actor_definition->name, s_actor_editor->input_field_type_name->value);
+
+        database_actor_definition->database_sprite = s_actor_editor->selected_database_sprite;
+
+        database_actor_definition->tick_script = realloc(database_actor_definition->tick_script, (strlen(s_actor_editor->input_field_tick_script->value) + 1) * sizeof(char));
+        strcpy(database_actor_definition->tick_script, s_actor_editor->input_field_tick_script->value);
+
+        database_actor_definition->draw_script = realloc(database_actor_definition->draw_script, (strlen(s_actor_editor->input_field_draw_script->value) + 1) * sizeof(char));
+        strcpy(database_actor_definition->draw_script, s_actor_editor->input_field_draw_script->value);
+
+        printf("Should change sprite to %s\n", s_actor_editor->selected_database_sprite->name);
     }
 }
 
