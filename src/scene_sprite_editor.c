@@ -38,6 +38,28 @@ void sprite_button_save_press()
     else
     {
         printf("Modify sprite\n");
+        database_sprite_T* database_sprite = DATABASE->sprites->items[s_sprite_editor->sprite_index];
+        sprite_T* sprite = database_sprite->sprite;
+        printf("Modifying sprite with name \"%s\"\n", database_sprite->name);
+
+        dynamic_list_T* frame_textures = scene_sprite_editor_get_frames_as_textures(s_sprite_editor);
+
+        for (int i = 0; i < frame_textures->size; i++)
+        {
+            texture_T* texture = (texture_T*) frame_textures->items[i];
+
+            if (i > sprite->textures->size)
+            {
+                printf("Adding a new texture to existing sprite\n");
+                dynamic_list_append(sprite->textures, texture);
+            }
+            else
+            {
+                printf("Modifying existing texture on sprite\n");
+                //texture_free(sprite->textures->items[i]);
+                sprite->textures->items[i] = texture;
+            }
+        }
     }
 }
 
@@ -46,9 +68,21 @@ void dropdown_list_sprite_press(void* option)
     printf("Selected a sprite!\n");
     dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) option;
     sprite_T* sprite = (sprite_T*) dropdown_list_option->value;
-    
+
     scene_T* scene = get_current_scene();
     scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) scene;
+
+    for (int i = 0; i < DATABASE->sprites->size; i++)
+    {
+        database_sprite_T* database_sprite = (database_sprite_T*) DATABASE->sprites->items[i];
+
+        if (database_sprite->sprite == sprite)
+        {
+            s_sprite_editor->sprite_index = i;
+            printf("sprite_index=%d\n", s_sprite_editor->sprite_index);
+            break;
+        }
+    } 
 
     // Converting each texture in the sprite back into grids.
     for (int i = 0; i < sprite->textures->size; i++)
