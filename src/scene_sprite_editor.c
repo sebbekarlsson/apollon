@@ -479,8 +479,12 @@ void scene_sprite_editor_draw(scene_T* self)
     state_T* state = (state_T*) self;
     scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) self;
 
+    int number_of_frames = (int)(
+        s_sprite_editor->grids->size > 0 ? s_sprite_editor->grids->size - 1 : 0
+    );
+
     char grid_index_str[16];
-    sprintf(grid_index_str, "%d / %d", (int)s_sprite_editor->grid_index, (int)s_sprite_editor->grids->size - 1);
+    sprintf(grid_index_str, "%d / %d", (int)s_sprite_editor->grid_index, number_of_frames);
 
     draw_text(
         grid_index_str,
@@ -500,8 +504,10 @@ void scene_sprite_editor_draw(scene_T* self)
 void scene_sprite_editor_goto_next(scene_sprite_editor_T* self)
 {
     self->grid_index += 1;
+    int size = (int) self->grids->size;
+    int index = (int) self->grid_index;
 
-    if (self->grids->size-1 < self->grid_index)
+    if (size-1 < index)
     {
         printf("Created another grid state representation!\n");
 
@@ -520,6 +526,10 @@ void scene_sprite_editor_goto_next(scene_sprite_editor_T* self)
                 "grid_canvas"
             )
         );
+    }
+    else
+    {
+        printf("No grid for you! %d %d\n", size-1, index);
     }
 
     scene_sprite_editor_refresh_grid(self);
@@ -575,9 +585,22 @@ void scene_sprite_editor_refresh_grid(scene_sprite_editor_T* self)
 {
     if (self->grids->size == 0)
     {
-        printf("Cannot refresh grid!\n");
-        grid_clean(self->grid);
-        return;
+        printf("Adding a new grid to the frame list because it is empty!\n");
+        dynamic_list_append(
+            self->grids,
+            init_grid(
+                (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
+                (WINDOW_HEIGHT / 2) - ((16 * 16) / 2),
+                0.0f,
+                16,
+                16,
+                16,
+                0,
+                0,
+                0,
+                "grid_canvas"
+            )
+        );
     }
     
     grid_T* current_grid_state = (grid_T*) self->grids->items[self->grid_index]; 
@@ -585,6 +608,7 @@ void scene_sprite_editor_refresh_grid(scene_sprite_editor_T* self)
     grid_clean(self->grid);
     //grid_clean(current_grid_state);
 
+    printf("%d\n", (int)current_grid_state->width);
     grid_copy(current_grid_state, self->grid);
 }
 
