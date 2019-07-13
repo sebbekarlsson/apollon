@@ -66,7 +66,7 @@ void dropdown_list_tick(actor_T* self)
         dropdown_list->selected_index = dropdown_list->option_index;
         KEYBOARD_STATE->key_locks[GLFW_KEY_ENTER] = 1;
 
-        if (dropdown_list->press)
+        if (dropdown_list->press && dropdown_list->options->size > 0)
         {
             dropdown_list->press(dropdown_list->options->items[dropdown_list->option_index]);
         }

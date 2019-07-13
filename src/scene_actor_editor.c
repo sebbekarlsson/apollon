@@ -98,6 +98,37 @@ void actor_editor_sprite_press(void* option)
     s_actor_editor->selected_database_sprite = (database_sprite_T*) dropdown_list_option->value;
 }
 
+void actor_editor_actor_press(void* option)
+{
+    printf("Press actor dropdown\n");
+    dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) option;
+    database_actor_definition_T* database_actor_definition = (database_actor_definition_T*) dropdown_list_option->value;
+
+    scene_T* scene = get_current_scene();
+    scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) scene;
+
+    for (int i = 0; i < DATABASE->actor_definitions->size; i++)
+    {
+        database_actor_definition_T* actor_def = (database_actor_definition_T*) DATABASE->actor_definitions->items[i];
+
+        if (database_actor_definition == actor_def)
+        {
+            s_actor_editor->actor_index = i;
+
+            s_actor_editor->input_field_type_name->value = realloc(s_actor_editor->input_field_type_name->value, (strlen(actor_def->name) + 1) * sizeof(char));
+            strcpy(s_actor_editor->input_field_type_name->value, actor_def->name);
+
+            s_actor_editor->input_field_tick_script->value = realloc(s_actor_editor->input_field_tick_script->value, (strlen(actor_def->tick_script) + 1) * sizeof(char));
+            strcpy(s_actor_editor->input_field_tick_script->value, actor_def->tick_script);
+
+            s_actor_editor->input_field_draw_script->value = realloc(s_actor_editor->input_field_draw_script->value, (strlen(actor_def->draw_script) + 1) * sizeof(char));
+            strcpy(s_actor_editor->input_field_draw_script->value, actor_def->draw_script);
+
+            break;
+        }
+    }
+}
+
 scene_actor_editor_T* init_scene_actor_editor()
 {
     scene_actor_editor_T* s_actor_editor = calloc(1, sizeof(struct SCENE_ACTOR_EDITOR_STRUCT));
@@ -128,7 +159,7 @@ scene_actor_editor_T* init_scene_actor_editor()
     /* ==== actor ==== */
     s_actor_editor->label_actor = init_label(ix, iy, 0.0f, "Actor");
     iy += label_margin;
-    s_actor_editor->dropdown_list_actor = init_dropdown_list(ix, iy, 0.0f, (void*) 0);
+    s_actor_editor->dropdown_list_actor = init_dropdown_list(ix, iy, 0.0f, actor_editor_actor_press);
     s_actor_editor->dropdown_list_actor->expanded = 0;
     ((actor_T*)s_actor_editor->dropdown_list_actor)->z = 1;
 
