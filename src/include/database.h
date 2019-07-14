@@ -4,7 +4,6 @@
 #include <coelum/sprite.h>
 #include <coelum/scene.h>
 
-static const char* DATABASE_FILENAME = "application.db";
 
 typedef struct DATABASE_SPRITE_STRUCT
 {
@@ -26,6 +25,7 @@ database_actor_definition_T* init_database_actor_definition(database_sprite_T* d
 
 typedef struct DATABASE_STRUCT
 {
+    char* filename;
     dynamic_list_T* sprites;
     dynamic_list_T* actor_definitions;
     dynamic_list_T* scenes;
@@ -36,4 +36,12 @@ database_T* init_database();
 void database_serialize(database_T* database);
 
 void database_deserialize(database_T* database, const char* filename);
+
+char* database_get_sprites_sql(database_T* database);
+
+char* database_get_actor_definitions_sql(database_T* database);
+
+char* database_get_scenes_sql(database_T* database);
+
+char* database_get_actor_instances_sql(database_T* database);
 #endif
