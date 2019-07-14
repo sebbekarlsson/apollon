@@ -329,13 +329,13 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->button_new);
     
     int dropdown_list_sprite_width = 160;
-    s_sprite_editor->label_name = init_label(
+    s_sprite_editor->label_current_sprite = init_label(
         ((WINDOW_WIDTH / 2) - ((16 * 16) / 2)) - (dropdown_list_sprite_width + 16),
         (WINDOW_HEIGHT / 2) - ((16 * 16) / 2) - (8 + 8),
         0.0f,
         "Sprite"
     );
-    dynamic_list_append(state->actors, s_sprite_editor->label_name);
+    dynamic_list_append(state->actors, s_sprite_editor->label_current_sprite);
 
     s_sprite_editor->dropdown_list_sprite = init_dropdown_list(
         (((WINDOW_WIDTH / 2) - ((16 * 16) / 2))) - (dropdown_list_sprite_width + 16),
@@ -377,6 +377,9 @@ void scene_sprite_editor_tick(scene_T* self)
     actor_T* grid_actor = (actor_T*) actor_focusable;
     grid_T* grid = (grid_T*) grid_actor;
     actor_focusable->focused = 1;
+
+    s_sprite_editor->label_current_sprite->visible = DATABASE->sprites->size > 0;
+    ((actor_focusable_T*)s_sprite_editor->dropdown_list_sprite)->visible = DATABASE->sprites->size > 0;
 
     if (KEYBOARD_STATE->keys[GLFW_KEY_UP] && !KEYBOARD_STATE->key_locks[GLFW_KEY_UP])
     {

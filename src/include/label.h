@@ -12,6 +12,7 @@ typedef struct LABEL_STRUCT
     unsigned int r;
     unsigned int g;
     unsigned int b;
+    unsigned int visible;
 } label_T;
 
 label_T* init_label(float x, float y, float z, char* text);

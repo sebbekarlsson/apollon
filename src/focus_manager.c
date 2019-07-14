@@ -20,13 +20,18 @@ void focus_manager_tick(focus_manager_T* focus_manager)
 {
     if (KEYBOARD_STATE->keys[GLFW_KEY_TAB] && !KEYBOARD_STATE->key_locks[GLFW_KEY_TAB])
     {
+
         if (focus_manager->focus_index < focus_manager->focusables->size - 1)
-        {
             focus_manager->focus_index += 1;
-        }
         else
-        {
             focus_manager->focus_index = 0;
+        
+        while(((actor_focusable_T*)focus_manager->focusables->items[focus_manager->focus_index])->visible == 0)
+        {
+            if (focus_manager->focus_index < focus_manager->focusables->size - 1)
+                focus_manager->focus_index += 1;
+            else
+                focus_manager->focus_index = 0;
         }
 
         KEYBOARD_STATE->key_locks[GLFW_KEY_TAB] = 1;

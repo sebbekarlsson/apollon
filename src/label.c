@@ -15,6 +15,7 @@ label_T* init_label(float x, float y, float z, char* text)
     label->r = 0;
     label->g = 0;
     label->b = 0;
+    label->visible = 1;
 
     return label;
 }
@@ -26,6 +27,9 @@ void label_tick(actor_T* self)
 void label_draw(actor_T* self)
 {
     label_T* label = (label_T*) self;
+
+    if (!label->visible)
+        return;
 
     scene_T* scene = get_current_scene();
     state_T* state = (state_T*) scene;

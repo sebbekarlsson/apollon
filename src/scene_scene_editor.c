@@ -62,7 +62,7 @@ void scene_editor_dropdown_press(void* dropdown_list, void* option)
 
     printf("Actor definition:%s\n", database_actor_definition->name);
 
-    dropdown->visible = 0;
+    ((actor_focusable_T*)dropdown)->visible = 0;
     dropdown->expanded = 0;
 
     actor_focusable_T* dropdown_focusable = (actor_focusable_T*) dropdown;
@@ -101,7 +101,7 @@ scene_scene_editor_T* init_scene_scene_editor()
     // this one is starts as focused
     ((actor_focusable_T*)s_scene_editor->grid)->focused = 1;
     s_scene_editor->dropdown_list = init_dropdown_list(0.0f, 0.0f, 0.0f, scene_editor_dropdown_press);
-    s_scene_editor->dropdown_list->visible = 0;
+    ((actor_focusable_T*)s_scene_editor->dropdown_list)->visible = 0;
 
     dynamic_list_append(state->actors, s_scene_editor->grid);
     dynamic_list_append(state->actors, s_scene_editor->dropdown_list);
@@ -169,12 +169,12 @@ void scene_scene_editor_tick(scene_T* self)
         if (!dropdown_list_focusable->focused)
         {
             dropdown_list_focusable->focused = 1;
-            s_scene_editor->dropdown_list->visible = 1;
+            ((actor_focusable_T*)s_scene_editor->dropdown_list)->visible = 1;
         }
         else
         {
             dropdown_list_focusable->focused = 0;
-            s_scene_editor->dropdown_list->visible = 0;
+            ((actor_focusable_T*)s_scene_editor->dropdown_list)->visible = 0;
         }
 
         KEYBOARD_STATE->key_locks[GLFW_KEY_I] = 1;

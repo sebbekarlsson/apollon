@@ -7,6 +7,7 @@ typedef struct ACTOR_FOCUSABLE_STRUCT
 {
     actor_T base;
     unsigned int focused;
+    unsigned int visible;
 } actor_focusable_T;
 
 

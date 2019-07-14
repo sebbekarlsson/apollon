@@ -18,11 +18,12 @@ dropdown_list_T* init_dropdown_list(float x, float y, float z, void (*press)(voi
     dropdown_list_T* dropdown_list = calloc(1, sizeof(struct DROPDOWN_LIST_STRUCT));
     actor_T* actor = (actor_T*) dropdown_list;
     actor_constructor(actor, x, y, z, dropdown_list_tick, dropdown_list_draw, "dropdown_list");
+    actor_focusable_T* actor_focusable = (actor_focusable_T*) actor;
+    actor_focusable_constructor(actor_focusable);
     
     dropdown_list->options = init_dynamic_list(sizeof(struct DROPDOWN_LIST_OPTION_STRUCT*));
     dropdown_list->option_index = 0;
     dropdown_list->expanded = 0;
-    dropdown_list->visible = 1;
     dropdown_list->selected_index = 0;
     dropdown_list->width = 200;
     dropdown_list->press = press;
@@ -134,8 +135,9 @@ void dropdown_list_option_draw(int i, dropdown_list_option_T* option, dropdown_l
 void dropdown_list_draw(actor_T* self)
 {
     dropdown_list_T* dropdown_list = (dropdown_list_T*) self;
+    actor_focusable_T* dropdown_list_focusable = (actor_focusable_T*) dropdown_list;
 
-    if (!dropdown_list->visible)
+    if (!dropdown_list_focusable->visible)
         return;
 
     scene_T* scene = scene_manager_get_current_scene(THEATRE->scene_manager);

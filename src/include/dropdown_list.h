@@ -10,7 +10,6 @@ typedef struct DROPDOWN_LIST_STRUCT
     unsigned int focused;
     unsigned int option_index;
     unsigned int expanded;
-    unsigned int visible;
     unsigned int selected_index;
     unsigned int width;
     void (*press)(void* dropdown_list, void* option);
