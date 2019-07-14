@@ -13,7 +13,7 @@ extern float COLOR_BG_DARK[3];
 extern float COLOR_BG_DARK_BRIGHT[3];
 extern float COLOR_FG[3];
 
-dropdown_list_T* init_dropdown_list(float x, float y, float z, void (*press)(void* option))
+dropdown_list_T* init_dropdown_list(float x, float y, float z, void (*press)(void* dropdown_list, void* option))
 {
     dropdown_list_T* dropdown_list = calloc(1, sizeof(struct DROPDOWN_LIST_STRUCT));
     actor_T* actor = (actor_T*) dropdown_list;
@@ -68,7 +68,7 @@ void dropdown_list_tick(actor_T* self)
 
         if (dropdown_list->press && dropdown_list->options->size > 0)
         {
-            dropdown_list->press(dropdown_list->options->items[dropdown_list->option_index]);
+            dropdown_list->press(dropdown_list, dropdown_list->options->items[dropdown_list->option_index]);
         }
     }
 }

@@ -22,4 +22,6 @@ void scene_scene_editor_draw(scene_T* self);
 void scene_scene_editor_goto_next(scene_scene_editor_T* self);
 
 void scene_scene_editor_goto_prev(scene_scene_editor_T* self);
+
+void scene_scene_editor_delete_current_scene(scene_scene_editor_T* self);
 #endif

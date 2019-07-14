@@ -88,7 +88,7 @@ void button_save_press()
     }
 }
 
-void actor_editor_sprite_press(void* option)
+void actor_editor_sprite_press(void* dropdown_list, void* option)
 {
     dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) option;
 
@@ -98,7 +98,7 @@ void actor_editor_sprite_press(void* option)
     s_actor_editor->selected_database_sprite = (database_sprite_T*) dropdown_list_option->value;
 }
 
-void actor_editor_actor_press(void* option)
+void actor_editor_actor_press(void* dropdown_list, void* option)
 {
     printf("Press actor dropdown\n");
     dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) option;

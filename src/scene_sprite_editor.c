@@ -68,7 +68,7 @@ void sprite_button_save_press()
     }
 }
 
-void dropdown_list_sprite_press(void* option)
+void dropdown_list_sprite_press(void* dropdown_list, void* option)
 {
     printf("Selected a sprite!\n");
     dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) option;
