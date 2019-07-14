@@ -1,6 +1,7 @@
 #include "include/scene_actor_editor.h"
 #include "include/etc.h"
 #include "include/database.h"
+#include "include/dropdown_list.h"
 #include <coelum/input.h>
 #include <coelum/current.h>
 #include <string.h>
@@ -123,6 +124,20 @@ void actor_editor_actor_press(void* dropdown_list, void* option)
 
             s_actor_editor->input_field_draw_script->value = realloc(s_actor_editor->input_field_draw_script->value, (strlen(actor_def->draw_script) + 1) * sizeof(char));
             strcpy(s_actor_editor->input_field_draw_script->value, actor_def->draw_script);
+
+            for (int j = 0; j < s_actor_editor->dropdown_list_sprite->options->size; j++)
+            {
+                dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) s_actor_editor->dropdown_list_sprite->options->items[j];
+
+                database_sprite_T* database_sprite = (database_sprite_T*) dropdown_list_option->value;
+
+                if (database_sprite == actor_def->database_sprite)
+                {
+                    printf("selected index is now %d\n", j);
+                    s_actor_editor->dropdown_list_sprite->selected_index = (unsigned int) j;
+                    break;
+                }
+            }
 
             break;
         }

@@ -102,6 +102,7 @@ scene_scene_editor_T* init_scene_scene_editor()
     ((actor_focusable_T*)s_scene_editor->grid)->focused = 1;
     s_scene_editor->dropdown_list = init_dropdown_list(0.0f, 0.0f, 0.0f, scene_editor_dropdown_press);
     ((actor_focusable_T*)s_scene_editor->dropdown_list)->visible = 0;
+    ((actor_T*)s_scene_editor->dropdown_list)->z = 1;
 
     dynamic_list_append(state->actors, s_scene_editor->grid);
     dynamic_list_append(state->actors, s_scene_editor->dropdown_list);
