@@ -4,6 +4,7 @@
 #include <coelum/sprite.h>
 #include <coelum/scene.h>
 
+static const char* DATABASE_FILENAME = "application.db";
 
 typedef struct DATABASE_SPRITE_STRUCT
 {
@@ -31,4 +32,8 @@ typedef struct DATABASE_STRUCT
 } database_T;
 
 database_T* init_database();
+
+void database_serialize(database_T* database);
+
+void database_deserialize(database_T* database, const char* filename);
 #endif
