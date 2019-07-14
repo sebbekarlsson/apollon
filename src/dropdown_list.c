@@ -166,15 +166,34 @@ void dropdown_list_draw(actor_T* self)
     }
     else
     {
-        for (int i = 0; i < dropdown_list->options->size; i++)
+        if (dropdown_list->options->size > 0)
         {
-            dropdown_list_option_T* option = (dropdown_list_option_T*) dropdown_list->options->items[i];
-
-            if (i == dropdown_list->selected_index)
+            for (int i = 0; i < dropdown_list->options->size; i++)
             {
-                dropdown_list_option_draw(0, option, dropdown_list, state);
-                break;
+                dropdown_list_option_T* option = (dropdown_list_option_T*) dropdown_list->options->items[i];
+
+                if (i == dropdown_list->selected_index)
+                {
+                    dropdown_list_option_draw(0, option, dropdown_list, state);
+                    break;
+                }
             }
+        }
+        else
+        {
+            draw_text(
+                "EMPTY",
+                self->x + (32 / 2),
+                (self->y + (32 / 2)),
+                0,
+                COLOR_FG[0], // r
+                COLOR_FG[1], // g
+                COLOR_FG[2], // b
+                6,
+                6,
+                0,
+                state
+            );
         }
     }
 }
