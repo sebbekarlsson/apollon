@@ -12,6 +12,23 @@
 extern keyboard_state_T* KEYBOARD_STATE;
 extern database_T* DATABASE;
 
+void insert_new_scene(char* type_name)
+{
+    scene_T* scene = scene_constructor(
+        init_scene(),
+        (void*) 0,
+        (void*) 0,
+        2
+    );
+    
+    scene->type_name = type_name;
+
+    dynamic_list_append(
+        DATABASE->scenes,
+        scene 
+    );
+}
+
 scene_scene_editor_T* init_scene_scene_editor()
 {
     scene_scene_editor_T* s_scene_editor = calloc(1, sizeof(struct SCENE_SCENE_EDITOR_STRUCT));
@@ -38,13 +55,17 @@ scene_scene_editor_T* init_scene_scene_editor()
         "grid"
     );
 
+    s_scene_editor->scene_index = 0;
+
     // this one is starts as focused
     ((actor_focusable_T*)s_scene_editor->grid)->focused = 1;
     s_scene_editor->dropdown_list = init_dropdown_list(0.0f, 0.0f, 0.0f, (void*) 0);
     s_scene_editor->dropdown_list->visible = 0;
-    
+
     dynamic_list_append(state->actors, s_scene_editor->grid);
     dynamic_list_append(state->actors, s_scene_editor->dropdown_list);
+
+    insert_new_scene("main");
 
     return s_scene_editor;
 }
@@ -55,6 +76,18 @@ void scene_scene_editor_tick(scene_T* self)
 
     scene_scene_editor_T* s_scene_editor = (scene_scene_editor_T*) self;
     grid_T* grid = s_scene_editor->grid;
+
+    if (KEYBOARD_STATE->keys[GLFW_KEY_Z] && !KEYBOARD_STATE->key_locks[GLFW_KEY_Z])
+    {
+        scene_scene_editor_goto_prev(s_scene_editor);
+        KEYBOARD_STATE->key_locks[GLFW_KEY_Z] = 1;
+    }
+
+    if (KEYBOARD_STATE->keys[GLFW_KEY_X] && !KEYBOARD_STATE->key_locks[GLFW_KEY_X])
+    {
+        scene_scene_editor_goto_next(s_scene_editor);
+        KEYBOARD_STATE->key_locks[GLFW_KEY_X] = 1;
+    }
 
     if (KEYBOARD_STATE->keys[GLFW_KEY_UP] && !KEYBOARD_STATE->key_locks[GLFW_KEY_UP])
     {
@@ -125,4 +158,54 @@ void scene_scene_editor_tick(scene_T* self)
 
 void scene_scene_editor_draw(scene_T* self)
 {
+    state_T* state = (state_T*) self;
+    scene_scene_editor_T* s_scene_editor = (scene_scene_editor_T*) self;
+
+    int number_of_scenes = (int)(
+        DATABASE->scenes->size > 0 ? DATABASE->scenes->size - 1 : 0
+    );
+
+    char scene_index_str[16];
+    sprintf(scene_index_str, "%d / %d", (int)s_scene_editor->scene_index, number_of_scenes);
+
+    draw_text(
+        scene_index_str,
+        16 + 6,
+        16 - 6,
+        0,
+        0, // r
+        0, // g
+        0, // b
+        6,
+        6,
+        0,
+        state
+    );
+}
+
+void scene_scene_editor_goto_next(scene_scene_editor_T* self)
+{
+    self->scene_index += 1;
+    int size = (int) DATABASE->scenes->size;
+    int index = (int) self->scene_index;
+
+    if (size-1 < index)
+    {
+        printf("Inserted another scene!\n");
+        insert_new_scene("no name");
+    }
+    else
+    {
+        printf("No grid for you! %d %d\n", size-1, index);
+    }
+
+    //scene_scene_editor_refresh_grid(self);
+}
+
+void scene_scene_editor_goto_prev(scene_scene_editor_T* self)
+{
+    if (self->scene_index > 0)
+        self->scene_index -= 1;
+
+    //scene_scene_editor_refresh_grid(self);
 }

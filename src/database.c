@@ -26,6 +26,7 @@ database_T* init_database()
     database_T* database = calloc(1, sizeof(struct DATABASE_STRUCT));
     database->sprites = init_dynamic_list(sizeof(struct DATABASE_SPRITE_STRUCT*));
     database->actor_definitions = init_dynamic_list(sizeof(struct DATABASE_ACTOR_DEFINITION_STRUCT*));
+    database->scenes = init_dynamic_list(sizeof(struct SCENE_STRUCT*)); 
 
     return database;
 }
