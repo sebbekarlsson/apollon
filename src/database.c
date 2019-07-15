@@ -131,12 +131,12 @@ char* database_get_sprites_sql(database_T* database)
     for (int i = 0; i < database->sprites->size; i++)
     {
         database_sprite_T* database_sprite = (database_sprite_T*) database->sprites->items[i];
-        char* item_sql_template = "INSERT INTO sprites VALUES(%d, \"%s\", \"abc123\");\n";
+        const char* item_sql_template = "INSERT INTO sprites VALUES(%d, \"%s\", \"abc123\");\n";
         char* item_sql = calloc(256, sizeof(char));
 
         sprintf(item_sql, item_sql_template, i, database_sprite->name);
 
-        sql = realloc(sql, (strlen(sql) + strlen(item_sql)) * sizeof(char));
+        sql = realloc(sql, (1 + strlen(sql) + strlen(item_sql)) * sizeof(char));
         strcat(sql, item_sql);
 
         free(item_sql);
@@ -155,12 +155,12 @@ char* database_get_actor_definitions_sql(database_T* database)
     for (int i = 0; i < database->actor_definitions->size; i++)
     {
         database_actor_definition_T* database_actor_definition = (database_actor_definition_T*) database->actor_definitions->items[i];
-        char* item_sql_template = "INSERT INTO actor_definitions VALUES(%d, \"%s\", \"%s\", \"%s\", %d)\n";
+        const char* item_sql_template = "INSERT INTO actor_definitions VALUES(%d, \"%s\", \"%s\", \"%s\", %d)\n";
         char* item_sql = calloc(256, sizeof(char));
 
         sprintf(item_sql, item_sql_template, i, database_actor_definition->name, database_actor_definition->tick_script, database_actor_definition->draw_script, 0);
 
-        sql = realloc(sql, (strlen(sql) + strlen(item_sql)) * sizeof(char));
+        sql = realloc(sql, (1 + strlen(sql) + strlen(item_sql)) * sizeof(char));
         strcat(sql, item_sql);
 
         free(item_sql);
@@ -178,12 +178,12 @@ char* database_get_scenes_sql(database_T* database)
     for (int i = 0; i < database->scenes->size; i++)
     {
         scene_T* scene = (scene_T*) database->scenes->items[i];
-        char* item_sql_template = "INSERT INTO scenes VALUES(%d, \"%s\", %d, %d, %d)\n";
+        const char* item_sql_template = "INSERT INTO scenes VALUES(%d, \"%s\", %d, %d, %d)\n";
         char* item_sql = calloc(256, sizeof(char));
 
         sprintf(item_sql, item_sql_template, i, scene->type_name, scene->bg_r, scene->bg_g, scene->bg_b);
 
-        sql = realloc(sql, (strlen(sql) + strlen(item_sql)) * sizeof(char));
+        sql = realloc(sql, (1 + strlen(sql) + strlen(item_sql)) * sizeof(char));
         strcat(sql, item_sql);
 
         free(item_sql);
@@ -207,12 +207,12 @@ char* database_get_actor_instances_sql(database_T* database)
         {
             actor_T* actor = (actor_T*) state->actors->items[j];
 
-            char* item_sql_template = "INSERT INTO actor_instances VALUES(%d, 0, %d, %d, %d, %d)\n";
-            char* item_sql = calloc(256, sizeof(char));
+            const char* item_sql_template = "INSERT INTO actor_instances VALUES(%d, %d, %12.6f, %12.6f, %12.6f, %d)\n";
+            char* item_sql = calloc(300, sizeof(char));
 
-            sprintf(item_sql, item_sql_template, j, actor->x, actor->y, actor->z, i);
+            sprintf(item_sql, item_sql_template, j, 0, actor->x, actor->y, actor->z, i);
 
-            sql = realloc(sql, (strlen(sql) + strlen(item_sql)) * sizeof(char));
+            sql = realloc(sql, (1 + strlen(sql) + strlen(item_sql)) * sizeof(char));
             strcat(sql, item_sql);
 
             free(item_sql);

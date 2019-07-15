@@ -68,6 +68,8 @@ void scene_editor_dropdown_press(void* dropdown_list, void* option)
     actor_focusable_T* dropdown_focusable = (actor_focusable_T*) dropdown;
 
     dropdown_focusable->focused = 0;
+
+    database_get_actor_instances_sql(DATABASE);
 }
 
 scene_scene_editor_T* init_scene_scene_editor()
