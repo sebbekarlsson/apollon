@@ -87,6 +87,8 @@ void button_save_press()
 
         printf("Should change sprite to %s\n", s_actor_editor->selected_database_sprite->name);
     }
+
+    database_get_actor_definitions_sql(DATABASE);
 }
 
 void actor_editor_sprite_press(void* dropdown_list, void* option)

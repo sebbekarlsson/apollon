@@ -148,7 +148,25 @@ char* database_get_sprites_sql(database_T* database)
 
 char* database_get_actor_definitions_sql(database_T* database)
 {
-    return 0;
+    char* sql = calloc(1, sizeof(char));
+    sql[0] = '\0';
+
+    for (int i = 0; i < database->actor_definitions->size; i++)
+    {
+        database_actor_definition_T* database_actor_definition = (database_actor_definition_T*) database->actor_definitions->items[i];
+        char* item_sql_template = "INSERT INTO actor_definitions VALUES(%d, \"%s\", \"%s\", \"%s\", %d)\n";
+        char* item_sql = calloc(256, sizeof(char));
+
+        sprintf(item_sql, item_sql_template, i, database_actor_definition->name, database_actor_definition->tick_script, database_actor_definition->draw_script, 0);
+
+        sql = realloc(sql, (strlen(sql) + strlen(item_sql)) * sizeof(char));
+        strcat(sql, item_sql);
+
+        free(item_sql);
+    }
+
+    printf("ACTOR_DEFINITIONS_SQL: %s", sql);
+    return sql;
 }
 
 char* database_get_scenes_sql(database_T* database)
