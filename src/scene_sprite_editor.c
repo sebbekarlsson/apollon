@@ -66,6 +66,8 @@ void sprite_button_save_press()
             }
         }
     }
+    
+    database_get_sprites_sql(DATABASE);
 }
 
 void dropdown_list_sprite_press(void* dropdown_list, void* option)
