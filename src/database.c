@@ -1,6 +1,7 @@
 #include "include/database.h"
 #include <sqlite3.h>
 #include <string.h>
+#include <coelum/actor.h>
 
 
 database_sprite_T* init_database_sprite(sprite_T* sprite, char* name)
@@ -189,10 +190,35 @@ char* database_get_scenes_sql(database_T* database)
     }
 
     printf("SCENES_SQL: %s", sql);
-    return 0;
+    return sql;
 }
 
 char* database_get_actor_instances_sql(database_T* database)
 {
-    return 0;
+    char* sql = calloc(1, sizeof(char));
+    sql[0] = '\0';
+
+    for (int i = 0; i < database->scenes->size; i++)
+    {
+        scene_T* scene = (scene_T*) database->scenes->items[i];
+        state_T* state = (state_T*) scene;
+
+        for (int j = 0; j < state->actors->size; j++)
+        {
+            actor_T* actor = (actor_T*) state->actors->items[j];
+
+            char* item_sql_template = "INSERT INTO actor_instances VALUES(%d, 0, %d, %d, %d, %d)\n";
+            char* item_sql = calloc(256, sizeof(char));
+
+            sprintf(item_sql, item_sql_template, j, actor->x, actor->y, actor->z, i);
+
+            sql = realloc(sql, (strlen(sql) + strlen(item_sql)) * sizeof(char));
+            strcat(sql, item_sql);
+
+            free(item_sql);
+        }
+    }
+
+    printf("ACTOR_INSTANCES_SQL: %s", sql);
+    return sql;
 }
