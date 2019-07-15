@@ -171,6 +171,24 @@ char* database_get_actor_definitions_sql(database_T* database)
 
 char* database_get_scenes_sql(database_T* database)
 {
+    char* sql = calloc(1, sizeof(char));
+    sql[0] = '\0';
+
+    for (int i = 0; i < database->scenes->size; i++)
+    {
+        scene_T* scene = (scene_T*) database->scenes->items[i];
+        char* item_sql_template = "INSERT INTO scenes VALUES(%d, \"%s\", %d, %d, %d)\n";
+        char* item_sql = calloc(256, sizeof(char));
+
+        sprintf(item_sql, item_sql_template, i, scene->type_name, scene->bg_r, scene->bg_g, scene->bg_b);
+
+        sql = realloc(sql, (strlen(sql) + strlen(item_sql)) * sizeof(char));
+        strcat(sql, item_sql);
+
+        free(item_sql);
+    }
+
+    printf("SCENES_SQL: %s", sql);
     return 0;
 }
 
