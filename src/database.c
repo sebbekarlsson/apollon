@@ -1,36 +1,13 @@
 #include "include/database.h"
-#include <sqlite3.h>
 #include <string.h>
 #include <coelum/actor.h>
+#include <coelum/utils.h>
 
-
-database_sprite_T* init_database_sprite(sprite_T* sprite, char* name)
-{
-    database_sprite_T* database_sprite = calloc(1, sizeof(struct DATABASE_SPRITE_STRUCT));
-    database_sprite->sprite = sprite;
-    database_sprite->name = name;
-
-    return database_sprite;
-}
-
-database_actor_definition_T* init_database_actor_definition(database_sprite_T* database_sprite, char* name, char* tick_script, char* draw_script)
-{
-    database_actor_definition_T* database_actor_definition = calloc(1, sizeof(struct DATABASE_ACTOR_DEFINITION_STRUCT));
-    database_actor_definition->database_sprite = database_sprite;
-    database_actor_definition->name = name;
-    database_actor_definition->tick_script = tick_script;
-    database_actor_definition->draw_script = draw_script;
-
-    return database_actor_definition;
-}
 
 database_T* init_database()
 {
     database_T* database = calloc(1, sizeof(struct DATABASE_STRUCT));
     database->filename = "application.db";
-    database->sprites = init_dynamic_list(sizeof(struct DATABASE_SPRITE_STRUCT*));
-    database->actor_definitions = init_dynamic_list(sizeof(struct DATABASE_ACTOR_DEFINITION_STRUCT*));
-    database->scenes = init_dynamic_list(sizeof(struct SCENE_STRUCT*)); 
 
     sqlite3 *db;
     char *err_msg = 0;
@@ -45,12 +22,12 @@ database_T* init_database()
 
         return database;
     }
-    
-    char *sql = "CREATE TABLE IF NOT EXISTS actor_definitions(id INT, name TEXT, tick_script TEXT, draw_script TEXT, sprite_id INT);"
-                "CREATE TABLE IF NOT EXISTS actor_instances(id INT, actor_definition_id INT, x FLOAT, y FLOAT, z FLOAT, scene_id INT);"
-                "CREATE TABLE IF NOT EXISTS sprites(id INT, name TEXT, filepath TEXT);"
-                "CREATE TABLE IF NOT EXISTS scenes(id INT, name TEXT, bg_r INT, bg_g INT, bg_b INT)"; 
 
+    char *sql = "CREATE TABLE IF NOT EXISTS actor_definitions(id TEXT, name TEXT, tick_script TEXT, draw_script TEXT, sprite_id TEXT);"
+                "CREATE TABLE IF NOT EXISTS actor_instances(id TEXT, actor_definition_id TEXT, x FLOAT, y FLOAT, z FLOAT, scene_id TEXT);"
+                "CREATE TABLE IF NOT EXISTS sprites(id TEXT, name TEXT, filepath TEXT);"
+                "CREATE TABLE IF NOT EXISTS scenes(id TEXT, name TEXT, bg_r INT, bg_g INT, bg_b INT)";
+    
     rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
     
     if (rc != SQLITE_OK)
@@ -69,156 +46,93 @@ database_T* init_database()
     return database;
 }
 
-void database_serialize(database_T* database)
+database_sprite_T* init_database_sprite(const unsigned char* id, const unsigned char* name, const unsigned char* filepath)
 {
-    sqlite3 *db;
-    char *err_msg = 0;
-    
-    int rc = sqlite3_open(database->filename, &db);
-    
-    if (rc != SQLITE_OK)
-    {
-        
-        fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
-        sqlite3_close(db);
+    database_sprite_T* database_sprite = calloc(1, sizeof(struct DATABASE_SPRITE_STRUCT));
+    database_sprite->id = id;
+    database_sprite->name = name; 
+    database_sprite->filepath = filepath;
 
-        return;
-    }
-
-    char* sprites_sql = database_get_sprites_sql(database);
-    char* actor_definitions_sql = database_get_actor_definitions_sql(database);
-    char* actor_instances_sql = database_get_actor_instances_sql(database);
-    char* scenes_sql = database_get_scenes_sql(database);
-
-    char* sql = calloc(
-        strlen(sprites_sql) +
-        strlen(actor_definitions_sql) + 
-        strlen(actor_instances_sql) +
-        strlen(scenes_sql) + 1,
-        sizeof(char)
-    );
-
-    strcat(sql, sprites_sql);
-    strcat(sql, actor_definitions_sql);
-    strcat(sql, actor_instances_sql);
-    strcat(sql, scenes_sql);
-
-    rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
-    
-    if (rc != SQLITE_OK)
-    {
-        
-        fprintf(stderr, "SQL error: %s\n", err_msg);
-        
-        sqlite3_free(err_msg);        
-        sqlite3_close(db);
-        
-        return;
-    } 
-    
-    sqlite3_close(db);
+    return database_sprite;
 }
 
-void database_deserialize(database_T* database, const char* filename)
+sqlite3_stmt* database_exec_sql(database_T* database, char* sql, unsigned int do_error_checking)
 {
-}
+    sqlite3* db = database->db;
+	sqlite3_stmt* stmt;
+	
+	sqlite3_open(database->filename, &db);
 
-char* database_get_sprites_sql(database_T* database)
-{
-    char* sql = calloc(1, sizeof(char));
-    sql[0] = '\0';
+	if (db == NULL)
+	{
+		printf("Failed to open DB\n");
+		return (void*) 0;
+	}
 
-    for (int i = 0; i < database->sprites->size; i++)
+	printf("Performing query...\n");
+    printf("%s\n", sql);
+	sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+
+    if (do_error_checking)
     {
-        database_sprite_T* database_sprite = (database_sprite_T*) database->sprites->items[i];
-        const char* item_sql_template = "INSERT INTO sprites VALUES(%d, \"%s\", \"abc123\");\n";
-        char* item_sql = calloc(256, sizeof(char));
-
-        sprintf(item_sql, item_sql_template, i, database_sprite->name);
-
-        sql = realloc(sql, (1 + strlen(sql) + strlen(item_sql)) * sizeof(char));
-        strcat(sql, item_sql);
-
-        free(item_sql);
-    }
-
-    printf("SPRITES_SQL: %s", sql);
-
-    return sql;
-}
-
-char* database_get_actor_definitions_sql(database_T* database)
-{
-    char* sql = calloc(1, sizeof(char));
-    sql[0] = '\0';
-
-    for (int i = 0; i < database->actor_definitions->size; i++)
-    {
-        database_actor_definition_T* database_actor_definition = (database_actor_definition_T*) database->actor_definitions->items[i];
-        const char* item_sql_template = "INSERT INTO actor_definitions VALUES(%d, \"%s\", \"%s\", \"%s\", %d)\n";
-        char* item_sql = calloc(256, sizeof(char));
-
-        sprintf(item_sql, item_sql_template, i, database_actor_definition->name, database_actor_definition->tick_script, database_actor_definition->draw_script, 0);
-
-        sql = realloc(sql, (1 + strlen(sql) + strlen(item_sql)) * sizeof(char));
-        strcat(sql, item_sql);
-
-        free(item_sql);
-    }
-
-    printf("ACTOR_DEFINITIONS_SQL: %s", sql);
-    return sql;
-}
-
-char* database_get_scenes_sql(database_T* database)
-{
-    char* sql = calloc(1, sizeof(char));
-    sql[0] = '\0';
-
-    for (int i = 0; i < database->scenes->size; i++)
-    {
-        scene_T* scene = (scene_T*) database->scenes->items[i];
-        const char* item_sql_template = "INSERT INTO scenes VALUES(%d, \"%s\", %d, %d, %d)\n";
-        char* item_sql = calloc(256, sizeof(char));
-
-        sprintf(item_sql, item_sql_template, i, scene->type_name, scene->bg_r, scene->bg_g, scene->bg_b);
-
-        sql = realloc(sql, (1 + strlen(sql) + strlen(item_sql)) * sizeof(char));
-        strcat(sql, item_sql);
-
-        free(item_sql);
-    }
-
-    printf("SCENES_SQL: %s", sql);
-    return sql;
-}
-
-char* database_get_actor_instances_sql(database_T* database)
-{
-    char* sql = calloc(1, sizeof(char));
-    sql[0] = '\0';
-
-    for (int i = 0; i < database->scenes->size; i++)
-    {
-        scene_T* scene = (scene_T*) database->scenes->items[i];
-        state_T* state = (state_T*) scene;
-
-        for (int j = 0; j < state->actors->size; j++)
+        int rc = sqlite3_step(stmt);
+        if (rc != SQLITE_DONE)
         {
-            actor_T* actor = (actor_T*) state->actors->items[j];
-
-            const char* item_sql_template = "INSERT INTO actor_instances VALUES(%d, %d, %12.6f, %12.6f, %12.6f, %d)\n";
-            char* item_sql = calloc(300, sizeof(char));
-
-            sprintf(item_sql, item_sql_template, j, 0, actor->x, actor->y, actor->z, i);
-
-            sql = realloc(sql, (1 + strlen(sql) + strlen(item_sql)) * sizeof(char));
-            strcat(sql, item_sql);
-
-            free(item_sql);
+            printf("ERROR executing query: %s\n", sqlite3_errmsg(db));
+            return (void*) 0;
         }
     }
 
-    printf("ACTOR_INSTANCES_SQL: %s", sql);
-    return sql;
+	return stmt;
+}
+
+char* database_insert_sprite(database_T* database, const char* name, sprite_T* sprite)
+{
+    char* id = get_random_string(16);
+    char* sql_template = "INSERT INTO sprites VALUES(\"%s\", \"%s\", \"%s\")";
+    char* sql = calloc(300, sizeof(char));
+
+
+    char* filepath = calloc(strlen("sprites/") + strlen(name) + strlen(".bin"), sizeof(char));
+    sprintf(filepath, "sprites/%s.bin", name);
+
+    sprintf(sql, sql_template, id, name, filepath);
+    printf("%s\n", sql);
+
+    sqlite3_stmt* stmt = database_exec_sql(database, sql, 1);
+    sqlite3_finalize(stmt);
+    sqlite3_close(database->db);
+    free(sql);
+
+    return id;
+}
+
+dynamic_list_T* database_get_all_sprites(database_T* database)
+{
+    dynamic_list_T* sprites = init_dynamic_list(sizeof(struct DATABASE_SPRITE_STRUCT*));
+
+    sqlite3_stmt* stmt = database_exec_sql(database, "SELECT * FROM sprites", 0);
+
+    printf("Got results:\n");
+	while (sqlite3_step(stmt) != SQLITE_DONE) {
+        const unsigned char* id = sqlite3_column_text(stmt, 0);
+        const unsigned char* name = sqlite3_column_text(stmt, 1);
+        const unsigned char* filepath = sqlite3_column_text(stmt, 2);
+
+        dynamic_list_append(
+            sprites,
+            init_database_sprite(
+                id,
+                name,
+                filepath
+            )
+        );
+	}
+
+	sqlite3_finalize(stmt);
+
+	sqlite3_close(database->db);
+    getc(stdin);
+
+    return sprites;
 }

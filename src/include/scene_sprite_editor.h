@@ -24,7 +24,7 @@ typedef struct SCENE_SPRITE_EDITOR_STRUCT
     button_T* button_save;
     button_T* button_new;
     unsigned int grid_index;
-    int sprite_index;
+    char* sprite_id; // the sprite currently being modified
     float r;
     float g;
     float b;

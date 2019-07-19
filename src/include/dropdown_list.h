@@ -1,6 +1,7 @@
 #ifndef APOLLON_DROPDOWN_LIST_H
 #define APOLLON_DROPDOWN_LIST_H
 #include "actor_focusable.h"
+#include "database.h"
 
 
 typedef struct DROPDOWN_LIST_STRUCT
@@ -20,6 +21,10 @@ dropdown_list_T* init_dropdown_list(float x, float y, float z, void (*press)(voi
 void dropdown_list_tick(actor_T* self);
 
 void dropdown_list_draw(actor_T* self);
+
+void dropdown_list_sync_from_table(dropdown_list_T* dropdown_list, database_T* database, const char* tablename, unsigned int key_column, int sprite_column);
+
+unsigned int dropdown_list_has_option_with_string_value(dropdown_list_T* dropdown_list, const char* value);
 
 typedef struct DROPDOWN_LIST_OPTION_STRUCT
 {

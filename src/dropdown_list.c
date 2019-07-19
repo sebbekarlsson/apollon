@@ -208,3 +208,60 @@ dropdown_list_option_T* init_dropdown_list_option(sprite_T* sprite, char* key, v
 
     return option;
 }
+
+unsigned int dropdown_list_has_option_with_string_value(dropdown_list_T* dropdown_list, const char* value)
+{
+    for (int i = 0; i < dropdown_list->options->size; i++)
+    {
+        dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) dropdown_list->options->items[i];
+
+        if (strcmp((char*)dropdown_list_option->value, value) == 0)
+            return 1;
+    }
+
+    return 0;
+}
+
+void dropdown_list_sync_from_table(dropdown_list_T* dropdown_list, database_T* database, const char* tablename, unsigned int key_column, int sprite_column)
+{
+    char* sql_template = "SELECT * FROM %s";
+    char* sql = calloc(strlen(sql_template) + strlen(tablename) + 1, sizeof(char));
+    sprintf(sql, sql_template, tablename);
+
+    sqlite3_stmt* stmt = database_exec_sql(database, sql, 0);
+
+	while (sqlite3_step(stmt) != SQLITE_DONE) {
+        const unsigned char* _value = sqlite3_column_text(stmt, 0);
+        const unsigned char* _key = sqlite3_column_text(stmt, key_column);
+
+        char* value = calloc(strlen((char*) _value) + 1, sizeof(char));
+        strcpy(value, _value);
+
+        char* key = calloc(strlen((char*) _key) + 1, sizeof(char));
+        strcpy(key,  _key); 
+
+        // TODO: load serialized sprite here.
+        /*const unsigned char* sprite_path = 0;
+
+        if (sprite_column != -1)
+            sprite_path = sqlite3_column_text(stmt, sprite_column);*/
+
+        if (dropdown_list_has_option_with_string_value(dropdown_list, value))
+            continue;
+
+
+        dynamic_list_append(
+            dropdown_list->options,
+            init_dropdown_list_option(
+                (void*) 0,
+                key,
+                value,
+                0
+            )
+        );
+	}
+
+	sqlite3_finalize(stmt);
+
+	sqlite3_close(database->db);
+}

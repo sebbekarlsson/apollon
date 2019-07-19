@@ -43,107 +43,25 @@ void button_save_press()
 {
     printf("button_save_press\n");
 
-    scene_T* scene = get_current_scene();
-    scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) scene;
-
-    if (s_actor_editor->actor_index == -1)
-    {
-        printf("Save new actor\n");
-
-        char* name = calloc(strlen(s_actor_editor->input_field_type_name->value) + 1, sizeof(char));
-        strcpy(name, s_actor_editor->input_field_type_name->value);
-
-        char* tick_script = calloc(strlen(s_actor_editor->input_field_tick_script->value) + 1, sizeof(char));
-        strcpy(tick_script, s_actor_editor->input_field_tick_script->value);
-
-        char* draw_script = calloc(strlen(s_actor_editor->input_field_draw_script->value) + 1, sizeof(char));
-        strcpy(draw_script, s_actor_editor->input_field_draw_script->value);
-
-        database_actor_definition_T* database_actor_definition = init_database_actor_definition(
-            s_actor_editor->selected_database_sprite,
-            name,
-            tick_script,
-            draw_script
-        );
-
-        dynamic_list_append(DATABASE->actor_definitions, database_actor_definition);
-        s_actor_editor->actor_index = DATABASE->actor_definitions->size - 1;
-    }
-    else
-    {
-        printf("Modify existing actor\n");
-        database_actor_definition_T* database_actor_definition = (database_actor_definition_T*) DATABASE->actor_definitions->items[s_actor_editor->actor_index];
-
-        database_actor_definition->name = realloc(database_actor_definition->name, (strlen(s_actor_editor->input_field_type_name->value) + 1) * sizeof(char));
-        strcpy(database_actor_definition->name, s_actor_editor->input_field_type_name->value);
-
-        database_actor_definition->database_sprite = s_actor_editor->selected_database_sprite;
-
-        database_actor_definition->tick_script = realloc(database_actor_definition->tick_script, (strlen(s_actor_editor->input_field_tick_script->value) + 1) * sizeof(char));
-        strcpy(database_actor_definition->tick_script, s_actor_editor->input_field_tick_script->value);
-
-        database_actor_definition->draw_script = realloc(database_actor_definition->draw_script, (strlen(s_actor_editor->input_field_draw_script->value) + 1) * sizeof(char));
-        strcpy(database_actor_definition->draw_script, s_actor_editor->input_field_draw_script->value);
-
-        printf("Should change sprite to %s\n", s_actor_editor->selected_database_sprite->name);
-    }
-
-    database_get_actor_definitions_sql(DATABASE);
+    /*scene_T* scene = get_current_scene();
+    scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) scene;*/
 }
 
 void actor_editor_sprite_press(void* dropdown_list, void* option)
 {
-    dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) option;
+    //dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) option;
 
-    scene_T* scene = get_current_scene();
-    scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) scene;
-
-    s_actor_editor->selected_database_sprite = (database_sprite_T*) dropdown_list_option->value;
+    /*scene_T* scene = get_current_scene();
+    scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) scene;*/
 }
 
 void actor_editor_actor_press(void* dropdown_list, void* option)
 {
     printf("Press actor dropdown\n");
-    dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) option;
-    database_actor_definition_T* database_actor_definition = (database_actor_definition_T*) dropdown_list_option->value;
+    /*dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) option;
 
     scene_T* scene = get_current_scene();
-    scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) scene;
-
-    for (int i = 0; i < DATABASE->actor_definitions->size; i++)
-    {
-        database_actor_definition_T* actor_def = (database_actor_definition_T*) DATABASE->actor_definitions->items[i];
-
-        if (database_actor_definition == actor_def)
-        {
-            s_actor_editor->actor_index = i;
-
-            s_actor_editor->input_field_type_name->value = realloc(s_actor_editor->input_field_type_name->value, (strlen(actor_def->name) + 1) * sizeof(char));
-            strcpy(s_actor_editor->input_field_type_name->value, actor_def->name);
-
-            s_actor_editor->input_field_tick_script->value = realloc(s_actor_editor->input_field_tick_script->value, (strlen(actor_def->tick_script) + 1) * sizeof(char));
-            strcpy(s_actor_editor->input_field_tick_script->value, actor_def->tick_script);
-
-            s_actor_editor->input_field_draw_script->value = realloc(s_actor_editor->input_field_draw_script->value, (strlen(actor_def->draw_script) + 1) * sizeof(char));
-            strcpy(s_actor_editor->input_field_draw_script->value, actor_def->draw_script);
-
-            for (int j = 0; j < s_actor_editor->dropdown_list_sprite->options->size; j++)
-            {
-                dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) s_actor_editor->dropdown_list_sprite->options->items[j];
-
-                database_sprite_T* database_sprite = (database_sprite_T*) dropdown_list_option->value;
-
-                if (database_sprite == actor_def->database_sprite)
-                {
-                    printf("selected index is now %d\n", j);
-                    s_actor_editor->dropdown_list_sprite->selected_index = (unsigned int) j;
-                    break;
-                }
-            }
-
-            break;
-        }
-    }
+    scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) scene;*/
 }
 
 scene_actor_editor_T* init_scene_actor_editor()
@@ -253,51 +171,6 @@ void scene_actor_editor_tick(scene_T* self)
     scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) self;
 
     focus_manager_tick(s_actor_editor->focus_manager);
-
-
-    if (s_actor_editor->dropdown_list_sprite->options->size < DATABASE->sprites->size)
-    {
-        for (int i = s_actor_editor->dropdown_list_sprite->options->size; i < DATABASE->sprites->size; i++)
-        {
-            database_sprite_T* database_sprite = DATABASE->sprites->items[i];
-
-            // 20 = (sprite_width(16) + margin(4))
-            // 12 = (font_size + font_spacing)
-            unsigned int text_limit = ((s_actor_editor->dropdown_list_sprite->width - 20) / (12)) - 1;
-
-            dynamic_list_append(
-                s_actor_editor->dropdown_list_sprite->options,
-                init_dropdown_list_option(
-                    database_sprite->sprite,
-                    database_sprite->name,
-                    database_sprite,
-                    text_limit
-                )
-            );
-        }
-    }
-
-    if (s_actor_editor->dropdown_list_actor->options->size < DATABASE->actor_definitions->size)
-    {
-        for (int i = s_actor_editor->dropdown_list_actor->options->size; i < DATABASE->actor_definitions->size; i++)
-        {
-            database_actor_definition_T* database_actor_definition = (database_actor_definition_T*) DATABASE->actor_definitions->items[i];
-
-            // 20 = (sprite_width(16) + margin(4))
-            // 12 = (font_size + font_spacing)
-            unsigned int text_limit = ((s_actor_editor->dropdown_list_actor->width - 20) / (12)) - 1;
-
-            dynamic_list_append(
-                s_actor_editor->dropdown_list_actor->options,
-                init_dropdown_list_option(
-                    database_actor_definition->database_sprite->sprite,
-                    database_actor_definition->name,
-                    database_actor_definition,
-                    text_limit
-                )
-            );
-        }
-    }
 }
 
 void scene_actor_editor_draw(scene_T* self)

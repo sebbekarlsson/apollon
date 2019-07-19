@@ -14,164 +14,47 @@ extern keyboard_state_T* KEYBOARD_STATE;
 extern database_T* DATABASE;
 
 
+void sprite_editor_refresh_state(scene_sprite_editor_T* s_sprite_editor)
+{
+    dropdown_list_sync_from_table(
+        s_sprite_editor->dropdown_list_sprite,
+        DATABASE,
+        "sprites",
+        1,
+        2
+    );
+}
+
 void sprite_button_save_press()
 {
     scene_T* scene = get_current_scene();
     scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) scene;
 
-    if (s_sprite_editor->sprite_index == -1)
-    {
-        printf("Create new sprite\n");
+    char* db_sprite_id = database_insert_sprite(
+        DATABASE,
+        s_sprite_editor->input_field_name->value,
+        (void*) 0 
+    );
 
-        sprite_T* sprite = init_sprite(
-            scene_sprite_editor_get_frames_as_textures(s_sprite_editor),
-            1,
-            16,
-            16
-        );
+    if (s_sprite_editor->sprite_id)
+        free(s_sprite_editor->sprite_id);
 
-        char* name = calloc(strlen(s_sprite_editor->input_field_name->value) + 1, sizeof(char));
-        strcpy(name, s_sprite_editor->input_field_name->value);
-        database_sprite_T* database_sprite = init_database_sprite(sprite, name);
+    s_sprite_editor->sprite_id = db_sprite_id; 
 
-        dynamic_list_append(DATABASE->sprites, database_sprite);
-        s_sprite_editor->sprite_index = DATABASE->sprites->size - 1;
-    }
-    else
-    {
-        printf("Modify sprite\n");
-        database_sprite_T* database_sprite = DATABASE->sprites->items[s_sprite_editor->sprite_index];
-        sprite_T* sprite = database_sprite->sprite;
-        printf("Modifying sprite with name \"%s\"\n", database_sprite->name);
-
-        dynamic_list_T* frame_textures = scene_sprite_editor_get_frames_as_textures(s_sprite_editor);
-
-        database_sprite->name = realloc(database_sprite->name, (strlen(s_sprite_editor->input_field_name->value) + 1) * sizeof(char));
-        strcpy(database_sprite->name, s_sprite_editor->input_field_name->value);
-
-        for (int i = 0; i < frame_textures->size; i++)
-        {
-            texture_T* texture = (texture_T*) frame_textures->items[i];
-
-            if (i >= sprite->textures->size)
-            {
-                printf("Adding a new texture to existing sprite\n");
-                dynamic_list_append(sprite->textures, texture);
-            }
-            else
-            {
-                printf("Modifying existing texture on sprite\n");
-                texture_free(sprite->textures->items[i]);
-                sprite->textures->items[i] = texture;
-            }
-        }
-    }
-    
-    database_get_sprites_sql(DATABASE);
+    sprite_editor_refresh_state(s_sprite_editor);
 }
 
 void dropdown_list_sprite_press(void* dropdown_list, void* option)
 {
     printf("Selected a sprite!\n");
-    dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) option;
-    sprite_T* sprite = (sprite_T*) dropdown_list_option->value;
-
-    scene_T* scene = get_current_scene();
-    scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) scene;
-    
-    scene_sprite_editor_clear_all_frames(s_sprite_editor);
-
-    for (int i = 0; i < DATABASE->sprites->size; i++)
-    {
-        database_sprite_T* database_sprite = (database_sprite_T*) DATABASE->sprites->items[i];
-
-        if (database_sprite->sprite == sprite)
-        {
-            s_sprite_editor->sprite_index = i;
-            s_sprite_editor->input_field_name->value = realloc(s_sprite_editor->input_field_name->value, (strlen(database_sprite->name) + 1) * sizeof(char));
-            printf("NAME: %s\n", database_sprite->name);
-            strcpy(s_sprite_editor->input_field_name->value, database_sprite->name);
-            printf("sprite_index=%d\n", s_sprite_editor->sprite_index);
-            break;
-        }
-    } 
-
-    // Converting each texture in the sprite back into grids.
-    for (int i = 0; i < sprite->textures->size; i++)
-    {
-        texture_T* texture = (texture_T*) sprite->textures->items[i];
-
-        grid_T* grid = init_grid(
-            (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
-            (WINDOW_HEIGHT / 2) - ((16 * 16) / 2),
-            0.0f,
-            16,
-            16,
-            16,
-            0,
-            0,
-            0,
-            "grid_canvas"
-        );
-
-        int y, x;
-
-        for (y = 0; y < grid->height; y++)
-        {
-            for (x = 0; x < grid->width; x++)
-            { 
-                unsigned int channelCount = 4;
-                unsigned char* pixelOffset = texture->data + (y * (int)grid->width + x) * channelCount;
-                unsigned char r = pixelOffset[0];
-                unsigned char g = pixelOffset[1];
-                unsigned char b = pixelOffset[2];
-
-                grid->cells[x][y]->r = r;
-                grid->cells[x][y]->g = g;
-                grid->cells[x][y]->b = b;
-            }
-        }
-        
-        dynamic_list_append(
-            s_sprite_editor->grids,
-            grid 
-        );
-    }
-
-    scene_sprite_editor_refresh_grid(s_sprite_editor);
+    //dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) option;
 }
 
 void sprite_button_new_press()
 {
     printf("New!\n");
-    scene_T* scene = get_current_scene();
-    scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) scene;
-
-    s_sprite_editor->sprite_index = -1;
-
-    scene_sprite_editor_clear_all_frames(s_sprite_editor);
-
-    dynamic_list_append(
-        s_sprite_editor->grids,
-        init_grid(
-            (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
-            (WINDOW_HEIGHT / 2) - ((16 * 16) / 2),
-            0.0f,
-            16,
-            16,
-            16,
-            0,
-            0,
-            0,
-            "grid_canvas"
-        )
-    );
-    
-    memset(
-        s_sprite_editor->input_field_name->value,
-        0,
-        sizeof(char) * strlen(s_sprite_editor->input_field_name->value)
-    );
+    //scene_T* scene = get_current_scene();
+    //scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) scene;
 }
 
 scene_sprite_editor_T* init_scene_sprite_editor()
@@ -358,11 +241,13 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->grid_color_mixer);
 
     s_sprite_editor->grid_index = 0;
-    s_sprite_editor->sprite_index = -1;
+    s_sprite_editor->sprite_id = 0;
 
     s_sprite_editor->r = 0.0f;
     s_sprite_editor->g = 0.0f;
     s_sprite_editor->b = 0.0f;
+
+    sprite_editor_refresh_state(s_sprite_editor);
 
     return s_sprite_editor;
 }
@@ -380,8 +265,8 @@ void scene_sprite_editor_tick(scene_T* self)
     grid_T* grid = (grid_T*) grid_actor;
     actor_focusable->focused = 1;
 
-    s_sprite_editor->label_current_sprite->visible = DATABASE->sprites->size > 0;
-    ((actor_focusable_T*)s_sprite_editor->dropdown_list_sprite)->visible = DATABASE->sprites->size > 0;
+    //s_sprite_editor->label_current_sprite->visible = DATABASE->sprites->size > 0;
+    //((actor_focusable_T*)s_sprite_editor->dropdown_list_sprite)->visible = DATABASE->sprites->size > 0;
 
     if (KEYBOARD_STATE->keys[GLFW_KEY_UP] && !KEYBOARD_STATE->key_locks[GLFW_KEY_UP])
     {
@@ -510,28 +395,6 @@ void scene_sprite_editor_tick(scene_T* self)
             grid->cells[grid->cursor_x][grid->cursor_y]->b = (s_sprite_editor->b + grid->cells[grid->cursor_x][grid->cursor_y]->b);
 
             KEYBOARD_STATE->key_locks[GLFW_KEY_SPACE] = 1;
-        }
-    }
-
-    if (s_sprite_editor->dropdown_list_sprite->options->size < DATABASE->sprites->size)
-    {
-        for (int i = s_sprite_editor->dropdown_list_sprite->options->size; i < DATABASE->sprites->size; i++)
-        {
-            database_sprite_T* database_sprite = DATABASE->sprites->items[i];
-
-            // 20 = (sprite_width(16) + margin(4))
-            // 12 = (font_size + font_spacing)
-            unsigned int text_limit = ((s_sprite_editor->dropdown_list_sprite->width - 20) / (12)) - 1;
-
-            dynamic_list_append(
-                s_sprite_editor->dropdown_list_sprite->options,
-                init_dropdown_list_option(
-                    database_sprite->sprite,
-                    database_sprite->name,
-                    database_sprite->sprite,
-                    text_limit
-                )
-            );
         }
     }
 }

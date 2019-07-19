@@ -13,63 +13,11 @@
 extern keyboard_state_T* KEYBOARD_STATE;
 extern database_T* DATABASE;
 
-void insert_new_scene(char* type_name)
-{
-    scene_T* scene = scene_constructor(
-        init_scene(),
-        (void*) 0,
-        (void*) 0,
-        2
-    );
-    
-    scene->type_name = type_name;
-
-    dynamic_list_append(
-        DATABASE->scenes,
-        scene 
-    );
-}
 
 void scene_editor_dropdown_press(void* dropdown_list, void* option)
 {
-    scene_T* scene = get_current_scene();
-    scene_scene_editor_T* s_scene_editor = (scene_scene_editor_T*) scene;
-
-    scene_T* current_scene = (scene_T*) DATABASE->scenes->items[s_scene_editor->scene_index];
-
-    dropdown_list_T* dropdown = (dropdown_list_T*) dropdown_list;
-    dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) option;
-    database_actor_definition_T* database_actor_definition = (database_actor_definition_T*) dropdown_list_option->value;
-
-    actor_T* actor = actor_constructor(
-        init_actor(),
-        (s_scene_editor->grid->cursor_x * s_scene_editor->grid->cell_size) + 16,
-        (s_scene_editor->grid->cursor_y * s_scene_editor->grid->cell_size) + 16,
-        0.0f,
-        (void*) 0,
-        (void*) 0,
-        database_actor_definition->name
-    );
-
-    actor->width = 16;
-    actor->height = 16;
-    actor->sprite = database_actor_definition->database_sprite->sprite;
-
-    state_T* current_scene_state = (state_T*) current_scene;
-
-    printf("Adding actor to current scene\n");
-    dynamic_list_append(current_scene_state->actors, actor);
-
-    printf("Actor definition:%s\n", database_actor_definition->name);
-
-    ((actor_focusable_T*)dropdown)->visible = 0;
-    dropdown->expanded = 0;
-
-    actor_focusable_T* dropdown_focusable = (actor_focusable_T*) dropdown;
-
-    dropdown_focusable->focused = 0;
-
-    database_get_actor_instances_sql(DATABASE);
+    //scene_T* scene = get_current_scene();
+    //scene_scene_editor_T* s_scene_editor = (scene_scene_editor_T*) scene;
 }
 
 scene_scene_editor_T* init_scene_scene_editor()
@@ -109,7 +57,7 @@ scene_scene_editor_T* init_scene_scene_editor()
     dynamic_list_append(state->actors, s_scene_editor->grid);
     dynamic_list_append(state->actors, s_scene_editor->dropdown_list);
 
-    insert_new_scene("main");
+    //insert_new_scene("main");
 
     return s_scene_editor;
 }
@@ -182,28 +130,6 @@ void scene_scene_editor_tick(scene_T* self)
 
         KEYBOARD_STATE->key_locks[GLFW_KEY_I] = 1;
     }
-
-    if (s_scene_editor->dropdown_list->options->size < DATABASE->actor_definitions->size)
-    {
-        for (int i = s_scene_editor->dropdown_list->options->size; i < DATABASE->actor_definitions->size; i++)
-        {
-            database_actor_definition_T* database_actor_definition = (database_actor_definition_T*) DATABASE->actor_definitions->items[i];
-
-            // 20 = (sprite_width(16) + margin(4))
-            // 12 = (font_size + font_spacing)
-            unsigned int text_limit = ((s_scene_editor->dropdown_list->width - 20) / (12)) - 1;
-
-            dynamic_list_append(
-                s_scene_editor->dropdown_list->options,
-                init_dropdown_list_option(
-                    database_actor_definition->database_sprite->sprite,
-                    database_actor_definition->name,
-                    database_actor_definition,
-                    text_limit
-                )
-            );
-        }
-    }
 }
 
 void scene_scene_editor_draw(scene_T* self)
@@ -211,9 +137,7 @@ void scene_scene_editor_draw(scene_T* self)
     state_T* state = (state_T*) self;
     scene_scene_editor_T* s_scene_editor = (scene_scene_editor_T*) self;
 
-    int number_of_scenes = (int)(
-        DATABASE->scenes->size > 0 ? DATABASE->scenes->size - 1 : 0
-    );
+    int number_of_scenes = 0;
 
     char scene_index_str[16];
     sprintf(scene_index_str, "%d / %d", (int)s_scene_editor->scene_index, number_of_scenes);
@@ -231,47 +155,11 @@ void scene_scene_editor_draw(scene_T* self)
         0,
         state
     );
-
-    scene_T* current_scene = (scene_T*) DATABASE->scenes->items[s_scene_editor->scene_index];
-    state_T* current_scene_state = (state_T*) current_scene;
-
-    // draw all placed actors
-    for (int i = 0; i < current_scene_state->actors->size; i++)
-    {
-        actor_T* actor = (actor_T*) current_scene_state->actors->items[i];
-
-        if (!actor->sprite)
-            continue;
-
-        draw_positioned_sprite(
-            actor->sprite,
-            actor->x,
-            actor->y,
-            actor->z,
-            actor->width,
-            actor->height,
-            state
-        );
-    }
 }
 
 void scene_scene_editor_goto_next(scene_scene_editor_T* self)
 {
     self->scene_index += 1;
-    int size = (int) DATABASE->scenes->size;
-    int index = (int) self->scene_index;
-
-    if (size-1 < index)
-    {
-        printf("Inserted another scene!\n");
-        insert_new_scene("no name");
-    }
-    else
-    {
-        printf("No grid for you! %d %d\n", size-1, index);
-    }
-
-    //scene_scene_editor_refresh_grid(self);
 }
 
 void scene_scene_editor_goto_prev(scene_scene_editor_T* self)
@@ -289,17 +177,5 @@ void _scene_free(void* item)
 
 void scene_scene_editor_delete_current_scene(scene_scene_editor_T* self)
 {
-    if (self->scene_index == 0)
-    {
-        printf("Cannot delete first scene\n");
-        return;
-    }
-    
-    scene_T* current_scene = (scene_T*) DATABASE->scenes->items[self->scene_index];
-
-    dynamic_list_remove(DATABASE->scenes, current_scene, _scene_free);
-
-    self->scene_index -= 1;
-
-    //scene_scene_editor_refresh_grid(self);
+    // TODO: call SQL delete here
 }
