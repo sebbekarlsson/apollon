@@ -94,7 +94,6 @@ char* database_insert_sprite(database_T* database, const char* name, sprite_T* s
     char* sql_template = "INSERT INTO sprites VALUES(\"%s\", \"%s\", \"%s\")";
     char* sql = calloc(300, sizeof(char));
 
-
     char* filepath = calloc(strlen("sprites/") + strlen(name) + strlen(".bin"), sizeof(char));
     sprintf(filepath, "sprites/%s.spr", name);
 
