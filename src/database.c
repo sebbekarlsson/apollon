@@ -2,6 +2,8 @@
 #include <string.h>
 #include <coelum/actor.h>
 #include <coelum/utils.h>
+#include <spr/spr.h>
+#include <coelum/textures.h>
 
 
 database_T* init_database()
@@ -94,7 +96,7 @@ char* database_insert_sprite(database_T* database, const char* name, sprite_T* s
 
 
     char* filepath = calloc(strlen("sprites/") + strlen(name) + strlen(".bin"), sizeof(char));
-    sprintf(filepath, "sprites/%s.bin", name);
+    sprintf(filepath, "sprites/%s.spr", name);
 
     sprintf(sql, sql_template, id, name, filepath);
     printf("%s\n", sql);
@@ -103,6 +105,34 @@ char* database_insert_sprite(database_T* database, const char* name, sprite_T* s
     sqlite3_finalize(stmt);
     sqlite3_close(database->db);
     free(sql);
+
+    spr_frame_T** frames = (void*) 0;
+    size_t frames_size = 0;
+
+    for (int i = 0; i < sprite->textures->size; i++)
+    {
+        texture_T* texture = (texture_T*) sprite->textures->items[i];
+        spr_frame_T* frame = spr_init_frame_from_data(texture->data, texture->width, texture->height);
+        frames_size += 1;
+        frames = realloc(frames, frames_size * sizeof(struct SPR_FRAME_STRUCT*));
+        frames[frames_size-1] = frame;
+    }
+
+    spr_T* spr = init_spr(
+        sprite->width,
+        sprite->height,
+        255,
+        255,
+        255,
+        sprite->frame_delay,
+        sprite->animate,
+        frames,
+        frames_size
+    );
+
+    spr_write_to_file(spr, filepath);
+
+    spr_free(spr);
 
     return id;
 }

@@ -30,10 +30,13 @@ void sprite_button_save_press()
     scene_T* scene = get_current_scene();
     scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) scene;
 
+    dynamic_list_T* textures = scene_sprite_editor_get_frames_as_textures(s_sprite_editor);
+    sprite_T* sprite = init_sprite(textures, 0, s_sprite_editor->grid->width, s_sprite_editor->grid->height);
+
     char* db_sprite_id = database_insert_sprite(
         DATABASE,
         s_sprite_editor->input_field_name->value,
-        (void*) 0 
+        sprite
     );
 
     if (s_sprite_editor->sprite_id)
