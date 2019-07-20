@@ -17,6 +17,8 @@ database_sprite_T* init_database_sprite(char* id, char* name, char* filepath, sp
 
 void database_sprite_free(database_sprite_T* database_sprite);
 
+void database_sprite_reload_from_disk(database_sprite_T* database_sprite);
+
 typedef struct DATABASE_STRUCT
 {
     const char* filename;

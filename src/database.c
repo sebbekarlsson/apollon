@@ -66,6 +66,12 @@ void database_sprite_free(database_sprite_T* database_sprite)
     free(database_sprite);
 }
 
+void database_sprite_reload_from_disk(database_sprite_T* database_sprite)
+{
+    sprite_free(database_sprite->sprite);
+    database_sprite->sprite = load_sprite_from_disk(database_sprite->filepath);
+}
+
 sqlite3_stmt* database_exec_sql(database_T* database, char* sql, unsigned int do_error_checking)
 {
     sqlite3* db = database->db;

@@ -98,19 +98,22 @@ void dropdown_list_option_draw(int i, dropdown_list_option_T* option, dropdown_l
 
     int text_padding = 0;
 
-    if (option->sprite)
+    if (option->database_sprite)
     {
-        draw_positioned_sprite(
-            option->sprite,
-            self->x + 4,
-            (self->y + (i * 32)) + 8,
-            0.0f,
-            16,
-            16,
-            state
-        );
+        if (option->database_sprite->sprite)
+        {
+            draw_positioned_sprite(
+                option->database_sprite->sprite,
+                self->x + 4,
+                (self->y + (i * 32)) + 8,
+                0.0f,
+                16,
+                16,
+                state
+            );
 
-        text_padding = 16;
+            text_padding = 16;
+        }
     }
 
     if (option->key)
@@ -200,10 +203,10 @@ void dropdown_list_draw(actor_T* self)
     }
 }
 
-dropdown_list_option_T* init_dropdown_list_option(sprite_T* sprite, char* key, void* value, unsigned int text_limit)
+dropdown_list_option_T* init_dropdown_list_option(database_sprite_T* database_sprite, char* key, void* value, unsigned int text_limit)
 {
     dropdown_list_option_T* option = calloc(1, sizeof(struct DROPDOWN_LIST_OPTION_STRUCT));
-    option->sprite = sprite;
+    option->database_sprite = database_sprite;
     option->key = key;
     option->value = value;
     option->text_limit = text_limit;
@@ -224,7 +227,7 @@ unsigned int dropdown_list_has_option_with_string_value(dropdown_list_T* dropdow
     return 0;
 }
 
-void dropdown_list_sync_from_table(dropdown_list_T* dropdown_list, database_T* database, const char* tablename, unsigned int key_column, int sprite_column)
+void dropdown_list_sync_from_table(dropdown_list_T* dropdown_list, database_T* database, const char* tablename, unsigned int key_column, int sprite_id_column)
 {
     char* sql_template = "SELECT * FROM %s";
     char* sql = calloc(strlen(sql_template) + strlen(tablename) + 1, sizeof(char));
@@ -243,13 +246,13 @@ void dropdown_list_sync_from_table(dropdown_list_T* dropdown_list, database_T* d
         strcpy(key,  _key); 
 
         // loading serialized sprite
-        const unsigned char* sprite_path = 0;
-        sprite_T* sprite = (void*) 0;
+        const unsigned char* sprite_id = 0;
+        database_sprite_T* database_sprite = (void*) 0;
 
-        if (sprite_column != -1)
+        if (sprite_id_column != -1)
         {
-            sprite_path = sqlite3_column_text(stmt, sprite_column);
-            sprite = load_sprite_from_disk(sprite_path);
+            sprite_id = sqlite3_column_text(stmt, sprite_id_column);
+            database_sprite = database_get_sprite_by_id(database, sprite_id);
         }
 
         if (dropdown_list_has_option_with_string_value(dropdown_list, value))
@@ -258,7 +261,7 @@ void dropdown_list_sync_from_table(dropdown_list_T* dropdown_list, database_T* d
         dynamic_list_append(
             dropdown_list->options,
             init_dropdown_list_option(
-                sprite,
+                database_sprite,
                 key,
                 value,
                 0
@@ -269,4 +272,13 @@ void dropdown_list_sync_from_table(dropdown_list_T* dropdown_list, database_T* d
 	sqlite3_finalize(stmt);
 
 	sqlite3_close(database->db);
+}
+
+void dropdown_list_reload_sprites(dropdown_list_T* dropdown_list)
+{
+    for (int i = 0; i < dropdown_list->options->size; i++)
+    {
+        dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) dropdown_list->options->items[i];
+        database_sprite_reload_from_disk(dropdown_list_option->database_sprite);
+    }
 }

@@ -22,17 +22,19 @@ void dropdown_list_tick(actor_T* self);
 
 void dropdown_list_draw(actor_T* self);
 
-void dropdown_list_sync_from_table(dropdown_list_T* dropdown_list, database_T* database, const char* tablename, unsigned int key_column, int sprite_column);
+void dropdown_list_sync_from_table(dropdown_list_T* dropdown_list, database_T* database, const char* tablename, unsigned int key_column, int sprite_id_column);
+
+void dropdown_list_reload_sprites(dropdown_list_T* dropdown_list);
 
 unsigned int dropdown_list_has_option_with_string_value(dropdown_list_T* dropdown_list, const char* value);
 
 typedef struct DROPDOWN_LIST_OPTION_STRUCT
 {
-    sprite_T* sprite;
+    database_sprite_T* database_sprite;
     char* key;
     void* value;
     unsigned int text_limit;
 } dropdown_list_option_T;
 
-dropdown_list_option_T* init_dropdown_list_option(sprite_T* sprite, char* key, void* value, unsigned int text_limit);
+dropdown_list_option_T* init_dropdown_list_option(database_sprite_T* database_sprite, char* key, void* value, unsigned int text_limit);
 #endif

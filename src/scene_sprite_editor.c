@@ -21,8 +21,10 @@ void scene_sprite_editor_refresh_state(scene_sprite_editor_T* s_sprite_editor)
         DATABASE,
         "sprites",
         1,
-        2
+        0
     );
+
+    dropdown_list_reload_sprites(s_sprite_editor->dropdown_list_sprite);
 }
 
 void scene_sprite_editor_delete_grids_reset_sprite_id(scene_sprite_editor_T* s_sprite_editor)
@@ -59,6 +61,8 @@ void sprite_button_save_press()
         );
 
         scene_sprite_editor_set_sprite_id(s_sprite_editor, db_sprite_id);
+        database_sprite_T* database_sprite = database_get_sprite_by_id(DATABASE, db_sprite_id);
+        s_sprite_editor->current_database_sprite = database_sprite;
     }
     else
     {
@@ -128,7 +132,37 @@ void sprite_button_new_press()
     database_sprite_free(s_sprite_editor->current_database_sprite);
     s_sprite_editor->current_database_sprite = (void*)0;
 
-    scene_sprite_editor_delete_grids_reset_sprite_id(s_sprite_editor); 
+    memset(
+        s_sprite_editor->input_field_name->value,
+        '\0',
+        strlen(s_sprite_editor->input_field_name->value) * sizeof(char)
+    );
+
+    s_sprite_editor->input_field_name->value = realloc(
+        s_sprite_editor->input_field_name->value,
+        1 * sizeof(char) 
+    );
+
+    s_sprite_editor->input_field_name->value[0] = '\0';
+
+    scene_sprite_editor_delete_grids_reset_sprite_id(s_sprite_editor);
+
+    // we need at least one grid in the state list.
+    dynamic_list_append(
+        s_sprite_editor->grids,
+        init_grid(
+            (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
+            (WINDOW_HEIGHT / 2) - ((16 * 16) / 2),
+            0.0f,
+            16,
+            16,
+            16,
+            0,
+            0,
+            0,
+            "grid_canvas"
+        )
+    );
 }
 
 scene_sprite_editor_T* init_scene_sprite_editor()
