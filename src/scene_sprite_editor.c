@@ -66,6 +66,11 @@ void sprite_button_save_press()
 
         printf("FILEPATH: %s\n", s_sprite_editor->current_database_sprite->filepath);
         write_sprite_to_disk(sprite, s_sprite_editor->current_database_sprite->filepath);
+        database_update_sprite_name_by_id(
+            DATABASE,
+            s_sprite_editor->current_database_sprite->id,
+            s_sprite_editor->input_field_name->value
+        );
     }
 
     scene_sprite_editor_refresh_state(s_sprite_editor);

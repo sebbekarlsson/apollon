@@ -49,7 +49,7 @@ database_T* init_database()
     return database;
 }
 
-database_sprite_T* init_database_sprite(const unsigned char* id, const unsigned char* name, char* filepath, sprite_T* sprite)
+database_sprite_T* init_database_sprite(char* id, char* name, char* filepath, sprite_T* sprite)
 {
     database_sprite_T* database_sprite = calloc(1, sizeof(struct DATABASE_SPRITE_STRUCT));
     database_sprite->id = id;
@@ -86,6 +86,7 @@ sqlite3_stmt* database_exec_sql(database_T* database, char* sql, unsigned int do
     if (do_error_checking)
     {
         int rc = sqlite3_step(stmt);
+
         if (rc != SQLITE_DONE)
         {
             printf("ERROR executing query: %s\n", sqlite3_errmsg(db));
@@ -144,6 +145,25 @@ char* database_insert_sprite(database_T* database, const char* name, sprite_T* s
     return id;
 }
 
+void database_update_sprite_name_by_id(database_T* database, const char* id, const char* name)
+{
+    char* sql_template = "UPDATE sprites SET name=\"%s\" WHERE id=\"%s\"";
+    char* sql = calloc(strlen(sql_template) + strlen(id) + strlen(name) + 1, sizeof(char));
+    sprintf(sql, sql_template, name, id);
+
+    sqlite3_stmt* stmt = database_exec_sql(database, sql, 0);
+
+    int rc = sqlite3_step(stmt);
+
+    if (rc != SQLITE_DONE)
+    {
+        printf("ERROR executing query: %s\n", sqlite3_errmsg(database->db));
+    }
+
+	sqlite3_finalize(stmt);
+	sqlite3_close(database->db);
+}
+
 database_sprite_T* database_get_sprite_by_id(database_T* database, const char* id)
 {
     char* sql_template = "SELECT * FROM sprites WHERE id=\"%s\" LIMIT 1";
@@ -169,10 +189,15 @@ database_sprite_T* database_get_sprite_by_id(database_T* database, const char* i
 	sqlite3_finalize(stmt);
 	sqlite3_close(database->db);
 
+    char* id_new = calloc(strlen(id) + 1, sizeof(char));
+    strcpy(id_new, id);
+
+    char* name_new = calloc(strlen(name) + 1, sizeof(char));
+    strcpy(name_new, name);
 
     char* filepath_new = calloc(strlen(filepath) + 1, sizeof(char));
     strcpy(filepath_new, filepath);
 
     
-    return init_database_sprite(id, name, filepath_new, sprite);
+    return init_database_sprite(id_new, name_new, filepath_new, sprite);
 }
