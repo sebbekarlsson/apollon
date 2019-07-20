@@ -10,21 +10,30 @@
 extern keyboard_state_T* KEYBOARD_STATE;
 extern database_T* DATABASE;
 
+
+void scene_actor_editor_reset_actor_definition_id(scene_actor_editor_T* s_actor_editor)
+{
+    if (s_actor_editor->actor_definition_id != (void*) 0)
+    {
+        free(s_actor_editor->actor_definition_id);
+    }
+
+    s_actor_editor->actor_definition_id = (void*) 0;
+}
+
 void button_new_actor_press()
 {
     printf("button_new_actor_press\n");
 
     scene_T* scene = get_current_scene();
     scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) scene;
-    s_actor_editor->actor_index = -1;
+    scene_actor_editor_reset_actor_definition_id(s_actor_editor);
 
     memset(
         s_actor_editor->input_field_type_name->value,
         0,
         sizeof(char) * strlen(s_actor_editor->input_field_type_name->value)
     );
-
-    s_actor_editor->selected_database_sprite = (void*) 0;
 
     memset(
         s_actor_editor->input_field_tick_script->value,
@@ -43,8 +52,43 @@ void button_save_press()
 {
     printf("button_save_press\n");
 
-    /*scene_T* scene = get_current_scene();
-    scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) scene;*/
+    scene_T* scene = get_current_scene();
+    scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) scene;
+
+    dropdown_list_option_T* option_selected_sprite = dropdown_list_get_selected_option(
+        s_actor_editor->dropdown_list_sprite
+    );
+
+    if (option_selected_sprite == (void*) 0)
+    {
+        printf("No sprite selected!\n");
+        return;
+    }
+    
+    if (s_actor_editor->actor_definition_id == (void*)0)
+    {
+        printf("Insert new actor.\n");
+
+        database_insert_actor_definition(
+            DATABASE,
+            s_actor_editor->input_field_type_name->value,
+            (char*) option_selected_sprite->value,
+            s_actor_editor->input_field_tick_script->value,
+            s_actor_editor->input_field_draw_script->value
+        );
+    }
+    else
+    {
+        printf("Edit existing actor.\n");
+    }
+
+    dropdown_list_sync_from_table(
+        s_actor_editor->dropdown_list_actor,
+        DATABASE,
+        "actor_definitions",
+        1,
+        4
+    );
 }
 
 void actor_editor_sprite_press(void* dropdown_list, void* option)
@@ -58,10 +102,12 @@ void actor_editor_sprite_press(void* dropdown_list, void* option)
 void actor_editor_actor_press(void* dropdown_list, void* option)
 {
     printf("Press actor dropdown\n");
-    /*dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) option;
+    dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) option;
 
     scene_T* scene = get_current_scene();
-    scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) scene;*/
+    scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) scene;
+
+    // s_actor_editor->actor_definition_id = (char*) dropdown_list_option->value;
 }
 
 scene_actor_editor_T* init_scene_actor_editor()
@@ -77,8 +123,7 @@ scene_actor_editor_T* init_scene_actor_editor()
     scene->bg_g = 255;
     scene->bg_b = 255;
 
-    s_actor_editor->actor_index = -1;
-    s_actor_editor->selected_database_sprite = (void*) 0;
+    s_actor_editor->actor_definition_id = (void*) 0;
 
     s_actor_editor->focus_manager = init_focus_manager();
     
@@ -158,6 +203,22 @@ scene_actor_editor_T* init_scene_actor_editor()
     s_actor_editor->button_save = init_button(jx, jy, 0.0f, "Save", button_save_press);
     dynamic_list_append(s_actor_editor->focus_manager->focusables, (actor_focusable_T*) s_actor_editor->button_save);
     dynamic_list_append(state->actors, s_actor_editor->button_save);
+
+    dropdown_list_sync_from_table(
+        s_actor_editor->dropdown_list_sprite,
+        DATABASE,
+        "sprites",
+        1,
+        0
+    );
+
+    dropdown_list_sync_from_table(
+        s_actor_editor->dropdown_list_actor,
+        DATABASE,
+        "actor_definitions",
+        1,
+        4
+    );
 
     state_resort_actors(state);
 

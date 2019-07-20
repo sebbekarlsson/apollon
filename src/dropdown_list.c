@@ -282,3 +282,17 @@ void dropdown_list_reload_sprites(dropdown_list_T* dropdown_list)
         database_sprite_reload_from_disk(dropdown_list_option->database_sprite);
     }
 }
+
+dropdown_list_option_T* dropdown_list_get_selected_option(dropdown_list_T* dropdown_list)
+{
+    for (int i = 0; i < dropdown_list->options->size; i++)
+    {
+        dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) dropdown_list->options->items[i];
+        if (i == dropdown_list->selected_index)
+        {
+            return dropdown_list_option;
+        }
+    }
+
+    return (void*) 0;
+}

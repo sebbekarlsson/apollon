@@ -37,4 +37,6 @@ typedef struct DROPDOWN_LIST_OPTION_STRUCT
 } dropdown_list_option_T;
 
 dropdown_list_option_T* init_dropdown_list_option(database_sprite_T* database_sprite, char* key, void* value, unsigned int text_limit);
+
+dropdown_list_option_T* dropdown_list_get_selected_option(dropdown_list_T* dropdown_list);
 #endif
