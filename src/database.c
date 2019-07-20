@@ -198,6 +198,5 @@ database_sprite_T* database_get_sprite_by_id(database_T* database, const char* i
     char* filepath_new = calloc(strlen(filepath) + 1, sizeof(char));
     strcpy(filepath_new, filepath);
 
-    
     return init_database_sprite(id_new, name_new, filepath_new, sprite);
 }
