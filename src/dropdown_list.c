@@ -1,8 +1,9 @@
 #include "include/dropdown_list.h"
+#include "include/database.h"
+#include "include/file_utils.h"
 #include <coelum/theatre.h>
 #include <coelum/draw_utils.h>
 #include <coelum/input.h>
-#include "include/database.h"
 #include <string.h>
 #include <spr/spr.h>
 
@@ -248,35 +249,7 @@ void dropdown_list_sync_from_table(dropdown_list_T* dropdown_list, database_T* d
         if (sprite_column != -1)
         {
             sprite_path = sqlite3_column_text(stmt, sprite_column);
-            spr_T* spr = spr_load_from_file(sprite_path);
- 
-            dynamic_list_T* textures = init_dynamic_list(sizeof(struct TEXTURE_STRUCT));
-
-            for (int i = 0; i < spr->frames_size; i++)
-            {
-                spr_frame_T* frame = spr->frames[i];
-                unsigned char* img = calloc((spr->width * spr->height) * 4, sizeof(unsigned char));
-
-                int x = 0;
-                int y = 0;
-                for (int i = 0; i < spr->width * spr->height; i+=1)
-                {
-                    y = i / (int) spr->width;
-                    x = i % (int) spr->width;
-
-                    img[(4 * i)] = frame->pixel_rows[y]->pixels[x]->r;
-                    img[(4 * i) + 1] = frame->pixel_rows[y]->pixels[x]->g;
-                    img[(4 * i) + 2] = frame->pixel_rows[y]->pixels[x]->b;
-                    img[(4 * i) + 3] = frame->pixel_rows[y]->pixels[x]->a;
-                }
-                
-                texture_T* texture = get_texture_from_data((unsigned char*)img, spr->width, spr->height, GL_RGBA);
-                dynamic_list_append(textures, texture);
-            }
-
-            sprite = init_sprite(textures, spr->delay, spr->width, spr->height);
-
-            spr_free(spr);
+            sprite = load_sprite_from_disk(sprite_path);
         }
 
         if (dropdown_list_has_option_with_string_value(dropdown_list, value))

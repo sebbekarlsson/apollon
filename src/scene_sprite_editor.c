@@ -1,6 +1,6 @@
 #include "include/scene_sprite_editor.h"
 #include "include/etc.h"
-#include "include/database.h"
+#include "include/file_utils.h"
 #include <coelum/constants.h>
 #include <coelum/actor_text.h>
 #include <coelum/input.h>
@@ -14,7 +14,7 @@ extern keyboard_state_T* KEYBOARD_STATE;
 extern database_T* DATABASE;
 
 
-void sprite_editor_refresh_state(scene_sprite_editor_T* s_sprite_editor)
+void scene_sprite_editor_refresh_state(scene_sprite_editor_T* s_sprite_editor)
 {
     dropdown_list_sync_from_table(
         s_sprite_editor->dropdown_list_sprite,
@@ -25,6 +25,21 @@ void sprite_editor_refresh_state(scene_sprite_editor_T* s_sprite_editor)
     );
 }
 
+void scene_sprite_editor_delete_grids_reset_sprite_id(scene_sprite_editor_T* s_sprite_editor)
+{
+    scene_sprite_editor_clear_all_frames(s_sprite_editor);
+    free(s_sprite_editor->sprite_id);
+    s_sprite_editor->sprite_id = 0;
+}
+
+void scene_sprite_editor_set_sprite_id(scene_sprite_editor_T* s_sprite_editor, char* id)
+{
+    if (s_sprite_editor->sprite_id)
+        free(s_sprite_editor->sprite_id);
+
+    s_sprite_editor->sprite_id = id;
+}
+
 void sprite_button_save_press()
 {
     scene_T* scene = get_current_scene();
@@ -33,31 +48,82 @@ void sprite_button_save_press()
     dynamic_list_T* textures = scene_sprite_editor_get_frames_as_textures(s_sprite_editor);
     sprite_T* sprite = init_sprite(textures, 0, s_sprite_editor->grid->width, s_sprite_editor->grid->height);
 
-    char* db_sprite_id = database_insert_sprite(
-        DATABASE,
-        s_sprite_editor->input_field_name->value,
-        sprite
-    );
+    if (s_sprite_editor->sprite_id == (void*)0)
+    {
+        printf("Inserting a new sprite %s.\n", s_sprite_editor->sprite_id);
 
-    if (s_sprite_editor->sprite_id)
-        free(s_sprite_editor->sprite_id);
+        char* db_sprite_id = database_insert_sprite(
+            DATABASE,
+            s_sprite_editor->input_field_name->value,
+            sprite
+        );
 
-    s_sprite_editor->sprite_id = db_sprite_id; 
+        scene_sprite_editor_set_sprite_id(s_sprite_editor, db_sprite_id);
+    }
+    else
+    {
+        printf("Updating existing sprite.\n");
 
-    sprite_editor_refresh_state(s_sprite_editor);
+        printf("FILEPATH: %s\n", s_sprite_editor->current_database_sprite->filepath);
+        write_sprite_to_disk(sprite, s_sprite_editor->current_database_sprite->filepath);
+    }
+
+    scene_sprite_editor_refresh_state(s_sprite_editor);
 }
 
 void dropdown_list_sprite_press(void* dropdown_list, void* option)
 {
     printf("Selected a sprite!\n");
-    //dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) option;
+    scene_T* scene = get_current_scene();
+    scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) scene;
+
+    scene_sprite_editor_delete_grids_reset_sprite_id(s_sprite_editor);
+
+    dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) option;
+
+    char* id = (char*) dropdown_list_option->value;
+
+    database_sprite_T* database_sprite = database_get_sprite_by_id(DATABASE, id);
+    sprite_T* sprite = database_sprite->sprite;
+
+    s_sprite_editor->current_database_sprite = database_sprite;
+
+    scene_sprite_editor_load_grids_from_sprite(s_sprite_editor, sprite);
+    scene_sprite_editor_refresh_grid(s_sprite_editor);
+    
+    memset(
+        s_sprite_editor->input_field_name->value,
+        '\0',
+        strlen(s_sprite_editor->input_field_name->value) * sizeof(char)
+    );
+
+    s_sprite_editor->input_field_name->value = realloc(
+        s_sprite_editor->input_field_name->value,
+        (strlen(database_sprite->name) + 1) * sizeof(char)
+    );
+
+    strcpy(s_sprite_editor->input_field_name->value, database_sprite->name);
+
+    scene_sprite_editor_set_sprite_id(s_sprite_editor, database_sprite->id);
 }
 
 void sprite_button_new_press()
 {
     printf("New!\n");
-    //scene_T* scene = get_current_scene();
-    //scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) scene;
+
+    scene_T* scene = get_current_scene();
+    scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) scene;
+    
+    if (!s_sprite_editor->sprite_id)
+    {
+        printf("You are not currently editing a sprite.\n");
+        return;
+    }
+
+    database_sprite_free(s_sprite_editor->current_database_sprite);
+    s_sprite_editor->current_database_sprite = (void*)0;
+
+    scene_sprite_editor_delete_grids_reset_sprite_id(s_sprite_editor); 
 }
 
 scene_sprite_editor_T* init_scene_sprite_editor()
@@ -245,12 +311,13 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     s_sprite_editor->grid_index = 0;
     s_sprite_editor->sprite_id = 0;
+    s_sprite_editor->current_database_sprite = (void*) 0;
 
     s_sprite_editor->r = 0.0f;
     s_sprite_editor->g = 0.0f;
     s_sprite_editor->b = 0.0f;
 
-    sprite_editor_refresh_state(s_sprite_editor);
+    scene_sprite_editor_refresh_state(s_sprite_editor);
 
     return s_sprite_editor;
 }
@@ -525,6 +592,50 @@ void scene_sprite_editor_refresh_grid(scene_sprite_editor_T* self)
 
     printf("%d\n", (int)current_grid_state->width);
     grid_copy(current_grid_state, self->grid);
+}
+
+void scene_sprite_editor_load_grids_from_sprite(scene_sprite_editor_T* s_sprite_editor, sprite_T* sprite)
+{
+    for (int i = 0; i < sprite->textures->size; i++)
+    {
+        texture_T* texture = (texture_T*) sprite->textures->items[i];
+
+        grid_T* grid = init_grid(
+            (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
+            (WINDOW_HEIGHT / 2) - ((16 * 16) / 2),
+            0.0f,
+            16,
+            16,
+            16,
+            0,
+            0,
+            0,
+            "grid_canvas"
+        );
+
+        int y, x;
+
+        for (y = 0; y < grid->height; y++)
+        {
+            for (x = 0; x < grid->width; x++)
+            { 
+                unsigned int channelCount = 4;
+                unsigned char* pixelOffset = texture->data + (y * (int)grid->width + x) * channelCount;
+                unsigned char r = pixelOffset[0];
+                unsigned char g = pixelOffset[1];
+                unsigned char b = pixelOffset[2];
+
+                grid->cells[x][y]->r = r;
+                grid->cells[x][y]->g = g;
+                grid->cells[x][y]->b = b;
+            }
+        }
+        
+        dynamic_list_append(
+            s_sprite_editor->grids,
+            grid 
+        );
+    }
 }
 
 dynamic_list_T* scene_sprite_editor_get_frames_as_textures(scene_sprite_editor_T* self)

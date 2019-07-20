@@ -1,4 +1,5 @@
 #include "include/database.h"
+#include "include/file_utils.h"
 #include <string.h>
 #include <coelum/actor.h>
 #include <coelum/utils.h>
@@ -48,14 +49,21 @@ database_T* init_database()
     return database;
 }
 
-database_sprite_T* init_database_sprite(const unsigned char* id, const unsigned char* name, const unsigned char* filepath)
+database_sprite_T* init_database_sprite(const unsigned char* id, const unsigned char* name, char* filepath, sprite_T* sprite)
 {
     database_sprite_T* database_sprite = calloc(1, sizeof(struct DATABASE_SPRITE_STRUCT));
     database_sprite->id = id;
     database_sprite->name = name; 
     database_sprite->filepath = filepath;
+    database_sprite->sprite = sprite;
 
     return database_sprite;
+}
+
+void database_sprite_free(database_sprite_T* database_sprite)
+{
+    sprite_free(database_sprite->sprite);
+    free(database_sprite);
 }
 
 sqlite3_stmt* database_exec_sql(database_T* database, char* sql, unsigned int do_error_checking)
@@ -136,32 +144,35 @@ char* database_insert_sprite(database_T* database, const char* name, sprite_T* s
     return id;
 }
 
-dynamic_list_T* database_get_all_sprites(database_T* database)
+database_sprite_T* database_get_sprite_by_id(database_T* database, const char* id)
 {
-    dynamic_list_T* sprites = init_dynamic_list(sizeof(struct DATABASE_SPRITE_STRUCT*));
+    char* sql_template = "SELECT * FROM sprites WHERE id=\"%s\" LIMIT 1";
+    char* sql = calloc(strlen(sql_template) + strlen(id) + 1, sizeof(char));
+    sprintf(sql, sql_template, id);
 
-    sqlite3_stmt* stmt = database_exec_sql(database, "SELECT * FROM sprites", 0);
+    sqlite3_stmt* stmt = database_exec_sql(database, sql, 0);
 
-    printf("Got results:\n");
-	while (sqlite3_step(stmt) != SQLITE_DONE) {
-        const unsigned char* id = sqlite3_column_text(stmt, 0);
-        const unsigned char* name = sqlite3_column_text(stmt, 1);
-        const unsigned char* filepath = sqlite3_column_text(stmt, 2);
+    const unsigned char* name = 0;
+    const unsigned char* filepath = 0;
+    sprite_T* sprite = (void*) 0;
 
-        dynamic_list_append(
-            sprites,
-            init_database_sprite(
-                id,
-                name,
-                filepath
-            )
-        );
+    while (sqlite3_step(stmt) != SQLITE_DONE) {
+        name = sqlite3_column_text(stmt, 1);
+        filepath = sqlite3_column_text(stmt, 2);
+
+        if (filepath)
+            sprite = load_sprite_from_disk(filepath);
+
+        break;
 	}
 
 	sqlite3_finalize(stmt);
-
 	sqlite3_close(database->db);
-    getc(stdin);
 
-    return sprites;
+
+    char* filepath_new = calloc(strlen(filepath) + 1, sizeof(char));
+    strcpy(filepath_new, filepath);
+
+    
+    return init_database_sprite(id, name, filepath_new, sprite);
 }

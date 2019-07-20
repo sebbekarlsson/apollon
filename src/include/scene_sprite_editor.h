@@ -8,6 +8,7 @@
 #include "input_field.h"
 #include "label.h"
 #include "button.h"
+#include "database.h"
 
 
 typedef struct SCENE_SPRITE_EDITOR_STRUCT
@@ -25,6 +26,7 @@ typedef struct SCENE_SPRITE_EDITOR_STRUCT
     button_T* button_new;
     unsigned int grid_index;
     char* sprite_id; // the sprite currently being modified
+    database_sprite_T* current_database_sprite; // a copy of the current sprite being edited. Only for reading.
     float r;
     float g;
     float b;
@@ -46,6 +48,8 @@ void scene_sprite_editor_delete_current_frame(scene_sprite_editor_T* self);
 void scene_sprite_editor_clear_all_frames(scene_sprite_editor_T* self);
 
 void scene_sprite_editor_refresh_grid(scene_sprite_editor_T* self);
+
+void scene_sprite_editor_load_grids_from_sprite(scene_sprite_editor_T* s_sprite_editor, sprite_T* sprite);
 
 dynamic_list_T* scene_sprite_editor_get_frames_as_textures(scene_sprite_editor_T* self);
 #endif
