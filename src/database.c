@@ -85,7 +85,8 @@ database_actor_definition_T* init_database_actor_definition(
     char* name,
     char* sprite_id,
     char* tick_script,
-    char* draw_script
+    char* draw_script,
+    database_sprite_T* database_sprite
 )
 {
     database_actor_definition_T* database_actor_definition = calloc(
@@ -97,6 +98,7 @@ database_actor_definition_T* init_database_actor_definition(
     database_actor_definition->sprite_id = sprite_id;
     database_actor_definition->tick_script = tick_script;
     database_actor_definition->draw_script = draw_script;
+    database_actor_definition->database_sprite = database_sprite;
 
     return database_actor_definition;
 }
@@ -303,7 +305,8 @@ database_actor_definition_T* database_get_actor_definition_by_id(database_T* dat
         name_new,
         sprite_id_new,
         tick_script_new,
-        draw_script_new
+        draw_script_new,
+        database_get_sprite_by_id(database, sprite_id_new)
     );
 }
 
@@ -455,7 +458,8 @@ database_actor_instance_T* init_database_actor_instance(
     const char* scene_id,
     const float x,
     const float y,
-    const float z
+    const float z,
+    database_actor_definition_T* database_actor_definition
 )
 {
     database_actor_instance_T* database_actor_instance = calloc(1, sizeof(struct DATABASE_ACTOR_INSTANCE_STRUCT));
@@ -465,6 +469,30 @@ database_actor_instance_T* init_database_actor_instance(
     database_actor_instance->x = x;
     database_actor_instance->y = y;
     database_actor_instance->z = z;
+    database_actor_instance->database_actor_definition = database_actor_definition;
 
     return database_actor_instance;
+}
+
+char* database_insert_actor_instance(
+    database_T* database,
+    const char* actor_definition_id,
+    const char* scene_id,
+    const float x,
+    const float y,
+    const float z
+)
+{
+    char* id = get_random_string(16);
+    char* sql_template = "INSERT INTO actor_instances VALUES(\"%s\", \"%s\", %12.6f, %12.6f, %12.6f, \"%s\")";
+    char* sql = calloc(400, sizeof(char));
+
+    sprintf(sql, sql_template, id, actor_definition_id, x, y, z, scene_id);
+
+    sqlite3_stmt* stmt = database_exec_sql(database, sql, 1);
+    sqlite3_finalize(stmt);
+    sqlite3_close(database->db);
+    free(sql);
+
+    return id;
 }
