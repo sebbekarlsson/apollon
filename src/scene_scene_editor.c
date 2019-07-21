@@ -14,6 +14,20 @@ extern keyboard_state_T* KEYBOARD_STATE;
 extern database_T* DATABASE;
 
 
+void scene_scene_editor_refresh_state(scene_scene_editor_T* s_scene_editor)
+{
+    printf("Refreshing state...\n");
+
+    dropdown_list_sync_from_table(
+        s_scene_editor->dropdown_list,
+        DATABASE,
+        "actor_definitions",
+        1,
+        4
+    );
+    dropdown_list_reload_sprites(s_scene_editor->dropdown_list);
+}
+
 void scene_editor_dropdown_press(void* dropdown_list, void* option)
 {
     //scene_T* scene = get_current_scene();
@@ -56,6 +70,8 @@ scene_scene_editor_T* init_scene_scene_editor()
 
     dynamic_list_append(state->actors, s_scene_editor->grid);
     dynamic_list_append(state->actors, s_scene_editor->dropdown_list);
+
+    scene_scene_editor_refresh_state(s_scene_editor);
 
     //insert_new_scene("main");
 
