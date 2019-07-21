@@ -26,6 +26,8 @@ typedef struct DATABASE_ACTOR_DEFINITION_STRUCT
     char* sprite_id;
     char* tick_script;
     char* draw_script;
+
+    // TODO: add friction
 } database_actor_definition_T;
 
 database_actor_definition_T* init_database_actor_definition(
@@ -70,4 +72,24 @@ void database_update_actor_definition_by_id(
     const char* tick_script,
     const char* draw_script
 );
+
+typedef struct DATABASE_SCENE_STRUCT
+{
+    const char* id;
+    const char* name;
+
+    // TODO: add bg_r, bg_g, bg_b and possibly tick_script and draw_script
+} database_scene_T;
+
+typedef struct DATABASE_ACTOR_INSTANCE_STRUCT
+{
+    const char* id;
+    const char* actor_definition_id;
+    const char* scene_id;
+    const float x;
+    const float y;
+    const float z;
+
+    //TODO: add rx, ry, rz
+} database_actor_instance_T;
 #endif
