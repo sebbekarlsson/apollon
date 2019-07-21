@@ -108,6 +108,29 @@ void actor_editor_actor_press(void* dropdown_list, void* option)
     scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) scene;
 
     s_actor_editor->actor_definition_id = (char*) dropdown_list_option->value;
+
+    database_actor_definition_T* database_actor_definition = database_get_actor_definition_by_id(
+        DATABASE,
+        s_actor_editor->actor_definition_id 
+    );
+
+    s_actor_editor->input_field_type_name->value = realloc(
+        s_actor_editor->input_field_type_name->value,
+        (strlen(database_actor_definition->name) + 1) * sizeof(char)
+    );
+    strcpy(s_actor_editor->input_field_type_name->value, database_actor_definition->name);
+
+    s_actor_editor->input_field_tick_script->value = realloc(
+        s_actor_editor->input_field_tick_script->value,
+        (strlen(database_actor_definition->tick_script) + 1) * sizeof(char)
+    );
+    strcpy(s_actor_editor->input_field_tick_script->value, database_actor_definition->tick_script);
+
+    s_actor_editor->input_field_draw_script->value = realloc(
+        s_actor_editor->input_field_draw_script->value,
+        (strlen(database_actor_definition->draw_script) + 1) * sizeof(char)
+    );
+    strcpy(s_actor_editor->input_field_draw_script->value, database_actor_definition->draw_script);
 }
 
 scene_actor_editor_T* init_scene_actor_editor()

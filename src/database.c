@@ -68,7 +68,9 @@ void database_sprite_free(database_sprite_T* database_sprite)
 
 void database_sprite_reload_from_disk(database_sprite_T* database_sprite)
 {
-    sprite_free(database_sprite->sprite);
+    if (database_sprite->sprite)
+        sprite_free(database_sprite->sprite);
+
     database_sprite->sprite = load_sprite_from_disk(database_sprite->filepath);
 }
 
@@ -207,10 +209,10 @@ database_sprite_T* database_get_sprite_by_id(database_T* database, const char* i
     {
         name = sqlite3_column_text(stmt, 1);
         filepath = sqlite3_column_text(stmt, 2);
-	}
 
-	sqlite3_finalize(stmt);
-	sqlite3_close(database->db);
+        if (filepath)
+            sprite = load_sprite_from_disk(filepath);
+	}	
 
     char* id_new = calloc(strlen(id) + 1, sizeof(char));
     strcpy(id_new, id);
@@ -220,6 +222,9 @@ database_sprite_T* database_get_sprite_by_id(database_T* database, const char* i
 
     char* filepath_new = calloc(strlen(filepath) + 1, sizeof(char));
     strcpy(filepath_new, filepath);
+
+    sqlite3_finalize(stmt);
+	sqlite3_close(database->db);
 
     return init_database_sprite(id_new, name_new, filepath_new, sprite);
 }
@@ -232,7 +237,6 @@ char* database_insert_actor_definition(
     const char* draw_script
 )
 {
-    //char *sql = "CREATE TABLE IF NOT EXISTS actor_definitions(id TEXT, name TEXT, tick_script TEXT, draw_script TEXT, sprite_id TEXT);"
     char* id = get_random_string(16);
     char* sql_template = "INSERT INTO actor_definitions VALUES(\"%s\", \"%s\", \"%s\", \"%s\", \"%s\")";
     char* sql = calloc(600, sizeof(char));
@@ -267,14 +271,11 @@ database_actor_definition_T* database_get_actor_definition_by_id(database_T* dat
         tick_script = sqlite3_column_text(stmt, 2);
         draw_script = sqlite3_column_text(stmt, 3);
         sprite_id = sqlite3_column_text(stmt, 4);
-	}
-
-	sqlite3_finalize(stmt);
-	sqlite3_close(database->db);
+	}	
 
     char* id_new = calloc(strlen(id) + 1, sizeof(char));
     strcpy(id_new, id);
-
+    
     char* name_new = calloc(strlen(name) + 1, sizeof(char));
     strcpy(name_new, name);
 
@@ -286,6 +287,9 @@ database_actor_definition_T* database_get_actor_definition_by_id(database_T* dat
 
     char* draw_script_new = calloc(strlen(draw_script) + 1, sizeof(char));
     strcpy(draw_script_new, draw_script);
+
+    sqlite3_finalize(stmt);
+	sqlite3_close(database->db);
 
     return init_database_actor_definition(
         id_new,
