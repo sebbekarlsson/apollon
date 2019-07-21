@@ -107,7 +107,7 @@ void actor_editor_actor_press(void* dropdown_list, void* option)
     scene_T* scene = get_current_scene();
     scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) scene;
 
-    // s_actor_editor->actor_definition_id = (char*) dropdown_list_option->value;
+    s_actor_editor->actor_definition_id = (char*) dropdown_list_option->value;
 }
 
 scene_actor_editor_T* init_scene_actor_editor()

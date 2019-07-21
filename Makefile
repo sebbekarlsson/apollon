@@ -2,7 +2,7 @@ exec = apollon.out
 sources = $(wildcard src/*.c)
 sources += $(wildcard ../GL/src/*.c)
 objects = $(sources:.c=.o)
-flags = -Wall -g -lcoelum -lspr -lhermes -I../coelum/GL/include -lglfw -ldl -lcglm -lm -lopenal -lpthread -laudio -lpng -lsqlite3
+flags = -Wall -g -lcoelum -lspr -I../coelum/GL/include -lglfw -ldl -lcglm -lm -lopenal -lpthread -laudio -lpng -lsqlite3
 
 
 $(exec): $(objects)

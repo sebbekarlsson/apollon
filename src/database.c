@@ -77,7 +77,7 @@ database_actor_definition_T* init_database_actor_definition(
     char* name,
     char* sprite_id,
     char* tick_script,
-    char* draw_script    
+    char* draw_script
 )
 {
     database_actor_definition_T* database_actor_definition = calloc(
@@ -197,19 +197,16 @@ database_sprite_T* database_get_sprite_by_id(database_T* database, const char* i
     sprintf(sql, sql_template, id);
 
     sqlite3_stmt* stmt = database_exec_sql(database, sql, 0);
+    free(sql);
 
     const unsigned char* name = 0;
     const unsigned char* filepath = 0;
     sprite_T* sprite = (void*) 0;
 
-    while (sqlite3_step(stmt) != SQLITE_DONE) {
+    if (sqlite3_step(stmt) != SQLITE_DONE)
+    {
         name = sqlite3_column_text(stmt, 1);
         filepath = sqlite3_column_text(stmt, 2);
-
-        if (filepath)
-            sprite = load_sprite_from_disk(filepath);
-
-        break;
 	}
 
 	sqlite3_finalize(stmt);
@@ -248,4 +245,53 @@ char* database_insert_actor_definition(
     free(sql);
 
     return id;
+}
+
+database_actor_definition_T* database_get_actor_definition_by_id(database_T* database, const char* id)
+{
+    char* sql_template = "SELECT * FROM actor_definitions WHERE id=\"%s\" LIMIT 1";
+    char* sql = calloc(strlen(sql_template) + strlen(id) + 1, sizeof(char));
+    sprintf(sql, sql_template, id);
+
+    sqlite3_stmt* stmt = database_exec_sql(database, sql, 0);
+    free(sql);
+
+    const unsigned char* name = 0;
+    const unsigned char* sprite_id = 0;
+    const unsigned char* tick_script = 0;
+    const unsigned char* draw_script = 0;
+
+    if (sqlite3_step(stmt) != SQLITE_DONE)
+    {
+        name = sqlite3_column_text(stmt, 1);
+        tick_script = sqlite3_column_text(stmt, 2);
+        draw_script = sqlite3_column_text(stmt, 3);
+        sprite_id = sqlite3_column_text(stmt, 4);
+	}
+
+	sqlite3_finalize(stmt);
+	sqlite3_close(database->db);
+
+    char* id_new = calloc(strlen(id) + 1, sizeof(char));
+    strcpy(id_new, id);
+
+    char* name_new = calloc(strlen(name) + 1, sizeof(char));
+    strcpy(name_new, name);
+
+    char* sprite_id_new = calloc(strlen(sprite_id) + 1, sizeof(char));
+    strcpy(sprite_id_new, sprite_id);
+
+    char* tick_script_new = calloc(strlen(tick_script) + 1, sizeof(char));
+    strcpy(tick_script_new, tick_script);
+
+    char* draw_script_new = calloc(strlen(draw_script) + 1, sizeof(char));
+    strcpy(draw_script_new, draw_script);
+
+    return init_database_actor_definition(
+        id_new,
+        name_new,
+        sprite_id_new,
+        tick_script_new,
+        draw_script_new
+    );
 }

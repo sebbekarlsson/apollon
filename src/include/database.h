@@ -59,4 +59,6 @@ char* database_insert_actor_definition(
     const char* tick_script,
     const char* draw_script
 );
+
+database_actor_definition_T* database_get_actor_definition_by_id(database_T* database, const char* id);
 #endif
