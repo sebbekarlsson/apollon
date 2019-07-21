@@ -36,6 +36,12 @@ void dropdown_list_update_option_sprite_by_string_value(
     database_sprite_T* database_sprite
 );
 
+void dropdown_list_update_option_key_by_string_value(
+    dropdown_list_T* dropdown_list,
+    const char* value,
+    char* key        
+);
+
 typedef struct DROPDOWN_LIST_OPTION_STRUCT
 {
     database_sprite_T* database_sprite;

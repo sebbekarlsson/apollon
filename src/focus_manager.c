@@ -18,6 +18,9 @@ focus_manager_T* init_focus_manager()
 
 void focus_manager_tick(focus_manager_T* focus_manager)
 {
+    if (focus_manager->focusables->size == 0)
+        return;
+
     if (KEYBOARD_STATE->keys[GLFW_KEY_TAB] && !KEYBOARD_STATE->key_locks[GLFW_KEY_TAB])
     {
 

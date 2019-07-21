@@ -81,15 +81,36 @@ typedef struct DATABASE_SCENE_STRUCT
     // TODO: add bg_r, bg_g, bg_b and possibly tick_script and draw_script
 } database_scene_T;
 
+database_scene_T* init_database_scene(const char* id, const char* name);
+
+database_scene_T* database_get_scene_by_id(database_T* database, const char* id);
+
+unsigned int database_count_scenes(database_T* database);
+
+char* database_insert_scene(database_T* database, const char* name);
+
+void database_delete_scene_by_id(database_T* database, const char* id);
+
+void database_update_scene_name_by_id(database_T* database, const char* id, const char* name);
+
 typedef struct DATABASE_ACTOR_INSTANCE_STRUCT
 {
     const char* id;
     const char* actor_definition_id;
     const char* scene_id;
-    const float x;
-    const float y;
-    const float z;
+    float x;
+    float y;
+    float z;
 
     //TODO: add rx, ry, rz
 } database_actor_instance_T;
+
+database_actor_instance_T* init_database_actor_instance(
+    const char* id,
+    const char* actor_definition_id,
+    const char* scene_id,
+    const float x,
+    const float y,
+    const float z
+);
 #endif

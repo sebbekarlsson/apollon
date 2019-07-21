@@ -341,3 +341,130 @@ void database_update_actor_definition_by_id(
 	sqlite3_finalize(stmt);
 	sqlite3_close(database->db);
 }
+
+database_scene_T* init_database_scene(const char* id, const char* name)
+{
+    database_scene_T* database_scene = calloc(1, sizeof(struct DATABASE_SCENE_STRUCT));
+    database_scene->id = id;
+    database_scene->name = name;
+
+    return database_scene;
+}
+
+database_scene_T* database_get_scene_by_id(database_T* database, const char* id)
+{
+    char* sql_template = "SELECT * FROM scenes WHERE id=\"%s\" LIMIT 1";
+    char* sql = calloc(strlen(sql_template) + strlen(id) + 1, sizeof(char));
+    sprintf(sql, sql_template, id);
+
+    sqlite3_stmt* stmt = database_exec_sql(database, sql, 0);
+    free(sql);
+
+    const unsigned char* name = 0;
+
+    if (sqlite3_step(stmt) != SQLITE_DONE)
+    {
+        name = sqlite3_column_text(stmt, 1);
+	}	
+
+    char* id_new = calloc(strlen(id) + 1, sizeof(char));
+    strcpy(id_new, id);
+    
+    char* name_new = calloc(strlen(name) + 1, sizeof(char));
+    strcpy(name_new, name);
+
+    sqlite3_finalize(stmt);
+	sqlite3_close(database->db);
+
+    return init_database_scene(
+        id_new,
+        name_new
+    );
+}
+
+unsigned int database_count_scenes(database_T* database)
+{
+    const char* sql = "SELECT count(*) FROM scenes;";
+
+    sqlite3_stmt* stmt = database_exec_sql(database, sql, 0);
+
+    unsigned int count = 0;
+
+    if (sqlite3_step(stmt) != SQLITE_DONE)
+    {
+        count = sqlite3_column_int(stmt, 0);
+    }
+
+    sqlite3_finalize(stmt);
+	sqlite3_close(database->db);
+
+    return count;
+}
+
+char* database_insert_scene(database_T* database, const char* name)
+{
+    char* id = get_random_string(16);
+    char* sql_template = "INSERT INTO scenes VALUES(\"%s\", \"%s\", 255, 255, 255)";
+    char* sql = calloc(300, sizeof(char));
+
+    sprintf(sql, sql_template, id, name);
+
+    sqlite3_stmt* stmt = database_exec_sql(database, sql, 1);
+    sqlite3_finalize(stmt);
+    sqlite3_close(database->db);
+    free(sql);
+
+    return id;
+}
+
+void database_delete_scene_by_id(database_T* database, const char* id)
+{
+    char* sql_template = "DELETE * FROM scenes WHERE id=\"%s\"";
+    char* sql = calloc(strlen(sql_template) + strlen(id) + 1, sizeof(char));
+
+    sprintf(sql, sql_template, id);
+
+    sqlite3_stmt* stmt = database_exec_sql(database, sql, 1);
+    sqlite3_finalize(stmt);
+    sqlite3_close(database->db);
+    free(sql);
+}
+
+void database_update_scene_name_by_id(database_T* database, const char* id, const char* name)
+{
+    char* sql_template = "UPDATE scenes SET name=\"%s\" WHERE id=\"%s\"";
+    char* sql = calloc(strlen(sql_template) + strlen(id) + strlen(name) + 1, sizeof(char));
+    sprintf(sql, sql_template, name, id);
+
+    sqlite3_stmt* stmt = database_exec_sql(database, sql, 0);
+
+    int rc = sqlite3_step(stmt);
+
+    if (rc != SQLITE_DONE)
+    {
+        printf("ERROR executing query: %s\n", sqlite3_errmsg(database->db));
+    }
+
+	sqlite3_finalize(stmt);
+	sqlite3_close(database->db);
+}
+
+database_actor_instance_T* init_database_actor_instance(
+    const char* id,
+    const char* actor_definition_id,
+    const char* scene_id,
+    const float x,
+    const float y,
+    const float z
+)
+{
+    database_actor_instance_T* database_actor_instance = calloc(1, sizeof(struct DATABASE_ACTOR_INSTANCE_STRUCT));
+    database_actor_instance->id = id;
+    database_actor_instance->actor_definition_id = actor_definition_id;
+    database_actor_instance->scene_id = scene_id;
+    database_actor_instance->x = x;
+    database_actor_instance->y = y;
+    database_actor_instance->z = z;
+
+    return database_actor_instance;
+}

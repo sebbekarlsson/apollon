@@ -141,6 +141,7 @@ void dropdown_list_draw(actor_T* self)
 {
     dropdown_list_T* dropdown_list = (dropdown_list_T*) self;
     actor_focusable_T* dropdown_list_focusable = (actor_focusable_T*) dropdown_list;
+    unsigned int focused = dropdown_list_focusable->focused;
 
     if (!dropdown_list_focusable->visible)
         return;
@@ -191,9 +192,9 @@ void dropdown_list_draw(actor_T* self)
                 self->x + (32 / 2),
                 (self->y + (32 / 2)),
                 0,
-                COLOR_FG[0], // r
-                COLOR_FG[1], // g
-                COLOR_FG[2], // b
+                focused ? 255 : COLOR_FG[0], // r
+                focused ? 255 : COLOR_FG[1], // g
+                focused ? 255 : COLOR_FG[2], // b
                 6,
                 6,
                 0,
@@ -261,6 +262,26 @@ void dropdown_list_update_option_sprite_by_string_value(
     }
 }
 
+void dropdown_list_update_option_key_by_string_value(
+    dropdown_list_T* dropdown_list,
+    const char* value,
+    char* key        
+)
+{
+    for (int i = 0; i < dropdown_list->options->size; i++)
+    {
+        dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) dropdown_list->options->items[i];
+
+        if (strcmp((char*)dropdown_list_option->value, value) == 0)
+        {
+            free(dropdown_list_option->key);
+            dropdown_list_option->key = key;
+
+            break;
+        }
+    }
+}
+
 void dropdown_list_sync_from_table(dropdown_list_T* dropdown_list, database_T* database, const char* tablename, unsigned int key_column, int sprite_id_column)
 {
     char* sql_template = "SELECT * FROM %s";
@@ -291,11 +312,20 @@ void dropdown_list_sync_from_table(dropdown_list_T* dropdown_list, database_T* d
 
         if (dropdown_list_has_option_with_string_value(dropdown_list, value))
         {
-            printf("Update dropdown_list_option.\n");
-            dropdown_list_update_option_sprite_by_string_value(
+            if (sprite_id_column != -1)
+            {
+                printf("Update dropdown_list_option.\n");
+                dropdown_list_update_option_sprite_by_string_value(
+                    dropdown_list,
+                    (const char*) value,
+                    database_sprite        
+                );
+            }
+
+            dropdown_list_update_option_key_by_string_value(
                 dropdown_list,
                 (const char*) value,
-                database_sprite        
+                key        
             );
         }
         else
