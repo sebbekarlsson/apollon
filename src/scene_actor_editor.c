@@ -11,6 +11,29 @@ extern keyboard_state_T* KEYBOARD_STATE;
 extern database_T* DATABASE;
 
 
+void scene_actor_editor_refresh_state(scene_actor_editor_T* s_actor_editor)
+{
+    printf("Refreshing state...\n");
+
+    dropdown_list_sync_from_table(
+        s_actor_editor->dropdown_list_sprite,
+        DATABASE,
+        "sprites",
+        1,
+        0
+    );
+
+    dropdown_list_sync_from_table(
+        s_actor_editor->dropdown_list_actor,
+        DATABASE,
+        "actor_definitions",
+        1,
+        4
+    );
+    dropdown_list_reload_sprites(s_actor_editor->dropdown_list_actor);
+    dropdown_list_reload_sprites(s_actor_editor->dropdown_list_sprite);
+}
+
 void scene_actor_editor_reset_actor_definition_id(scene_actor_editor_T* s_actor_editor)
 {
     if (s_actor_editor->actor_definition_id != (void*) 0)
@@ -80,15 +103,18 @@ void button_save_press()
     else
     {
         printf("Edit existing actor.\n");
+
+        database_update_actor_definition_by_id(
+            DATABASE,
+            s_actor_editor->actor_definition_id,
+            s_actor_editor->input_field_type_name->value,
+            (char*) option_selected_sprite->value,
+            s_actor_editor->input_field_tick_script->value,
+            s_actor_editor->input_field_draw_script->value        
+        );
     }
 
-    dropdown_list_sync_from_table(
-        s_actor_editor->dropdown_list_actor,
-        DATABASE,
-        "actor_definitions",
-        1,
-        4
-    );
+    scene_actor_editor_refresh_state(s_actor_editor);
 }
 
 void actor_editor_sprite_press(void* dropdown_list, void* option)
@@ -131,6 +157,11 @@ void actor_editor_actor_press(void* dropdown_list, void* option)
         (strlen(database_actor_definition->draw_script) + 1) * sizeof(char)
     );
     strcpy(s_actor_editor->input_field_draw_script->value, database_actor_definition->draw_script);
+
+    dropdown_list_set_selected_option_by_string_value(
+        s_actor_editor->dropdown_list_sprite,
+        (const char*) database_actor_definition->sprite_id        
+    );
 }
 
 scene_actor_editor_T* init_scene_actor_editor()
@@ -227,21 +258,7 @@ scene_actor_editor_T* init_scene_actor_editor()
     dynamic_list_append(s_actor_editor->focus_manager->focusables, (actor_focusable_T*) s_actor_editor->button_save);
     dynamic_list_append(state->actors, s_actor_editor->button_save);
 
-    dropdown_list_sync_from_table(
-        s_actor_editor->dropdown_list_sprite,
-        DATABASE,
-        "sprites",
-        1,
-        0
-    );
-
-    dropdown_list_sync_from_table(
-        s_actor_editor->dropdown_list_actor,
-        DATABASE,
-        "actor_definitions",
-        1,
-        4
-    );
+    scene_actor_editor_refresh_state(s_actor_editor);
 
     state_resort_actors(state);
 

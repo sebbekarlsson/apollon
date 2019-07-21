@@ -121,15 +121,18 @@ void scene_scene_editor_tick(scene_T* self)
         {
             dropdown_list_focusable->focused = 1;
             ((actor_focusable_T*)s_scene_editor->dropdown_list)->visible = 1;
+            printf("Please show dropdown\n");
         }
         else
         {
             dropdown_list_focusable->focused = 0;
             ((actor_focusable_T*)s_scene_editor->dropdown_list)->visible = 0;
+            printf("Please dont show dropdown\n");
         }
 
         KEYBOARD_STATE->key_locks[GLFW_KEY_I] = 1;
     }
+
 }
 
 void scene_scene_editor_draw(scene_T* self)

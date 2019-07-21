@@ -61,4 +61,13 @@ char* database_insert_actor_definition(
 );
 
 database_actor_definition_T* database_get_actor_definition_by_id(database_T* database, const char* id);
+
+void database_update_actor_definition_by_id(
+    database_T* database,
+    const char* id,
+    const char* name,
+    const char* sprite_id,
+    const char* tick_script,
+    const char* draw_script
+);
 #endif

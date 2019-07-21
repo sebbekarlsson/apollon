@@ -26,7 +26,15 @@ void dropdown_list_sync_from_table(dropdown_list_T* dropdown_list, database_T* d
 
 void dropdown_list_reload_sprites(dropdown_list_T* dropdown_list);
 
+void dropdown_list_set_selected_option_by_string_value(dropdown_list_T* dropdown_list, const char* value);
+
 unsigned int dropdown_list_has_option_with_string_value(dropdown_list_T* dropdown_list, const char* value);
+
+void dropdown_list_update_option_sprite_by_string_value(
+    dropdown_list_T* dropdown_list,
+    const char* value,
+    database_sprite_T* database_sprite
+);
 
 typedef struct DROPDOWN_LIST_OPTION_STRUCT
 {

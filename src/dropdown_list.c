@@ -153,14 +153,14 @@ void dropdown_list_draw(actor_T* self)
         self->y,
         0.0f,
         dropdown_list->width,
-        32 * (dropdown_list->expanded ? dropdown_list->options->size : 1),
+        32 * (dropdown_list->expanded && dropdown_list->options->size > 0 ? dropdown_list->options->size : 1),
         COLOR_BG_DARK[0],
         COLOR_BG_DARK[1],
         COLOR_BG_DARK[2],
         state
     ); 
 
-    if (dropdown_list->expanded)
+    if (dropdown_list->expanded && dropdown_list->options->size > 0)
     {
         for (int i = 0; i < dropdown_list->options->size; i++)
         {
@@ -214,6 +214,20 @@ dropdown_list_option_T* init_dropdown_list_option(database_sprite_T* database_sp
     return option;
 }
 
+void dropdown_list_set_selected_option_by_string_value(dropdown_list_T* dropdown_list, const char* value)
+{
+    for (int i = 0; i < dropdown_list->options->size; i++)
+    {
+        dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) dropdown_list->options->items[i];
+
+        if (strcmp((char*)dropdown_list_option->value, value) == 0)
+        {
+            dropdown_list->selected_index = i;
+            break;
+        }
+    }
+}
+
 unsigned int dropdown_list_has_option_with_string_value(dropdown_list_T* dropdown_list, const char* value)
 {
     for (int i = 0; i < dropdown_list->options->size; i++)
@@ -225,6 +239,26 @@ unsigned int dropdown_list_has_option_with_string_value(dropdown_list_T* dropdow
     }
 
     return 0;
+}
+
+void dropdown_list_update_option_sprite_by_string_value(
+    dropdown_list_T* dropdown_list,
+    const char* value,
+    database_sprite_T* database_sprite
+)
+{
+    for (int i = 0; i < dropdown_list->options->size; i++)
+    {
+        dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) dropdown_list->options->items[i];
+
+        if (strcmp((char*)dropdown_list_option->value, value) == 0)
+        {
+            database_sprite_free(dropdown_list_option->database_sprite);
+            dropdown_list_option->database_sprite = database_sprite;
+
+            break;
+        }
+    }
 }
 
 void dropdown_list_sync_from_table(dropdown_list_T* dropdown_list, database_T* database, const char* tablename, unsigned int key_column, int sprite_id_column)
@@ -256,17 +290,26 @@ void dropdown_list_sync_from_table(dropdown_list_T* dropdown_list, database_T* d
         }
 
         if (dropdown_list_has_option_with_string_value(dropdown_list, value))
-            continue;
-
-        dynamic_list_append(
-            dropdown_list->options,
-            init_dropdown_list_option(
-                database_sprite,
-                key,
-                value,
-                0
-            )
-        );
+        {
+            printf("Update dropdown_list_option.\n");
+            dropdown_list_update_option_sprite_by_string_value(
+                dropdown_list,
+                (const char*) value,
+                database_sprite        
+            );
+        }
+        else
+        {
+            dynamic_list_append(
+                dropdown_list->options,
+                init_dropdown_list_option(
+                    database_sprite,
+                    key,
+                    value,
+                    0
+                )
+            );
+        }
 	}
 
 	sqlite3_finalize(stmt);

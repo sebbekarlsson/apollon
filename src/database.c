@@ -68,6 +68,12 @@ void database_sprite_free(database_sprite_T* database_sprite)
 
 void database_sprite_reload_from_disk(database_sprite_T* database_sprite)
 {
+    printf(
+        "Reloading sprite %s from file %s...\n",
+        database_sprite->name,
+        database_sprite->filepath
+    );
+
     if (database_sprite->sprite)
         sprite_free(database_sprite->sprite);
 
@@ -88,6 +94,7 @@ database_actor_definition_T* init_database_actor_definition(
     );
     database_actor_definition->id = id;
     database_actor_definition->name = name;
+    database_actor_definition->sprite_id = sprite_id;
     database_actor_definition->tick_script = tick_script;
     database_actor_definition->draw_script = draw_script;
 
@@ -298,4 +305,39 @@ database_actor_definition_T* database_get_actor_definition_by_id(database_T* dat
         tick_script_new,
         draw_script_new
     );
+}
+
+void database_update_actor_definition_by_id(
+    database_T* database,
+    const char* id,
+    const char* name,
+    const char* sprite_id,
+    const char* tick_script,
+    const char* draw_script
+)
+{
+    char* sql_template = 
+        "UPDATE actor_definitions SET name=\"%s\","
+        " sprite_id=\"%s\","
+        " tick_script=\"%s\","
+        " draw_script=\"%s\""
+        " WHERE id=\"%s\";";
+
+    char* sql = calloc(
+        strlen(sql_template) + strlen(id) + strlen(name) + strlen(tick_script) + strlen(draw_script) + 1,
+        sizeof(char)
+    );
+    sprintf(sql, sql_template, name, sprite_id, tick_script, draw_script, id);
+
+    sqlite3_stmt* stmt = database_exec_sql(database, sql, 0);
+
+    int rc = sqlite3_step(stmt);
+
+    if (rc != SQLITE_DONE)
+    {
+        printf("ERROR executing query: %s\n", sqlite3_errmsg(database->db));
+    }
+
+	sqlite3_finalize(stmt);
+	sqlite3_close(database->db);
 }
