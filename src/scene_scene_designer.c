@@ -16,6 +16,13 @@ extern database_T* DATABASE;
 extern main_state_T* MAIN_STATE;
 
 
+void scene_designer_load(scene_T* self)
+{
+    scene_scene_designer_T* s_scene_designer = (scene_scene_designer_T*) self;
+    scene_scene_designer_empty_database_actor_instances(s_scene_designer);
+    scene_scene_designer_refresh_state(s_scene_designer);
+}
+
 void scene_scene_designer_refresh_state(scene_scene_designer_T* s_scene_designer)
 {
     printf("Refreshing state...\n");
@@ -70,6 +77,8 @@ scene_scene_designer_T* init_scene_scene_designer()
 
     scene_constructor(s, scene_scene_designer_tick, scene_scene_designer_draw, 2);
 
+    s->load = scene_designer_load;
+
     s->type_name = "scene_designer";
     s->bg_r = 255;
     s->bg_g = 255;
@@ -94,8 +103,6 @@ scene_scene_designer_T* init_scene_scene_designer()
     s_scene_designer->database_actor_instances = init_dynamic_list(sizeof(struct DATABASE_ACTOR_INSTANCE_STRUCT*));
 
     dynamic_list_append(state->actors, s_scene_designer->actor_cursor);
-
-    scene_scene_designer_refresh_state(s_scene_designer);
 
     return s_scene_designer;
 }
@@ -191,9 +198,29 @@ void scene_scene_designer_draw(scene_T* self)
     }
 }
 
+void _free_database_actor_instance(void* item)
+{
+    database_actor_instance_T* database_actor_instance = (database_actor_instance_T*) item;
+    database_actor_instance_free(database_actor_instance);
+}
+
+void scene_scene_designer_empty_database_actor_instances(scene_scene_designer_T* s_scene_designer)
+{
+    if (s_scene_designer->database_actor_instances->size > 0)
+    {
+        for (int i = s_scene_designer->database_actor_instances->size; i > 0; i--)
+        {
+            dynamic_list_remove(
+                s_scene_designer->database_actor_instances,
+                s_scene_designer->database_actor_instances->items[i],
+                _free_database_actor_instance
+            );
+        }
+    }
+}
+
 void scene_scene_designer_sync_database_actor_instances(scene_scene_designer_T* s_scene_designer)
 {
-    //"CREATE TABLE IF NOT EXISTS actor_instances(id TEXT, actor_definition_id TEXT, x FLOAT, y FLOAT, z FLOAT, scene_id TEXT);"
     char* sql_template = "SELECT * FROM actor_instances WHERE scene_id=\"%s\"";
     char* sql = calloc(strlen(sql_template) + strlen(MAIN_STATE->scene_id) + 1, sizeof(char));
     sprintf(sql, sql_template, MAIN_STATE->scene_id);

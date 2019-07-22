@@ -40,6 +40,8 @@ database_actor_definition_T* init_database_actor_definition(
     database_sprite_T* database_sprite 
 );
 
+void database_actor_definition_free(database_actor_definition_T* database_actor_definition);
+
 typedef struct DATABASE_STRUCT
 {
     const char* filename;
@@ -97,9 +99,9 @@ void database_update_scene_name_by_id(database_T* database, const char* id, cons
 
 typedef struct DATABASE_ACTOR_INSTANCE_STRUCT
 {
-    const char* id;
-    const char* actor_definition_id;
-    const char* scene_id;
+    char* id;
+    char* actor_definition_id;
+    char* scene_id;
     float x;
     float y;
     float z;
@@ -109,14 +111,16 @@ typedef struct DATABASE_ACTOR_INSTANCE_STRUCT
 } database_actor_instance_T;
 
 database_actor_instance_T* init_database_actor_instance(
-    const char* id,
-    const char* actor_definition_id,
-    const char* scene_id,
-    const float x,
-    const float y,
-    const float z,
+    char* id,
+    char* actor_definition_id,
+    char* scene_id,
+    float x,
+    float y,
+    float z,
     database_actor_definition_T* database_actor_definition
 );
+
+void database_actor_instance_free(database_actor_instance_T* database_actor_instance);
 
 char* database_insert_actor_instance(
     database_T* database,

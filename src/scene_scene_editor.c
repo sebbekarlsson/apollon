@@ -14,6 +14,14 @@ extern theatre_T* THEATRE;
 extern main_state_T* MAIN_STATE;
 
 
+void scene_scene_editor_unload(void* self)
+{
+    scene_T* scene = (scene_T*) self;
+    scene_scene_editor_T* s_scene_editor = (scene_scene_editor_T*) scene;
+
+    s_scene_editor->focus_manager->focus_index = -1;
+}
+
 void scene_scene_editor_refresh_state(scene_scene_editor_T* s_scene_editor)
 {
     dropdown_list_sync_from_table(
@@ -105,6 +113,8 @@ scene_scene_editor_T* init_scene_scene_editor()
     state_T* state = (state_T*) s; 
 
     scene_constructor(s, scene_scene_editor_tick, scene_scene_editor_draw, 2);
+
+    s->unload = scene_scene_editor_unload;
 
     s->type_name = "scene_editor";
     s->bg_r = 255;

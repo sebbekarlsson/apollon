@@ -284,6 +284,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     dynamic_list_append(state->actors, s_sprite_editor->grid_color_mixer);
 
     s_sprite_editor->focus_manager = init_focus_manager();
+    s_sprite_editor->focus_manager->focus_index = 0;
 
     s_sprite_editor->label_name = init_label(
         (WINDOW_WIDTH / 2) - ((16 * 16) / 2),

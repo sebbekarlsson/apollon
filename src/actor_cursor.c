@@ -24,12 +24,14 @@ void actor_cursor_draw(actor_T* self)
     scene_T* scene = (scene_T*) get_current_scene();
     state_T* state = (state_T*) scene;
 
+    // 8 == half a cell
+
     draw_line(
-        self->x - (actor_cursor->length / 2),
-        self->y,
+        (self->x + 8) - (actor_cursor->length / 2),
+        (self->y + 8),
         self->z,
-        self->x + (actor_cursor->length / 2),
-        self->y,
+        (self->x + 8) + (actor_cursor->length / 2),
+        (self->y + 8),
         self->z,
         0,
         0,
@@ -38,11 +40,11 @@ void actor_cursor_draw(actor_T* self)
     );
 
     draw_line(
-        self->x,
-        self->y - (actor_cursor->length / 2),
+        (self->x + 8),
+        (self->y + 8) - (actor_cursor->length / 2),
         self->z,
-        self->x,
-        self->y + (actor_cursor->length / 2),
+        (self->x + 8),
+        (self->y + 8) + (actor_cursor->length / 2),
         self->z,
         0,
         0,

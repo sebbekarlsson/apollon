@@ -103,6 +103,16 @@ database_actor_definition_T* init_database_actor_definition(
     return database_actor_definition;
 }
 
+void database_actor_definition_free(database_actor_definition_T* database_actor_definition)
+{
+    free(database_actor_definition->id);
+    free(database_actor_definition->sprite_id);
+    free(database_actor_definition->tick_script);
+    free(database_actor_definition->draw_script);
+    database_sprite_free(database_actor_definition->database_sprite);
+    free(database_actor_definition);
+}
+
 sqlite3_stmt* database_exec_sql(database_T* database, char* sql, unsigned int do_error_checking)
 {
     sqlite3* db = database->db;
@@ -453,12 +463,12 @@ void database_update_scene_name_by_id(database_T* database, const char* id, cons
 }
 
 database_actor_instance_T* init_database_actor_instance(
-    const char* id,
-    const char* actor_definition_id,
-    const char* scene_id,
-    const float x,
-    const float y,
-    const float z,
+    char* id,
+    char* actor_definition_id,
+    char* scene_id,
+    float x,
+    float y,
+    float z,
     database_actor_definition_T* database_actor_definition
 )
 {
@@ -472,6 +482,15 @@ database_actor_instance_T* init_database_actor_instance(
     database_actor_instance->database_actor_definition = database_actor_definition;
 
     return database_actor_instance;
+}
+
+void database_actor_instance_free(database_actor_instance_T* database_actor_instance)
+{
+    free(database_actor_instance->id);
+    free(database_actor_instance->actor_definition_id);
+    free(database_actor_instance->scene_id);
+    database_actor_definition_free(database_actor_instance->database_actor_definition);
+    free(database_actor_instance);
 }
 
 char* database_insert_actor_instance(
