@@ -79,13 +79,15 @@ void database_update_actor_definition_by_id(
 
 typedef struct DATABASE_SCENE_STRUCT
 {
-    const char* id;
-    const char* name;
+    char* id;
+    char* name;
 
     // TODO: add bg_r, bg_g, bg_b and possibly tick_script and draw_script
 } database_scene_T;
 
-database_scene_T* init_database_scene(const char* id, const char* name);
+database_scene_T* init_database_scene(char* id, char* name);
+
+void database_scene_free(database_scene_T* database_scene);
 
 database_scene_T* database_get_scene_by_id(database_T* database, const char* id);
 

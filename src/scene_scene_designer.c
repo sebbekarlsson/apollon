@@ -19,6 +19,16 @@ extern main_state_T* MAIN_STATE;
 void scene_designer_load(scene_T* self)
 {
     scene_scene_designer_T* s_scene_designer = (scene_scene_designer_T*) self;
+
+    if (s_scene_designer->database_scene != (void*) 0)
+    {
+        database_scene_free(s_scene_designer->database_scene);
+        s_scene_designer->database_scene = (void*) 0;
+    }
+
+    if (MAIN_STATE->scene_id != (void*) 0)
+        s_scene_designer->database_scene = database_get_scene_by_id(DATABASE, MAIN_STATE->scene_id);
+
     scene_scene_designer_empty_database_actor_instances(s_scene_designer);
     scene_scene_designer_refresh_state(s_scene_designer);
 }
@@ -86,6 +96,7 @@ scene_scene_designer_T* init_scene_scene_designer()
 
     s_scene_designer->scene_index = 0;
     s_scene_designer->scene_count = 0;
+    s_scene_designer->database_scene = (void*) 0;
 
     // this one is starts as focused
     s_scene_designer->dropdown_list = init_dropdown_list(0.0f, 0.0f, 0.0f, scene_designer_dropdown_press);
@@ -168,19 +179,22 @@ void scene_scene_designer_draw(scene_T* self)
 
     if (MAIN_STATE->scene_id != (void*) 0)
     {
-        draw_text(
-            MAIN_STATE->scene_id,
-            16 + 6,
-            16 - 6,
-            0,
-            0, // r
-            0, // g
-            0, // b
-            6,
-            6,
-            0,
-            state
-        );
+        if (s_scene_designer->database_scene != (void*) 0)
+        {
+            draw_text(
+                s_scene_designer->database_scene->name,
+                6 + 4,
+                16 - 6,
+                0,
+                0, // r
+                0, // g
+                0, // b
+                6,
+                6,
+                0,
+                state
+            );
+        }
     }
 
     for (int i = 0; i < s_scene_designer->database_actor_instances->size; i++)

@@ -355,13 +355,20 @@ void database_update_actor_definition_by_id(
 	sqlite3_close(database->db);
 }
 
-database_scene_T* init_database_scene(const char* id, const char* name)
+database_scene_T* init_database_scene(char* id, char* name)
 {
     database_scene_T* database_scene = calloc(1, sizeof(struct DATABASE_SCENE_STRUCT));
     database_scene->id = id;
     database_scene->name = name;
 
     return database_scene;
+}
+
+void database_scene_free(database_scene_T* database_scene)
+{
+    free(database_scene->id);
+    free(database_scene->name);
+    free(database_scene);
 }
 
 database_scene_T* database_get_scene_by_id(database_T* database, const char* id)
