@@ -6,7 +6,6 @@
 #include "include/scene_sprite_editor.h"
 #include "include/colors.h"
 #include "include/image_utils.h"
-#include "include/database.h"
 #include <coelum/main.h>
 #include <coelum/theatre.h>
 

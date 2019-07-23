@@ -1,7 +1,6 @@
 #include "include/main.h"
 #include "include/scene_scene_editor.h"
 #include "include/etc.h"
-#include "include/database.h"
 #include <coelum/input.h>
 #include <coelum/theatre.h>
 #include <coelum/current.h>
@@ -61,6 +60,8 @@ void scene_editor_scene_press(void* dropdown_list, void* option)
         (strlen(database_scene->name) + 1) * sizeof(char)
     );
     strcpy(s_scene_editor->input_field_name->value, database_scene->name);
+
+    s_scene_editor->checkbox_main_scene->checked = database_scene->main;
 }
 
 void button_scene_new_press()
@@ -90,7 +91,11 @@ void button_scene_save_press()
     if (s_scene_editor->scene_id == (void*) 0)
     {
         printf("Insert new scene.\n");
-        s_scene_editor->scene_id = database_insert_scene(DATABASE, s_scene_editor->input_field_name->value);
+        s_scene_editor->scene_id = database_insert_scene(
+            DATABASE,
+            s_scene_editor->input_field_name->value,
+            s_scene_editor->checkbox_main_scene->checked
+         );
         MAIN_STATE->scene_id = s_scene_editor->scene_id;
         scene_scene_editor_refresh_state(s_scene_editor);
     } 
@@ -163,6 +168,15 @@ scene_scene_editor_T* init_scene_scene_editor()
     dynamic_list_append(s_scene_editor->focus_manager->focusables, (actor_focusable_T*) s_scene_editor->input_field_name);
     dynamic_list_append(state->actors, s_scene_editor->label_name);
     dynamic_list_append(state->actors, s_scene_editor->input_field_name);
+    jy += margin;
+
+    /* ==== checkbox_main_scene ====*/
+    s_scene_editor->label_main_scene = init_label(jx, jy, 0.0f, "Main");
+    jy += label_margin;
+    s_scene_editor->checkbox_main_scene = init_checkbox(jx, jy, 0.0f);
+    dynamic_list_append(s_scene_editor->focus_manager->focusables, (actor_focusable_T*) s_scene_editor->checkbox_main_scene);
+    dynamic_list_append(state->actors, s_scene_editor->label_main_scene);
+    dynamic_list_append(state->actors, s_scene_editor->checkbox_main_scene);
     jy += margin;
 
     /* ==== design button ====*/

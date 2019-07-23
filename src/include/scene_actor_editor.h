@@ -2,12 +2,12 @@
 #define APOLLON_SCENE_ACTOR_EDITOR_H
 #include <coelum/scene.h>
 #include <coelum/dynamic_list.h>
+#include <athena/database.h>
 #include "input_field.h"
 #include "dropdown_list.h"
 #include "focus_manager.h"
 #include "label.h"
 #include "button.h"
-#include "database.h"
 
 
 typedef struct SCENE_ACTOR_EDITOR_STRUCT

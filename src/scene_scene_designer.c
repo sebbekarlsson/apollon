@@ -1,7 +1,7 @@
 #include "include/main.h"
 #include "include/scene_scene_designer.h"
 #include "include/etc.h"
-#include "include/database.h"
+#include <athena/database.h>
 #include <coelum/constants.h>
 #include <coelum/actor_text.h>
 #include <coelum/input.h>

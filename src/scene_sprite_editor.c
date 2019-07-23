@@ -1,6 +1,6 @@
 #include "include/scene_sprite_editor.h"
 #include "include/etc.h"
-#include "include/file_utils.h"
+#include <coelum/file_utils.h>
 #include <coelum/constants.h>
 #include <coelum/actor_text.h>
 #include <coelum/input.h>

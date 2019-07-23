@@ -2,13 +2,13 @@
 #define APOLLON_SCENE_SPRITE_EDITOR_H
 #include <coelum/scene.h>
 #include <coelum/dynamic_list.h>
+#include <athena/database.h>
 #include "grid.h"
 #include "focus_manager.h"
 #include "dropdown_list.h"
 #include "input_field.h"
 #include "label.h"
 #include "button.h"
-#include "database.h"
 
 
 typedef struct SCENE_SPRITE_EDITOR_STRUCT

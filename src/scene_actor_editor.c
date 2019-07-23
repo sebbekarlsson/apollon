@@ -1,6 +1,5 @@
 #include "include/scene_actor_editor.h"
 #include "include/etc.h"
-#include "include/database.h"
 #include "include/dropdown_list.h"
 #include <coelum/input.h>
 #include <coelum/current.h>

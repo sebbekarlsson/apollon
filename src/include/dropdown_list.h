@@ -1,7 +1,7 @@
 #ifndef APOLLON_DROPDOWN_LIST_H
 #define APOLLON_DROPDOWN_LIST_H
 #include "actor_focusable.h"
-#include "database.h"
+#include <athena/database.h>
 
 
 typedef struct DROPDOWN_LIST_STRUCT

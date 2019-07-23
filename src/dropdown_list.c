@@ -1,6 +1,5 @@
 #include "include/dropdown_list.h"
-#include "include/database.h"
-#include "include/file_utils.h"
+#include <coelum/file_utils.h>
 #include <coelum/theatre.h>
 #include <coelum/draw_utils.h>
 #include <coelum/input.h>

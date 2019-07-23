@@ -6,6 +6,7 @@
 #include "button.h"
 #include "input_field.h"
 #include "label.h"
+#include "checkbox.h"
 
 
 typedef struct SCENE_SCENE_EDITOR_STRUCT
@@ -17,6 +18,9 @@ typedef struct SCENE_SCENE_EDITOR_STRUCT
 
     label_T* label_name;
     input_field_T* input_field_name;
+
+    label_T* label_main_scene;
+    checkbox_T* checkbox_main_scene;
 
     button_T* button_design;
     button_T* button_save;
