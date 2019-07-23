@@ -1,0 +1,3 @@
+object config = {
+    string leto_bin = "/path/to/leto/bin"; 
+};
