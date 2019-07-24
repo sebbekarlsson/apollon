@@ -1,17 +1,21 @@
 #ifndef APOLLON_LABEL_H
 #define APOLLON_LABEL_H
-#include "window.h"
-#include "window_component.h"
+#include <coelum/actor.h>
 
 
 typedef struct LABEL_STRUCT
 {
-    window_component_T base;
-    char* value;
-    window_T* window;
+    actor_T base;
+    char* text;
+    unsigned int font_size;
+    unsigned int font_spacing;
+    unsigned int r;
+    unsigned int g;
+    unsigned int b;
+    unsigned int visible;
 } label_T;
 
-label_T* init_label(float x, float y, char* value, window_T* window);
+label_T* init_label(float x, float y, float z, char* text);
 
 void label_tick(actor_T* self);
 

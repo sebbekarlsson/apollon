@@ -1,65 +1,50 @@
 #include "include/label.h"
-#include <coelum/theatre.h>
 #include <coelum/draw_utils.h>
-#include <coelum/input.h>
-#include <string.h>
+#include <coelum/current.h>
 
 
-extern theatre_T* THEATRE;
-
-extern const float COLOR_FG[3];
-
-label_T* init_label(float x, float y, char* value, window_T* window)
+label_T* init_label(float x, float y, float z, char* text)
 {
     label_T* label = calloc(1, sizeof(struct LABEL_STRUCT));
-    window_component_constructor((window_component_T*) label, x, y, label_tick, label_draw, "label");
+    actor_T* actor = (actor_T*) label;
+    actor_constructor(actor, x, y, z, label_tick, label_draw, "label");
 
-    label->value = value;
-    label->window = window;
+    label->text = text;
+    label->font_size = 8;
+    label->font_spacing = label->font_size + 4;
+    label->r = 0;
+    label->g = 0;
+    label->b = 0;
+    label->visible = 1;
 
     return label;
 }
 
 void label_tick(actor_T* self)
 {
-    actor_tick(self);
 }
 
 void label_draw(actor_T* self)
 {
     label_T* label = (label_T*) self;
-    window_component_T* window_component = (window_component_T*) label;
-    state_T* state = (state_T*) scene_manager_get_current_scene(THEATRE->scene_manager);
 
-    float size = 6;
-    float spacing = 7;
-    float left_padding = 4 + size;
+    if (!label->visible)
+        return;
 
-    if (label->value)
-    {
-        draw_text(
-            label->value,
-            left_padding + self->x,
-            self->y + size / 2,
-            0.0f,
-            COLOR_FG[0],
-            COLOR_FG[1],
-            COLOR_FG[2],
-            size, // size
-            spacing, // spacing
-            state
-        );
+    scene_T* scene = get_current_scene();
+    state_T* state = (state_T*) scene;
 
-        draw_positioned_2D_mesh(
-            self->x,
-            self->y + size + (size / 2) + 2,
-            0.0f,
-            strlen(label->value) * (size + spacing) + spacing,
-            size / 4,
-            COLOR_FG[0],
-            COLOR_FG[1],
-            COLOR_FG[2],
-            state
-        );
-    }
+    draw_text(
+        label->text,
+        self->x + ((label->font_size + label->font_spacing) / 2),
+        self->y,
+        0.0f,
+        label->r,
+        label->g,
+        label->b,
+        label->font_size,
+        label->font_spacing,
+        0,
+        state
+    );
 }
