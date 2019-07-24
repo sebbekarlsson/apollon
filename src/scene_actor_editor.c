@@ -91,17 +91,19 @@ void button_save_press()
     {
         printf("Insert new actor.\n");
 
-        database_insert_actor_definition(
+        char* actor_definition_id = database_insert_actor_definition(
             DATABASE,
             s_actor_editor->input_field_type_name->value,
             (char*) option_selected_sprite->value,
             s_actor_editor->input_field_tick_script->value,
             s_actor_editor->input_field_draw_script->value
         );
+
+        s_actor_editor->actor_definition_id = actor_definition_id;
     }
     else
     {
-        printf("Edit existing actor.\n");
+        printf("Edit existing actor %s.\n", s_actor_editor->actor_definition_id);
 
         database_update_actor_definition_by_id(
             DATABASE,
