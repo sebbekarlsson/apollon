@@ -165,12 +165,21 @@ void actor_editor_actor_press(void* dropdown_list, void* option)
     );
 }
 
+void scene_actor_editor_load(void* self)
+{
+    scene_T* scene = (scene_T*) self;
+    scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) scene;
+    scene_actor_editor_refresh_state(s_actor_editor);
+}
+
 scene_actor_editor_T* init_scene_actor_editor()
 {
     scene_actor_editor_T* s_actor_editor = calloc(1, sizeof(struct SCENE_ACTOR_EDITOR_STRUCT));
     scene_T* scene = (scene_T*) s_actor_editor;
     state_T* state = (state_T*) scene;
     scene_constructor(scene, scene_actor_editor_tick, scene_actor_editor_draw, 2);
+
+    scene->load = scene_actor_editor_load;
 
     scene->type_name = "actor_editor";
 
@@ -258,8 +267,6 @@ scene_actor_editor_T* init_scene_actor_editor()
     s_actor_editor->button_save = init_button(jx, jy, 0.0f, "Save", button_save_press);
     dynamic_list_append(s_actor_editor->focus_manager->focusables, (actor_focusable_T*) s_actor_editor->button_save);
     dynamic_list_append(state->actors, s_actor_editor->button_save);
-
-    scene_actor_editor_refresh_state(s_actor_editor);
 
     state_resort_actors(state);
 
