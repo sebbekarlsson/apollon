@@ -148,6 +148,21 @@ void dropdown_list_draw(actor_T* self)
     scene_T* scene = scene_manager_get_current_scene(THEATRE->scene_manager);
     state_T* state = (state_T*) scene;
 
+    if (dropdown_list->expanded)
+    {
+        draw_positioned_2D_mesh(
+            self->x + 4,
+            self->y + 4,
+            0.0f,
+            dropdown_list->width,
+            32 * (dropdown_list->expanded && dropdown_list->options->size > 0 ? dropdown_list->options->size : 1),
+            0,
+            0,
+            0,
+            state
+        );
+    }
+
     draw_positioned_2D_mesh(
         self->x,
         self->y,
