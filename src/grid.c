@@ -142,8 +142,18 @@ void grid_draw(actor_T* self)
 
         for (int y = 0; y < grid->height + 1; y++)
         {
-
             float cell_y = self->y + (y * grid->cell_size);
+
+            float cell_r = 255;
+            float cell_g = 255;
+            float cell_b = 255;
+
+            if (x < grid->width && y < grid->height)
+            {
+                cell_r = grid->cells[x][y]->r;
+                cell_g = grid->cells[x][y]->g;
+                cell_b = grid->cells[x][y]->b;
+            }
 
             if (cell_x == self->x)
             {
@@ -170,9 +180,9 @@ void grid_draw(actor_T* self)
                     0.0f,
                     grid->cell_size,
                     grid->cell_size,
-                    COLOR_FG[0],
-                    COLOR_FG[1],
-                    COLOR_FG[2],
+                    255 - cell_r,
+                    255 - cell_g,
+                    255 - cell_b,
                     state
                 );
             }
