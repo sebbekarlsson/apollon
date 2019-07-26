@@ -8,6 +8,9 @@
 #include "include/image_utils.h"
 
 
+extern const float COLOR_FG[3];
+
+
 grid_cell_T* init_grid_cell()
 {
     grid_cell_T* cell = calloc(1, sizeof(struct GRID_CELL_STRUCT));
@@ -167,9 +170,9 @@ void grid_draw(actor_T* self)
                     0.0f,
                     grid->cell_size,
                     grid->cell_size,
-                    0,
-                    0,
-                    0,
+                    COLOR_FG[0],
+                    COLOR_FG[1],
+                    COLOR_FG[2],
                     state
                 );
             }

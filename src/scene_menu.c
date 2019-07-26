@@ -5,6 +5,7 @@
 #include <coelum/actor_text.h>
 #include <coelum/theatre.h>
 #include <coelum/scene_manager.h>
+#include <coelum/draw_utils.h>
 #include <hermes/lexer.h>
 #include <hermes/hermes_parser.h>
 #include <hermes/hermes_runtime.h>
@@ -14,6 +15,7 @@
 
 extern float COLOR_BG_DARK[3];
 extern float COLOR_BG_DARK_BRIGHT[3];
+extern float COLOR_RED[3];
 
 extern theatre_T* THEATRE;
 
@@ -120,4 +122,38 @@ void scene_menu_tick(scene_T* self)
 
 void scene_menu_draw(scene_T* self)
 {
+    state_T* state = (state_T*) self;
+
+    char* text = "Coelum";
+
+    float text_size = 32;
+    float text_spacing = 24;
+
+    float banner_height = 148;
+
+    draw_positioned_2D_mesh(
+        0,
+        0,
+        0,
+        WINDOW_WIDTH,
+        banner_height,
+        COLOR_BG_DARK_BRIGHT[0],
+        COLOR_BG_DARK_BRIGHT[1],
+        COLOR_BG_DARK_BRIGHT[2],
+        state
+    );
+
+    draw_text(
+        text,
+        ((WINDOW_WIDTH / 2) - ((strlen(text) * (text_size + text_spacing)) / 2)) + (text_size / 2),
+        78,
+        0,
+        COLOR_RED[0],
+        COLOR_RED[1],
+        COLOR_RED[2],
+        text_size,
+        text_spacing,
+        0,
+        state
+    );
 }

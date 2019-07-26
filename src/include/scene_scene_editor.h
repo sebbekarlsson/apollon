@@ -16,6 +16,8 @@ typedef struct SCENE_SCENE_EDITOR_STRUCT
     label_T* label_scene;
     dropdown_list_T* dropdown_list_scene;
 
+    label_T* label_number_of_actors;
+
     label_T* label_name;
     input_field_T* input_field_name;
 

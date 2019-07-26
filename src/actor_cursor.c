@@ -3,6 +3,9 @@
 #include <coelum/current.h>
 
 
+extern const float COLOR_FG[3];
+
+
 actor_cursor_T* init_actor_cursor(float x, float y, float z)
 {
     actor_cursor_T* actor_cursor = calloc(1, sizeof(struct ACTOR_CURSOR_STRUCT));
@@ -33,9 +36,9 @@ void actor_cursor_draw(actor_T* self)
         (self->x + 8) + (actor_cursor->length / 2),
         (self->y + 8),
         self->z,
-        0,
-        0,
-        0,
+        COLOR_FG[0],
+        COLOR_FG[1],
+        COLOR_FG[2],
         state
     );
 
@@ -46,9 +49,9 @@ void actor_cursor_draw(actor_T* self)
         (self->x + 8),
         (self->y + 8) + (actor_cursor->length / 2),
         self->z,
-        0,
-        0,
-        0,
+        COLOR_FG[0],
+        COLOR_FG[1],
+        COLOR_FG[2],
         state
     );
 }

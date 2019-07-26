@@ -14,6 +14,7 @@
 extern keyboard_state_T* KEYBOARD_STATE;
 extern database_T* DATABASE;
 extern main_state_T* MAIN_STATE;
+extern const float COLOR_FG[3];
 
 
 void scene_designer_load(scene_T* self)
@@ -186,9 +187,9 @@ void scene_scene_designer_draw(scene_T* self)
                 6 + 4,
                 16 - 6,
                 0,
-                0, // r
-                0, // g
-                0, // b
+                COLOR_FG[0], // r
+                COLOR_FG[1], // g
+                COLOR_FG[2], // b
                 6,
                 6,
                 0,

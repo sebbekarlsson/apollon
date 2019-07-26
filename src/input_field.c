@@ -9,6 +9,7 @@
 extern keyboard_state_T* KEYBOARD_STATE;
 
 extern const float COLOR_BG_BRIGHT[3];
+extern const float COLOR_FG[3];
 
 input_field_T* init_input_field(float x, float y, float z)
 {
@@ -70,9 +71,9 @@ void input_field_draw(actor_T* self)
                 self->x + (((input_field->font_size + input_field->font_spacing) / 2) - scroll),
                 self->y + (input_field->height / 2),
                 self->z,
-                0,
-                0,
-                0,
+                COLOR_FG[0],
+                COLOR_FG[1],
+                COLOR_FG[2], 
                 input_field->font_size,
                 input_field->font_spacing,
                 0,
@@ -90,9 +91,9 @@ void input_field_draw(actor_T* self)
             self->z,
             4,
             (input_field->font_size * 2),
-            0,
-            0,
-            0,
+            COLOR_FG[0],
+            COLOR_FG[1],
+            COLOR_FG[2],
             state        
         );
     } 
@@ -103,9 +104,9 @@ void input_field_draw(actor_T* self)
         self->z,
         input_field->width,
         4,
-        0,
-        0,
-        0,
+        COLOR_FG[0],
+        COLOR_FG[1],
+        COLOR_FG[2],
         state 
     );
 }

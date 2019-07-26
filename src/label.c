@@ -3,6 +3,9 @@
 #include <coelum/current.h>
 
 
+extern const float COLOR_FG[3];
+
+
 label_T* init_label(float x, float y, float z, char* text)
 {
     label_T* label = calloc(1, sizeof(struct LABEL_STRUCT));
@@ -12,9 +15,9 @@ label_T* init_label(float x, float y, float z, char* text)
     label->text = text;
     label->font_size = 8;
     label->font_spacing = label->font_size + 4;
-    label->r = 0;
-    label->g = 0;
-    label->b = 0;
+    label->r = COLOR_FG[0];
+    label->g = COLOR_FG[1];
+    label->b = COLOR_FG[2];
     label->visible = 1;
 
     return label;

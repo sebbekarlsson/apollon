@@ -21,6 +21,18 @@ void scene_scene_editor_unload(void* self)
     s_scene_editor->focus_manager->focus_index = -1;
 }
 
+void scene_scene_editor_reset_label_number_of_actors(scene_scene_editor_T* s_scene_editor)
+{
+    unsigned int nr_actors = 0;
+
+    const char* nr_actors_template = "Actors: %d";
+    char* nr_actors_text = calloc(strlen(nr_actors_template) + 100, sizeof(char));
+    sprintf(nr_actors_text, nr_actors_template, nr_actors);
+
+    free(s_scene_editor->label_number_of_actors->text);
+    s_scene_editor->label_number_of_actors->text = nr_actors_text;
+}
+
 void scene_scene_editor_refresh_state(scene_scene_editor_T* s_scene_editor)
 {
     dropdown_list_sync_from_table(
@@ -30,6 +42,22 @@ void scene_scene_editor_refresh_state(scene_scene_editor_T* s_scene_editor)
         1,
         -1
     );
+
+    if (s_scene_editor->scene_id != (void*) 0)
+    {
+        unsigned int nr_actors = database_count_actors_in_scene(DATABASE, s_scene_editor->scene_id);
+
+        const char* nr_actors_template = "Actors: %d";
+        char* nr_actors_text = calloc(strlen(nr_actors_template) + 100, sizeof(char));
+        sprintf(nr_actors_text, nr_actors_template, nr_actors);
+
+        free(s_scene_editor->label_number_of_actors->text);
+        s_scene_editor->label_number_of_actors->text = nr_actors_text;
+    }
+    else
+    {
+        scene_scene_editor_reset_label_number_of_actors(s_scene_editor);
+    }
 }
 
 void scene_scene_editor_reset_scene_id(scene_scene_editor_T* s_scene_editor)
@@ -62,6 +90,8 @@ void scene_editor_scene_press(void* dropdown_list, void* option)
     strcpy(s_scene_editor->input_field_name->value, database_scene->name);
 
     s_scene_editor->checkbox_main_scene->checked = database_scene->main;
+
+    scene_scene_editor_refresh_state(s_scene_editor);
 }
 
 void button_scene_new_press()
@@ -76,6 +106,10 @@ void button_scene_new_press()
         0,
         sizeof(char) * strlen(s_scene_editor->input_field_name->value)
     );
+
+    s_scene_editor->checkbox_main_scene->checked = 0;
+
+    scene_scene_editor_refresh_state(s_scene_editor);
 }
 
 void button_scene_design_press()
@@ -150,6 +184,16 @@ scene_scene_editor_T* init_scene_scene_editor()
     dynamic_list_append(state->actors, s_scene_editor->label_scene);
     dynamic_list_append(state->actors, s_scene_editor->dropdown_list_scene);
     iy += margin;
+
+    const char* _number_of_actors_text = "Actors:";
+    char* number_of_actors_text = calloc(strlen(_number_of_actors_text) + 1, sizeof(char));
+    strcpy(number_of_actors_text, _number_of_actors_text);
+
+    s_scene_editor->label_number_of_actors = init_label(ix, iy, 0.0f, number_of_actors_text);
+    s_scene_editor->label_number_of_actors->font_size = 6;
+    s_scene_editor->label_number_of_actors->font_spacing = 6;
+    dynamic_list_append(state->actors, s_scene_editor->label_number_of_actors);
+    iy += label_margin + 16;
 
     s_scene_editor->button_new = init_button(ix, iy, 0.0f, "New Scene", button_scene_new_press);
     dynamic_list_append(s_scene_editor->focus_manager->focusables, (actor_focusable_T*) s_scene_editor->button_new);

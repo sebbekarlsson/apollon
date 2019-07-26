@@ -8,6 +8,7 @@
 #include "include/image_utils.h"
 #include <coelum/main.h>
 #include <coelum/theatre.h>
+#include <coelum/textures.h>
 
 
 extern theatre_T* THEATRE;
@@ -15,6 +16,14 @@ extern theatre_T* THEATRE;
 main_state_T* MAIN_STATE;
 database_T* DATABASE;
 
+
+texture_T* TEXTURE_CHECKBOX_SHEET;
+
+
+void load_textures()
+{
+    TEXTURE_CHECKBOX_SHEET = get_texture("res/img/checkbox_sheet.png", GL_RGBA);
+}
 
 main_state_T* init_main_state()
 {
@@ -27,6 +36,8 @@ main_state_T* init_main_state()
 int main(int argc, char* argv[])
 {
     coelum_init();
+
+    load_textures();
 
     MAIN_STATE = init_main_state();
     DATABASE = init_database();
