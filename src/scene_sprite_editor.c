@@ -296,6 +296,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
             s_sprite_editor->grid_color_selector->cells[x][y]->r = r;
             s_sprite_editor->grid_color_selector->cells[x][y]->g = g;
             s_sprite_editor->grid_color_selector->cells[x][y]->b = b;
+            s_sprite_editor->grid_color_selector->cells[x][y]->a = 1.0f;
         }
     }
 
@@ -404,6 +405,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     s_sprite_editor->r = 0.0f;
     s_sprite_editor->g = 0.0f;
     s_sprite_editor->b = 0.0f;
+    s_sprite_editor->a = 1.0f;
 
     state_resort_actors(state);
 
@@ -493,6 +495,7 @@ void scene_sprite_editor_tick(scene_T* self)
             grid->cells[grid->cursor_x][grid->cursor_y]->r = s_sprite_editor->r;
             grid->cells[grid->cursor_x][grid->cursor_y]->g = s_sprite_editor->g;
             grid->cells[grid->cursor_x][grid->cursor_y]->b = s_sprite_editor->b;
+            grid->cells[grid->cursor_x][grid->cursor_y]->a = s_sprite_editor->a;
         }
 
         if (s_sprite_editor->grids->size)
@@ -714,10 +717,12 @@ void scene_sprite_editor_load_grids_from_sprite(scene_sprite_editor_T* s_sprite_
                 unsigned char r = pixelOffset[0];
                 unsigned char g = pixelOffset[1];
                 unsigned char b = pixelOffset[2];
+                unsigned char a = pixelOffset[3];
 
                 grid->cells[x][y]->r = r;
                 grid->cells[x][y]->g = g;
                 grid->cells[x][y]->b = b;
+                grid->cells[x][y]->a = a;
             }
         }
         

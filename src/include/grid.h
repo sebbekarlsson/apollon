@@ -9,6 +9,7 @@ typedef struct GRID_CELL_STRUCT
     float r;
     float g;
     float b;
+    float a;
 } grid_cell_T;
 
 grid_cell_T* init_grid_cell();

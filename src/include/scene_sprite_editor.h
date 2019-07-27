@@ -32,6 +32,7 @@ typedef struct SCENE_SPRITE_EDITOR_STRUCT
     float r;
     float g;
     float b;
+    float a;
     focus_manager_T* focus_manager;
 } scene_sprite_editor_T;
 

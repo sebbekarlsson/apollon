@@ -10,6 +10,8 @@
 
 extern const float COLOR_FG[3];
 
+extern sprite_T* SPRITE_CHECKBOARD;
+
 
 grid_cell_T* init_grid_cell()
 {
@@ -17,6 +19,7 @@ grid_cell_T* init_grid_cell()
     cell->r = 255;
     cell->g = 255;
     cell->b = 255;
+    cell->a = 0.0f;
 
     return cell;
 }
@@ -108,6 +111,16 @@ void grid_draw(actor_T* self)
         {
             float cell_y = self->y + (y * grid->cell_size);
 
+            draw_positioned_sprite(
+                SPRITE_CHECKBOARD,
+                cell_x,
+                cell_y,
+                0.0f,
+                grid->cell_size,
+                grid->cell_size,
+                state
+            );
+
             draw_positioned_2D_mesh(
                 cell_x,
                 cell_y,
@@ -117,7 +130,7 @@ void grid_draw(actor_T* self)
                 grid->cells[x][y]->r,
                 grid->cells[x][y]->g,
                 grid->cells[x][y]->b,
-                1.0f,
+                grid->cells[x][y]->a,
                 state
             );
         }
@@ -245,7 +258,7 @@ texture_T* grid_create_texture(grid_T* grid)
         img[(4 * i)] = grid->cells[x][y]->r;
         img[(4 * i) + 1] = grid->cells[x][y]->g;
         img[(4 * i) + 2] = grid->cells[x][y]->b;
-        img[(4 * i) + 3] = 255;
+        img[(4 * i) + 3] = (int)(grid->cells[x][y]->a * 255);
     }
 
     return get_texture_from_data((unsigned char*)img, grid->width, grid->height, GL_RGBA);
@@ -260,6 +273,7 @@ void grid_copy(grid_T* source_grid, grid_T* target_grid)
             target_grid->cells[x][y]->r = source_grid->cells[x][y]->r;
             target_grid->cells[x][y]->g = source_grid->cells[x][y]->g;
             target_grid->cells[x][y]->b = source_grid->cells[x][y]->b;
+            target_grid->cells[x][y]->a = source_grid->cells[x][y]->a;
         }
     }
 }
@@ -273,6 +287,7 @@ void grid_clean(grid_T* grid)
             grid->cells[x][y]->r = 255;
             grid->cells[x][y]->g = 255;
             grid->cells[x][y]->b = 255;
+            grid->cells[x][y]->a = 0.0f;
         }
     }
 }

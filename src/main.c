@@ -18,11 +18,25 @@ database_T* DATABASE;
 
 
 texture_T* TEXTURE_CHECKBOX_SHEET;
+texture_T* TEXTURE_CHECKBOARD;
+
+sprite_T* SPRITE_CHECKBOARD;
 
 
 void load_textures()
 {
     TEXTURE_CHECKBOX_SHEET = get_texture("res/img/checkbox_sheet.png", GL_RGBA);
+    TEXTURE_CHECKBOARD = get_texture("res/img/checkboard.png", GL_RGB);
+
+    dynamic_list_T* sprite_checkboard_list = init_dynamic_list(sizeof(struct TEXTURE_STRUCT*));
+    dynamic_list_append(sprite_checkboard_list, TEXTURE_CHECKBOARD);
+
+    SPRITE_CHECKBOARD = init_sprite(
+        sprite_checkboard_list,
+        1.0f,
+        TEXTURE_CHECKBOARD->width,
+        TEXTURE_CHECKBOARD->height
+    );
 }
 
 main_state_T* init_main_state()
