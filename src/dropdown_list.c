@@ -91,6 +91,7 @@ void dropdown_list_option_draw(int i, dropdown_list_option_T* option, dropdown_l
             COLOR_BG_DARK_BRIGHT[0],
             COLOR_BG_DARK_BRIGHT[1],
             COLOR_BG_DARK_BRIGHT[2],
+            1.0f,
             state
         );
     }
@@ -159,6 +160,7 @@ void dropdown_list_draw(actor_T* self)
             0,
             0,
             0,
+            0.6f,
             state
         );
     }
@@ -172,6 +174,7 @@ void dropdown_list_draw(actor_T* self)
         COLOR_BG_DARK[0],
         COLOR_BG_DARK[1],
         COLOR_BG_DARK[2],
+        1.0f,
         state
     ); 
 

@@ -69,6 +69,7 @@ void button_draw(actor_T* self)
         focused ? COLOR_BG_DARK_BRIGHT[0] : button->bg_r,
         focused ? COLOR_BG_DARK_BRIGHT[1] : button->bg_g,
         focused ? COLOR_BG_DARK_BRIGHT[2] : button->bg_b,
+        1.0f,
         state
     );
 

@@ -49,6 +49,7 @@ void input_field_draw(actor_T* self)
         COLOR_BG_BRIGHT[0],
         COLOR_BG_BRIGHT[1],
         COLOR_BG_BRIGHT[2],
+        1.0f,
         state 
     );
 
@@ -94,7 +95,8 @@ void input_field_draw(actor_T* self)
             COLOR_FG[0],
             COLOR_FG[1],
             COLOR_FG[2],
-            state        
+            1.0f,
+            state       
         );
     } 
 
@@ -107,6 +109,7 @@ void input_field_draw(actor_T* self)
         COLOR_FG[0],
         COLOR_FG[1],
         COLOR_FG[2],
+        1.0f,
         state 
     );
 }

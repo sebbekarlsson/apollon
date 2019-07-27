@@ -140,6 +140,7 @@ void scene_menu_draw(scene_T* self)
         COLOR_BG_DARK_BRIGHT[0],
         COLOR_BG_DARK_BRIGHT[1],
         COLOR_BG_DARK_BRIGHT[2],
+        1.0f,
         state
     );
 

@@ -117,6 +117,7 @@ void grid_draw(actor_T* self)
                 grid->cells[x][y]->r,
                 grid->cells[x][y]->g,
                 grid->cells[x][y]->b,
+                1.0f,
                 state
             );
         }
@@ -183,6 +184,7 @@ void grid_draw(actor_T* self)
                     255 - cell_r,
                     255 - cell_g,
                     255 - cell_b,
+                    1.0f,
                     state
                 );
             }
