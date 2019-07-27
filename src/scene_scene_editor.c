@@ -121,6 +121,9 @@ void button_scene_save_press()
 {
     scene_T* scene = get_current_scene();
     scene_scene_editor_T* s_scene_editor = (scene_scene_editor_T*) scene;
+    
+    if (s_scene_editor->checkbox_main_scene->checked)
+        database_unset_main_flag_on_all_scenes(DATABASE);
 
     if (s_scene_editor->scene_id == (void*) 0)
     {
@@ -136,10 +139,11 @@ void button_scene_save_press()
     else
     {
         printf("Update existing scene.\n");
-        database_update_scene_name_by_id(
+        database_update_scene_by_id(
             DATABASE,
             s_scene_editor->scene_id,
-            s_scene_editor->input_field_name->value
+            s_scene_editor->input_field_name->value,
+            s_scene_editor->checkbox_main_scene->checked
         );
         scene_scene_editor_refresh_state(s_scene_editor);
     }
