@@ -25,6 +25,14 @@ void scene_sprite_editor_refresh_state(scene_sprite_editor_T* s_sprite_editor)
     );
 
     dropdown_list_reload_sprites(s_sprite_editor->dropdown_list_sprite);
+
+    if (s_sprite_editor->sprite_id != (void*) 0)
+    {
+        dropdown_list_set_selected_option_by_string_value(
+            s_sprite_editor->dropdown_list_sprite,
+            (const char*) s_sprite_editor->sprite_id 
+        );
+    }
 }
 
 void scene_sprite_editor_delete_grids_reset_sprite_id(scene_sprite_editor_T* s_sprite_editor)
