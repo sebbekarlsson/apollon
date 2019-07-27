@@ -27,7 +27,7 @@ void scene_actor_editor_refresh_state(scene_actor_editor_T* s_actor_editor)
         DATABASE,
         "actor_definitions",
         1,
-        4
+        5
     );
     dropdown_list_reload_sprites(s_actor_editor->dropdown_list_actor);
     dropdown_list_reload_sprites(s_actor_editor->dropdown_list_sprite);
@@ -55,6 +55,12 @@ void button_new_actor_press()
         s_actor_editor->input_field_type_name->value,
         0,
         sizeof(char) * strlen(s_actor_editor->input_field_type_name->value)
+    );
+
+    memset(
+        s_actor_editor->input_field_init_script->value,
+        0,
+        sizeof(char) * strlen(s_actor_editor->input_field_init_script->value)
     );
 
     memset(
@@ -95,6 +101,7 @@ void button_save_press()
             DATABASE,
             s_actor_editor->input_field_type_name->value,
             (char*) option_selected_sprite->value,
+            s_actor_editor->input_field_init_script->value,
             s_actor_editor->input_field_tick_script->value,
             s_actor_editor->input_field_draw_script->value
         );
@@ -110,6 +117,7 @@ void button_save_press()
             s_actor_editor->actor_definition_id,
             s_actor_editor->input_field_type_name->value,
             (char*) option_selected_sprite->value,
+            s_actor_editor->input_field_init_script->value,
             s_actor_editor->input_field_tick_script->value,
             s_actor_editor->input_field_draw_script->value        
         );
@@ -146,6 +154,12 @@ void actor_editor_actor_press(void* dropdown_list, void* option)
         (strlen(database_actor_definition->name) + 1) * sizeof(char)
     );
     strcpy(s_actor_editor->input_field_type_name->value, database_actor_definition->name);
+
+    s_actor_editor->input_field_init_script->value = realloc(
+        s_actor_editor->input_field_init_script->value,
+        (strlen(database_actor_definition->init_script) + 1) * sizeof(char)
+    );
+    strcpy(s_actor_editor->input_field_init_script->value, database_actor_definition->init_script);
 
     s_actor_editor->input_field_tick_script->value = realloc(
         s_actor_editor->input_field_tick_script->value,
@@ -205,11 +219,42 @@ scene_actor_editor_T* init_scene_actor_editor()
     iy += label_margin;
     s_actor_editor->dropdown_list_actor = init_dropdown_list(ix, iy, 0.0f, actor_editor_actor_press);
     s_actor_editor->dropdown_list_actor->expanded = 0;
+    s_actor_editor->dropdown_list_actor->width = 220;
     ((actor_T*)s_actor_editor->dropdown_list_actor)->z = 1;
 
     dynamic_list_append(s_actor_editor->focus_manager->focusables, (actor_focusable_T*) s_actor_editor->dropdown_list_actor);
     dynamic_list_append(state->actors, s_actor_editor->label_actor);
     dynamic_list_append(state->actors, s_actor_editor->dropdown_list_actor);
+    iy += margin;
+
+    /* ==== init_script ====*/
+    s_actor_editor->label_init_script = init_label(ix, iy, 0.0f, "Init Script");
+    iy += label_margin;
+    s_actor_editor->input_field_init_script = init_input_field(ix, iy, 0.0f);
+    s_actor_editor->input_field_init_script->width = s_actor_editor->dropdown_list_actor->width;
+    dynamic_list_append(s_actor_editor->focus_manager->focusables, (actor_focusable_T*) s_actor_editor->input_field_init_script);
+    dynamic_list_append(state->actors, s_actor_editor->label_init_script);
+    dynamic_list_append(state->actors, s_actor_editor->input_field_init_script);
+    iy += margin;
+
+    /* ==== tick_script ====*/
+    s_actor_editor->label_tick_script = init_label(ix, iy, 0.0f, "Tick Script");
+    iy += label_margin;
+    s_actor_editor->input_field_tick_script = init_input_field(ix, iy, 0.0f);
+    s_actor_editor->input_field_tick_script->width = s_actor_editor->dropdown_list_actor->width;
+    dynamic_list_append(s_actor_editor->focus_manager->focusables, (actor_focusable_T*) s_actor_editor->input_field_tick_script);
+    dynamic_list_append(state->actors, s_actor_editor->label_tick_script);
+    dynamic_list_append(state->actors, s_actor_editor->input_field_tick_script);
+    iy += margin;
+
+    /* ==== draw_script ====*/
+    s_actor_editor->label_draw_script = init_label(ix, iy, 0.0f, "Draw Script");
+    iy += label_margin;
+    s_actor_editor->input_field_draw_script = init_input_field(ix, iy, 0.0f);
+    s_actor_editor->input_field_draw_script->width = s_actor_editor->dropdown_list_actor->width;
+    dynamic_list_append(s_actor_editor->focus_manager->focusables, (actor_focusable_T*) s_actor_editor->input_field_draw_script);
+    dynamic_list_append(state->actors, s_actor_editor->label_draw_script);
+    dynamic_list_append(state->actors, s_actor_editor->input_field_draw_script);
     iy += margin;
 
     s_actor_editor->button_new_actor = init_button(ix, iy, 0.0f, "New Actor", button_new_actor_press);
@@ -242,26 +287,7 @@ scene_actor_editor_T* init_scene_actor_editor()
     dynamic_list_append(s_actor_editor->focus_manager->focusables, (actor_focusable_T*) s_actor_editor->dropdown_list_sprite);
     dynamic_list_append(state->actors, s_actor_editor->label_sprite);
     dynamic_list_append(state->actors, s_actor_editor->dropdown_list_sprite);
-    jy += margin;
-
-
-    /* ==== tick_script ====*/
-    s_actor_editor->label_tick_script = init_label(jx, jy, 0.0f, "Tick Script");
-    jy += label_margin;
-    s_actor_editor->input_field_tick_script = init_input_field(jx, jy, 0.0f);
-    dynamic_list_append(s_actor_editor->focus_manager->focusables, (actor_focusable_T*) s_actor_editor->input_field_tick_script);
-    dynamic_list_append(state->actors, s_actor_editor->label_tick_script);
-    dynamic_list_append(state->actors, s_actor_editor->input_field_tick_script);
-    jy += margin;
-
-    /* ==== draw_script ====*/
-    s_actor_editor->label_draw_script = init_label(jx, jy, 0.0f, "Draw Script");
-    jy += label_margin;
-    s_actor_editor->input_field_draw_script = init_input_field(jx, jy, 0.0f);
-    dynamic_list_append(s_actor_editor->focus_manager->focusables, (actor_focusable_T*) s_actor_editor->input_field_draw_script);
-    dynamic_list_append(state->actors, s_actor_editor->label_draw_script);
-    dynamic_list_append(state->actors, s_actor_editor->input_field_draw_script);
-    jy += margin;
+    jy += margin; 
 
     /* ==== save button ====*/
     s_actor_editor->button_save = init_button(jx, jy, 0.0f, "Save", button_save_press);

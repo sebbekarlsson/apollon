@@ -49,7 +49,7 @@ void scene_scene_designer_refresh_state(scene_scene_designer_T* s_scene_designer
         DATABASE,
         "actor_definitions",
         1,
-        4
+        5
     );
     dropdown_list_reload_sprites(s_scene_designer->dropdown_list);
 }
