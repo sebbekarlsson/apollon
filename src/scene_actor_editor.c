@@ -31,6 +31,14 @@ void scene_actor_editor_refresh_state(scene_actor_editor_T* s_actor_editor)
     );
     dropdown_list_reload_sprites(s_actor_editor->dropdown_list_actor);
     dropdown_list_reload_sprites(s_actor_editor->dropdown_list_sprite);
+
+    if (s_actor_editor->actor_definition_id != (void*) 0)
+    {
+        dropdown_list_set_selected_option_by_string_value(
+            s_actor_editor->dropdown_list_actor,
+            (const char*) s_actor_editor->actor_definition_id 
+        );
+    }
 }
 
 void scene_actor_editor_reset_actor_definition_id(scene_actor_editor_T* s_actor_editor)
