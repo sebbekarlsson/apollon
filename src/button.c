@@ -8,6 +8,7 @@
 extern const float COLOR_BG_DARK[3];
 extern const float COLOR_BG_DARK_BRIGHT[3];
 extern const float COLOR_FG[3];
+extern const float COLOR_RED[3];
 
 extern keyboard_state_T* KEYBOARD_STATE;
 
@@ -26,11 +27,13 @@ button_T* init_button(float x, float y, float z, char* text, void (*press)())
     button->bg_r = COLOR_BG_DARK[0];
     button->bg_g = COLOR_BG_DARK[1];
     button->bg_b = COLOR_BG_DARK[2];
+    button->alpha = 1.0f;
     button->font_size = 6;
     button->font_spacing = 6;
     button->width = 200;
     button->height = 32;
     button->press = press;
+    button->disabled = 0;
 
     return button;
 }
@@ -41,7 +44,7 @@ void button_tick(actor_T* self)
     actor_focusable_T* actor_focusable = (actor_focusable_T*) button;
     unsigned int focused = actor_focusable->focused;
 
-    if (focused)
+    if (focused && !button->disabled)
     {
         if (KEYBOARD_STATE->keys[GLFW_KEY_ENTER] && !KEYBOARD_STATE->key_locks[GLFW_KEY_ENTER])
         {
@@ -49,6 +52,8 @@ void button_tick(actor_T* self)
             KEYBOARD_STATE->key_locks[GLFW_KEY_ENTER] = 1;
         }
     }
+
+    button->alpha = button->disabled ? 0.6f : 1.0f;
 }
 
 void button_draw(actor_T* self)
@@ -56,6 +61,7 @@ void button_draw(actor_T* self)
     button_T* button = (button_T*) self;
     actor_focusable_T* actor_focusable = (actor_focusable_T*) button;
     unsigned int focused = actor_focusable->focused;
+    unsigned int disabled = button->disabled;
 
     scene_T* scene = get_current_scene();
     state_T* state = (state_T*) scene;
@@ -66,10 +72,10 @@ void button_draw(actor_T* self)
         0.0f,
         button->width,
         button->height,
-        focused ? COLOR_BG_DARK_BRIGHT[0] : button->bg_r,
-        focused ? COLOR_BG_DARK_BRIGHT[1] : button->bg_g,
-        focused ? COLOR_BG_DARK_BRIGHT[2] : button->bg_b,
-        1.0f,
+        disabled ? COLOR_RED[0] : (focused ? COLOR_BG_DARK_BRIGHT[0] : button->bg_r),
+        disabled ? COLOR_RED[1] : (focused ? COLOR_BG_DARK_BRIGHT[1] : button->bg_g),
+        disabled ? COLOR_RED[2] : (focused ? COLOR_BG_DARK_BRIGHT[2] : button->bg_b),
+        button->alpha,
         state
     );
 

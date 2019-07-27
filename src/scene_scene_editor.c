@@ -53,10 +53,12 @@ void scene_scene_editor_refresh_state(scene_scene_editor_T* s_scene_editor)
 
         free(s_scene_editor->label_number_of_actors->text);
         s_scene_editor->label_number_of_actors->text = nr_actors_text;
+        s_scene_editor->button_design->disabled = 0;
     }
     else
     {
         scene_scene_editor_reset_label_number_of_actors(s_scene_editor);
+        s_scene_editor->button_design->disabled = 1;
     }
 }
 

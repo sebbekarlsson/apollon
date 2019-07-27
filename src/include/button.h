@@ -15,8 +15,10 @@ typedef struct BUTTON_STRUCT
     unsigned int bg_r;
     unsigned int bg_g;
     unsigned int bg_b;
+    float alpha;
     unsigned int font_size;
     unsigned int font_spacing;
+    unsigned int disabled;
     void (*press)();
 } button_T;
 

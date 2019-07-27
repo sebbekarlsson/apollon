@@ -6,4 +6,5 @@ const float COLOR_BG_DARK_BRIGHT[3] =   {189, 174, 147};
 const float COLOR_FG[3] =               {60.0f, 56.0f, 54.0};
 const float COLOR_RED[3] =              {204,36,29};
 const float COLOR_CONTRAST[3] =         {215, 153, 33};
+const float COLOR_GRAY[3] =             {146, 131, 116};
 #endif
