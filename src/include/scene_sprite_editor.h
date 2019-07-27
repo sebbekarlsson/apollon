@@ -20,6 +20,8 @@ typedef struct SCENE_SPRITE_EDITOR_STRUCT
     dynamic_list_T* grids;  // sprite frames
     label_T* label_current_sprite;
     dropdown_list_T* dropdown_list_sprite;
+    label_T* label_frame_delay;
+    input_field_T* input_field_frame_delay;
     label_T* label_name;
     input_field_T* input_field_name;
     button_T* button_save;

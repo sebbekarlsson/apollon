@@ -48,7 +48,15 @@ void sprite_button_save_press()
     scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) scene;
 
     dynamic_list_T* textures = scene_sprite_editor_get_frames_as_textures(s_sprite_editor);
-    sprite_T* sprite = init_sprite(textures, 0, s_sprite_editor->grid->width, s_sprite_editor->grid->height);
+
+    float frame_delay = atof(s_sprite_editor->input_field_frame_delay->value);
+
+    sprite_T* sprite = init_sprite(
+        textures,
+        frame_delay,
+        s_sprite_editor->grid->width,
+        s_sprite_editor->grid->height
+    );
 
     if (s_sprite_editor->sprite_id == (void*)0)
     {
@@ -110,8 +118,25 @@ void dropdown_list_sprite_press(void* dropdown_list, void* option)
         s_sprite_editor->input_field_name->value,
         (strlen(database_sprite->name) + 1) * sizeof(char)
     );
-
+    
     strcpy(s_sprite_editor->input_field_name->value, database_sprite->name);
+
+    memset(
+        s_sprite_editor->input_field_frame_delay->value,
+        '\0',
+        strlen(s_sprite_editor->input_field_frame_delay->value) * sizeof(char)
+    );
+
+    char* frame_delay_str = calloc(128, sizeof(char));
+    frame_delay_str[0] = '\0';
+    sprintf(frame_delay_str, "%1.2f", sprite->frame_delay);
+
+    s_sprite_editor->input_field_frame_delay->value = realloc(
+        s_sprite_editor->input_field_frame_delay->value,
+        (strlen(frame_delay_str) + 1) * sizeof(char)
+    );
+
+    strcpy(s_sprite_editor->input_field_frame_delay->value, frame_delay_str);
 
     scene_sprite_editor_set_sprite_id(s_sprite_editor, database_sprite->id);
 }
@@ -340,9 +365,24 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     s_sprite_editor->dropdown_list_sprite->expanded = 0;
     s_sprite_editor->dropdown_list_sprite->width = dropdown_list_sprite_width;
     ((actor_T*)s_sprite_editor->dropdown_list_sprite)->z = 1;
-
     dynamic_list_append(s_sprite_editor->focus_manager->focusables, (actor_focusable_T*) s_sprite_editor->dropdown_list_sprite);
     dynamic_list_append(state->actors, s_sprite_editor->dropdown_list_sprite);
+
+    s_sprite_editor->label_frame_delay = init_label(
+        (((WINDOW_WIDTH / 2) - ((16 * 16) / 2))) - (dropdown_list_sprite_width + 16),
+        (WINDOW_HEIGHT / 2) - ((16 * 16) / 2) + 64,
+        0.0f,
+        "Delay"
+    );
+    dynamic_list_append(state->actors, s_sprite_editor->label_frame_delay);
+    s_sprite_editor->input_field_frame_delay = init_input_field(
+        (((WINDOW_WIDTH / 2) - ((16 * 16) / 2))) - (dropdown_list_sprite_width + 16),
+        (WINDOW_HEIGHT / 2) - ((16 * 16) / 2) + 64 + 16,
+        0.0f
+    );
+    s_sprite_editor->input_field_frame_delay->width = s_sprite_editor->dropdown_list_sprite->width;
+    dynamic_list_append(s_sprite_editor->focus_manager->focusables, (actor_focusable_T*) s_sprite_editor->input_field_frame_delay);
+    dynamic_list_append(state->actors, s_sprite_editor->input_field_frame_delay);
 
 
     dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->grid);
@@ -356,6 +396,8 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     s_sprite_editor->r = 0.0f;
     s_sprite_editor->g = 0.0f;
     s_sprite_editor->b = 0.0f;
+
+    state_resort_actors(state);
 
     scene_sprite_editor_refresh_state(s_sprite_editor);
 
