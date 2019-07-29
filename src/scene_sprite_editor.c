@@ -60,6 +60,13 @@ void sprite_button_save_press()
     scene_T* scene = get_current_scene();
     scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) scene;
 
+    if (!strlen(s_sprite_editor->input_field_name->value))
+    {
+        modal_manager_show_modal(MODAL_MANAGER, "error", "You need to enter a name.");
+
+        return;
+    }
+
     dynamic_list_T* textures = scene_sprite_editor_get_frames_as_textures(s_sprite_editor);
 
     float frame_delay = atof(s_sprite_editor->input_field_frame_delay->value);
@@ -69,7 +76,7 @@ void sprite_button_save_press()
         frame_delay,
         s_sprite_editor->grid->width,
         s_sprite_editor->grid->height
-    );
+    ); 
 
     if (s_sprite_editor->sprite_id == (void*)0)
     {

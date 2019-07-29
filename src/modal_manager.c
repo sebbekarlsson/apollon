@@ -45,10 +45,13 @@ void modal_manager_register_modal(modal_manager_T* modal_manager, modal_T* modal
     dynamic_list_append(modal_manager->modals, modal);
 }
 
-modal_T* modal_manager_show_modal(modal_manager_T* modal_manager, const char* title, const char* text)
+modal_T* modal_manager_show_modal(modal_manager_T* modal_manager, char* title, char* text)
 {
     scene_T* scene = get_current_scene();
     state_T* state = (state_T*) scene;
+
+    // TODO: copy and allocate memory for title & text
+    // so that we can free it in the free method.
 
     modal_T* modal = init_modal(
         WINDOW_WIDTH / 2,
@@ -60,6 +63,7 @@ modal_T* modal_manager_show_modal(modal_manager_T* modal_manager, const char* ti
 
     modal_manager_register_modal(modal_manager, modal);
     dynamic_list_append(state->actors, modal);
+    state_resort_actors(state);
 
     MAIN_STATE->modal_is_active = 1;
 
