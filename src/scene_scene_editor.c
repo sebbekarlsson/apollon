@@ -1,6 +1,7 @@
 #include "include/main.h"
 #include "include/scene_scene_editor.h"
 #include "include/etc.h"
+#include "include/modal_manager.h"
 #include <coelum/input.h>
 #include <coelum/theatre.h>
 #include <coelum/current.h>
@@ -11,6 +12,7 @@ extern keyboard_state_T* KEYBOARD_STATE;
 extern database_T* DATABASE;
 extern theatre_T* THEATRE;
 extern main_state_T* MAIN_STATE;
+extern modal_manager_T* MODAL_MANAGER;
 
 
 void scene_scene_editor_unload(void* self)
@@ -123,6 +125,12 @@ void button_scene_save_press()
 {
     scene_T* scene = get_current_scene();
     scene_scene_editor_T* s_scene_editor = (scene_scene_editor_T*) scene;
+
+    if (!strlen(s_scene_editor->input_field_name->value))
+    {
+        modal_manager_show_modal(MODAL_MANAGER, "error", "You need to enter a name.");
+        return;
+    }
     
     if (s_scene_editor->checkbox_main_scene->checked)
         database_unset_main_flag_on_all_scenes(DATABASE);
@@ -252,10 +260,11 @@ void scene_scene_editor_tick(scene_T* self)
     go_back_on_escape();
 
     scene_scene_editor_T* s_scene_editor = (scene_scene_editor_T*) self;
-    
+
     focus_manager_tick(s_scene_editor->focus_manager);
 
-    //scene_scene_editor_T* s_scene_editor = (scene_scene_editor_T*) self;
+    if (MAIN_STATE->modal_is_active)
+        focus_manager_keep_disabled(s_scene_editor->focus_manager); 
 }
 
 void scene_scene_editor_draw(scene_T* self)
