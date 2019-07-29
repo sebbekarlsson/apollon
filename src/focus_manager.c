@@ -17,7 +17,7 @@ focus_manager_T* init_focus_manager()
 }
 
 void focus_manager_tick(focus_manager_T* focus_manager)
-{
+{ 
     if (focus_manager->focusables->size == 0)
         return;
 
@@ -49,4 +49,21 @@ void focus_manager_tick(focus_manager_T* focus_manager)
         actor_focusable_T* actor_focusable = (actor_focusable_T*) focus_manager->focusables->items[focus_manager->focus_index];
         actor_focusable->focused = 1;
     }
+}
+
+void focus_manager_keep_disabled(focus_manager_T* focus_manager)
+{
+    focus_manager->focus_index = -1;
+
+    for (int i = 0; i < focus_manager->focusables->size; i++)
+        ((actor_focusable_T*)focus_manager->focusables->items[i])->focused = 0;
+
+    return;
+}
+
+void focus_manager_free(focus_manager_T* focus_manager)
+{
+    free(focus_manager->focusables->items);
+    free(focus_manager->focusables);
+    free(focus_manager);
 }

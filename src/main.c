@@ -6,6 +6,7 @@
 #include "include/scene_sprite_editor.h"
 #include "include/colors.h"
 #include "include/image_utils.h"
+#include "include/modal_manager.h"
 #include <coelum/main.h>
 #include <coelum/theatre.h>
 #include <coelum/textures.h>
@@ -15,6 +16,8 @@ extern theatre_T* THEATRE;
 
 main_state_T* MAIN_STATE;
 database_T* DATABASE;
+
+modal_manager_T* MODAL_MANAGER;
 
 
 texture_T* TEXTURE_CHECKBOX_SHEET;
@@ -43,6 +46,7 @@ main_state_T* init_main_state()
 {
     main_state_T* main_state = calloc(1, sizeof(struct MAIN_STATE_STRUCT));
     main_state->scene_id = (void*) 0;
+    main_state->modal_is_active = 0;
 
     return main_state;
 }
@@ -55,6 +59,7 @@ int main(int argc, char* argv[])
 
     MAIN_STATE = init_main_state();
     DATABASE = init_database();
+    MODAL_MANAGER = init_modal_manager();
 
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_menu());
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_scene_editor());

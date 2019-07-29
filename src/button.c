@@ -93,3 +93,14 @@ void button_draw(actor_T* self)
         state
     );
 }
+
+void button_free(button_T* button)
+{
+//    free(button->text);
+
+    actor_T* actor = (actor_T*) button;
+
+    actor_free(actor);
+
+    free(button);
+}

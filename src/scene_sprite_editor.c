@@ -1,5 +1,8 @@
+#include "include/main.h"
 #include "include/scene_sprite_editor.h"
 #include "include/etc.h"
+#include "include/modal.h"
+#include "include/modal_manager.h"
 #include <coelum/file_utils.h>
 #include <coelum/constants.h>
 #include <coelum/actor_text.h>
@@ -12,6 +15,8 @@
 
 extern keyboard_state_T* KEYBOARD_STATE;
 extern database_T* DATABASE;
+extern main_state_T* MAIN_STATE;
+extern modal_manager_T* MODAL_MANAGER;
 
 
 void scene_sprite_editor_refresh_state(scene_sprite_editor_T* s_sprite_editor)
@@ -154,6 +159,7 @@ void sprite_button_new_press()
     printf("New!\n");
 
     scene_T* scene = get_current_scene();
+    state_T* state = (state_T*) scene;
     scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) scene;
     
     if (!s_sprite_editor->sprite_id)
@@ -195,7 +201,9 @@ void sprite_button_new_press()
             0,
             "grid_canvas"
         )
-    );
+    ); 
+
+    state_resort_actors(state);
 }
 
 scene_sprite_editor_T* init_scene_sprite_editor()
@@ -421,6 +429,12 @@ void scene_sprite_editor_tick(scene_T* self)
     scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) self;
     
     focus_manager_tick(s_sprite_editor->focus_manager);
+
+    if (MAIN_STATE->modal_is_active)
+        focus_manager_keep_disabled(s_sprite_editor->focus_manager); 
+
+    if (s_sprite_editor->focus_manager->focus_index == -1)
+        return;
 
     actor_focusable_T* actor_focusable = (actor_focusable_T*) s_sprite_editor->focus_manager->focusables->items[s_sprite_editor->focus_manager->focus_index];
     actor_T* grid_actor = (actor_T*) actor_focusable;

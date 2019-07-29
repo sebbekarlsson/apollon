@@ -27,4 +27,6 @@ button_T* init_button(float x, float y, float z, char* text, void (*press)());
 void button_tick(actor_T* self);
 
 void button_draw(actor_T* self);
+
+void button_free(button_T* button);
 #endif

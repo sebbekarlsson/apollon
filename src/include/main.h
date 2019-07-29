@@ -3,6 +3,7 @@
 typedef struct MAIN_STATE_STRUCT
 {
     char* scene_id;
+    unsigned int modal_is_active;
 } main_state_T;
 
 main_state_T* init_main_state();
