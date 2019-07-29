@@ -17,6 +17,12 @@ extern main_state_T* MAIN_STATE;
 extern const float COLOR_FG[3];
 
 
+void _free_database_actor_instance(void* item)
+{
+    database_actor_instance_T* database_actor_instance = (database_actor_instance_T*) item;
+    database_actor_instance_free(database_actor_instance);
+}
+
 void scene_designer_load(scene_T* self)
 {
     scene_scene_designer_T* s_scene_designer = (scene_scene_designer_T*) self;
@@ -198,6 +204,29 @@ void scene_scene_designer_tick(scene_T* self)
 
         KEYBOARD_STATE->key_locks[GLFW_KEY_I] = 1;
     }
+
+    if (KEYBOARD_STATE->keys[GLFW_KEY_DELETE] && !KEYBOARD_STATE->key_locks[GLFW_KEY_DELETE])
+    {
+        float cx = ((actor_T*)actor_cursor)->x;
+        float cy = ((actor_T*)actor_cursor)->y;
+        
+        for (int i = 0; i < s_scene_designer->database_actor_instances->size; i++)
+        {
+            database_actor_instance_T* dai = (database_actor_instance_T*) s_scene_designer->database_actor_instances->items[i];
+
+            if (cx + 16 >= dai->x && cx < dai->x + 16)
+            {
+                if (cy + 16 >= dai->y && cy < dai->y + 16)
+                {
+                    database_delete_actor_instance_by_id(DATABASE, dai->id);
+                    dynamic_list_remove(s_scene_designer->database_actor_instances, dai, _free_database_actor_instance);
+                    break;
+                }
+            }
+        }
+
+        KEYBOARD_STATE->key_locks[GLFW_KEY_DELETE] = 1;
+    }
 }
 
 void scene_scene_designer_draw(scene_T* self)
@@ -254,21 +283,16 @@ void scene_scene_designer_draw(scene_T* self)
     }
 }
 
-void _free_database_actor_instance(void* item)
-{
-    database_actor_instance_T* database_actor_instance = (database_actor_instance_T*) item;
-    database_actor_instance_free(database_actor_instance);
-}
-
 void scene_scene_designer_empty_database_actor_instances(scene_scene_designer_T* s_scene_designer)
 {
     if (s_scene_designer->database_actor_instances->size > 0)
     {
         for (int i = s_scene_designer->database_actor_instances->size; i > 0; i--)
         {
+            printf("i: %d\n", i);
             dynamic_list_remove(
                 s_scene_designer->database_actor_instances,
-                s_scene_designer->database_actor_instances->items[i],
+                s_scene_designer->database_actor_instances->items[i-1],
                 _free_database_actor_instance
             );
         }
