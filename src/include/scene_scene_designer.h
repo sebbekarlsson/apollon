@@ -16,6 +16,7 @@ typedef struct SCENE_SCENE_DESIGNER_STRUCT
     actor_cursor_T* actor_cursor;
     dynamic_list_T* database_actor_instances;
     database_scene_T* database_scene;
+    char* coords_text;
 } scene_scene_designer_T;
 
 scene_scene_designer_T* init_scene_scene_designer();

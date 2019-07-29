@@ -80,6 +80,24 @@ void scene_designer_dropdown_press(void* dropdown_list, void* option)
     scene_scene_designer_refresh_state(s_scene_designer);
 }
 
+void scene_scene_designer_update_coords_text(scene_scene_designer_T* s_scene_designer)
+{
+    actor_T* actor = (actor_T*) s_scene_designer->actor_cursor;
+
+    const char* template = "x: %1.2f y: %1.2f";
+    free(s_scene_designer->coords_text);
+    s_scene_designer->coords_text = calloc(
+        (strlen(template) + 1) + 128,
+        sizeof(char)
+    );
+    sprintf(
+        s_scene_designer->coords_text,
+        template,
+        actor->x,
+        actor->y
+    );
+}
+
 scene_scene_designer_T* init_scene_scene_designer()
 {
     scene_scene_designer_T* s_scene_designer = calloc(1, sizeof(struct SCENE_SCENE_DESIGNER_STRUCT));
@@ -98,6 +116,9 @@ scene_scene_designer_T* init_scene_scene_designer()
     s_scene_designer->scene_index = 0;
     s_scene_designer->scene_count = 0;
     s_scene_designer->database_scene = (void*) 0;
+    s_scene_designer->coords_text = calloc(1, sizeof(char));
+    s_scene_designer->coords_text[0] = '\0';
+
 
     // this one is starts as focused
     s_scene_designer->dropdown_list = init_dropdown_list(0.0f, 0.0f, 0.0f, scene_designer_dropdown_press);
@@ -114,6 +135,8 @@ scene_scene_designer_T* init_scene_scene_designer()
 
     s_scene_designer->database_actor_instances = init_dynamic_list(sizeof(struct DATABASE_ACTOR_INSTANCE_STRUCT*));
 
+    scene_scene_designer_update_coords_text(s_scene_designer);
+
     dynamic_list_append(state->actors, s_scene_designer->actor_cursor);
 
     return s_scene_designer;
@@ -129,24 +152,28 @@ void scene_scene_designer_tick(scene_T* self)
     if (KEYBOARD_STATE->keys[GLFW_KEY_UP] && !KEYBOARD_STATE->key_locks[GLFW_KEY_UP])
     {
         ((actor_T*)actor_cursor)->y -= 16;
+        scene_scene_designer_update_coords_text(s_scene_designer);
         KEYBOARD_STATE->key_locks[GLFW_KEY_UP] = 1;
     }
 
     if (KEYBOARD_STATE->keys[GLFW_KEY_DOWN] && !KEYBOARD_STATE->key_locks[GLFW_KEY_DOWN])
     {
         ((actor_T*)actor_cursor)->y += 16;
+        scene_scene_designer_update_coords_text(s_scene_designer);
         KEYBOARD_STATE->key_locks[GLFW_KEY_DOWN] = 1;
     }
 
     if (KEYBOARD_STATE->keys[GLFW_KEY_LEFT] && !KEYBOARD_STATE->key_locks[GLFW_KEY_LEFT])
     {
         ((actor_T*)actor_cursor)->x -= 16;
+        scene_scene_designer_update_coords_text(s_scene_designer);
         KEYBOARD_STATE->key_locks[GLFW_KEY_LEFT] = 1;
     }
 
     if (KEYBOARD_STATE->keys[GLFW_KEY_RIGHT] && !KEYBOARD_STATE->key_locks[GLFW_KEY_RIGHT])
     {
         ((actor_T*)actor_cursor)->x += 16;
+        scene_scene_designer_update_coords_text(s_scene_designer);
         KEYBOARD_STATE->key_locks[GLFW_KEY_RIGHT] = 1;
     }
 
@@ -197,6 +224,20 @@ void scene_scene_designer_draw(scene_T* self)
             );
         }
     }
+
+    draw_text(
+        s_scene_designer->coords_text,
+        (strlen(s_scene_designer->database_scene->name) * (6 + 6)) + 6 + 4 + 6 + 4,
+        16 - 6,
+        0,
+        COLOR_FG[0], // r
+        COLOR_FG[1], // g
+        COLOR_FG[2], // b
+        6,
+        6,
+        0,
+        state
+    );
 
     for (int i = 0; i < s_scene_designer->database_actor_instances->size; i++)
     {
