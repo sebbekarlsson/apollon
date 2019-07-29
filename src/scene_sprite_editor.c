@@ -608,6 +608,24 @@ void scene_sprite_editor_draw(scene_T* self)
         0,
         state
     );
+
+    if (s_sprite_editor->sprite_id != (void*)0)
+    {
+        if (s_sprite_editor->current_database_sprite != (void*)0)
+        {
+            int spr_preview_size = 16;
+
+            draw_positioned_sprite(
+                s_sprite_editor->current_database_sprite->sprite,
+                WINDOW_WIDTH - spr_preview_size - 8,
+                8,
+                0.0f,
+                spr_preview_size,
+                spr_preview_size,
+                state
+            );
+        }
+    }
 }
 
 void scene_sprite_editor_goto_next(scene_sprite_editor_T* self)
