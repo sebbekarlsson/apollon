@@ -1,6 +1,8 @@
 #include "include/scene_actor_editor.h"
 #include "include/etc.h"
 #include "include/dropdown_list.h"
+#include "include/modal_manager.h"
+#include "include/main.h"
 #include <coelum/input.h>
 #include <coelum/current.h>
 #include <string.h>
@@ -8,6 +10,8 @@
 
 extern keyboard_state_T* KEYBOARD_STATE;
 extern database_T* DATABASE;
+extern modal_manager_T* MODAL_MANAGER;
+extern main_state_T* MAIN_STATE;
 
 
 void scene_actor_editor_refresh_state(scene_actor_editor_T* s_actor_editor)
@@ -90,6 +94,12 @@ void button_save_press()
 
     scene_T* scene = get_current_scene();
     scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) scene;
+
+    if (!strlen(s_actor_editor->input_field_type_name->value))
+    {
+        modal_manager_show_modal(MODAL_MANAGER, "error", "You need to enter a name.");
+        return;
+    }
 
     dropdown_list_option_T* option_selected_sprite = dropdown_list_get_selected_option(
         s_actor_editor->dropdown_list_sprite
@@ -314,6 +324,9 @@ void scene_actor_editor_tick(scene_T* self)
     scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) self;
 
     focus_manager_tick(s_actor_editor->focus_manager);
+
+    if (MAIN_STATE->modal_is_active)
+        focus_manager_keep_disabled(s_actor_editor->focus_manager); 
 }
 
 void scene_actor_editor_draw(scene_T* self)
