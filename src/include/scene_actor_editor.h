@@ -52,6 +52,9 @@ typedef struct SCENE_ACTOR_EDITOR_STRUCT
     /* ==== save button ==== */
     button_T* button_save;
 
+    /* ==== delete button ==== */
+    button_T* button_delete;
+
     focus_manager_T* focus_manager;
 } scene_actor_editor_T;
 
