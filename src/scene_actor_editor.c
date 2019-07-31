@@ -213,7 +213,11 @@ void actor_editor_actor_press(void* dropdown_list, void* option)
     scene_T* scene = get_current_scene();
     scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) scene;
 
-    s_actor_editor->actor_definition_id = (char*) dropdown_list_option->value;
+    char* option_value = (char*) dropdown_list_option->value;
+    char* actor_definition_id_new = calloc(strlen(option_value) + 1, sizeof(char));
+    strcpy(actor_definition_id_new, option_value);
+
+    s_actor_editor->actor_definition_id = actor_definition_id_new;
 
     database_actor_definition_T* database_actor_definition = database_get_actor_definition_by_id(
         DATABASE,

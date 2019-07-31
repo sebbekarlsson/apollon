@@ -107,7 +107,10 @@ void scene_sprite_editor_set_sprite_id(scene_sprite_editor_T* s_sprite_editor, c
     if (s_sprite_editor->sprite_id)
         free(s_sprite_editor->sprite_id);
 
-    s_sprite_editor->sprite_id = id;
+    char* id_new = calloc(strlen(id) + 1, sizeof(char));
+    strcpy(id_new, id);
+
+    s_sprite_editor->sprite_id = id_new;
 }
 
 void sprite_button_save_press()

@@ -15,6 +15,24 @@ extern main_state_T* MAIN_STATE;
 extern modal_manager_T* MODAL_MANAGER;
 
 
+static void _free_scene_dropdown_option(void* item)
+{
+    dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) item;
+    
+    free(dropdown_list_option->key);
+    free((char*)dropdown_list_option->value);
+    free(dropdown_list_option);
+}
+
+static void scene_scene_editor_clear_input_fields(scene_scene_editor_T* s_scene_editor)
+{
+    memset(
+        s_scene_editor->input_field_name->value,
+        0,
+        sizeof(char) * strlen(s_scene_editor->input_field_name->value)
+    );
+}
+
 void scene_scene_editor_unload(void* self)
 {
     scene_T* scene = (scene_T*) self;
@@ -59,8 +77,10 @@ void scene_scene_editor_refresh_state(scene_scene_editor_T* s_scene_editor)
     }
     else
     {
+        scene_scene_editor_clear_input_fields(s_scene_editor);
         scene_scene_editor_reset_label_number_of_actors(s_scene_editor);
         s_scene_editor->button_design->disabled = 1;
+        s_scene_editor->checkbox_main_scene->checked = 0;
     }
 }
 
@@ -82,8 +102,13 @@ void scene_editor_scene_press(void* dropdown_list, void* option)
     scene_T* scene = get_current_scene();
     scene_scene_editor_T* s_scene_editor = (scene_scene_editor_T*) scene;
 
-    s_scene_editor->scene_id = (char*) dropdown_list_option->value;
-    MAIN_STATE->scene_id = s_scene_editor->scene_id;
+    char* option_value = (char*) dropdown_list_option->value;
+
+    char* scene_id_new = calloc(strlen(option_value) + 1, sizeof(char));
+    strcpy(scene_id_new, option_value);
+
+    s_scene_editor->scene_id = scene_id_new;
+    MAIN_STATE->scene_id = scene_id_new;
 
     database_scene_T* database_scene = database_get_scene_by_id(DATABASE, s_scene_editor->scene_id);
 
@@ -105,11 +130,7 @@ void button_scene_new_press()
 
     scene_scene_editor_reset_scene_id(s_scene_editor);
 
-    memset(
-        s_scene_editor->input_field_name->value,
-        0,
-        sizeof(char) * strlen(s_scene_editor->input_field_name->value)
-    );
+    scene_scene_editor_clear_input_fields(s_scene_editor); 
 
     s_scene_editor->checkbox_main_scene->checked = 0;
 
@@ -157,6 +178,47 @@ void button_scene_save_press()
         );
         scene_scene_editor_refresh_state(s_scene_editor);
     }
+}
+
+void button_scene_delete_press()
+{
+    printf("Pressed delete\n");
+
+    scene_T* scene = get_current_scene();
+    scene_scene_editor_T* s_scene_editor = (scene_scene_editor_T*) scene;
+
+    if (s_scene_editor->scene_id == (void*) 0)
+    {
+        printf("Not currently modifying a scene.\n");
+        return ;
+    }
+
+    database_delete_scene_by_id(DATABASE, s_scene_editor->scene_id);
+
+    for (int i = 0; i < s_scene_editor->dropdown_list_scene->options->size; i++)
+    {
+        dropdown_list_option_T* option = s_scene_editor->dropdown_list_scene->options->items[i];
+
+        if (option->value == (void*)0)
+            continue;
+        
+        char* db_scene_id = (char*) option->value;
+
+        if (strcmp(db_scene_id, s_scene_editor->scene_id) == 0)
+        {
+            dynamic_list_remove(
+                s_scene_editor->dropdown_list_scene->options,
+                option,
+                _free_scene_dropdown_option 
+            );
+
+            break;
+        } 
+    }
+
+    scene_scene_editor_reset_scene_id(s_scene_editor);
+
+    scene_scene_editor_refresh_state(s_scene_editor);
 }
 
 scene_scene_editor_T* init_scene_scene_editor()
@@ -247,6 +309,12 @@ scene_scene_editor_T* init_scene_scene_editor()
     s_scene_editor->button_save = init_button(jx, jy, 0.0f, "Save", button_scene_save_press);
     dynamic_list_append(s_scene_editor->focus_manager->focusables, (actor_focusable_T*) s_scene_editor->button_save);
     dynamic_list_append(state->actors, s_scene_editor->button_save);
+    jy += margin;
+
+    /* ==== save button ====*/
+    s_scene_editor->button_delete = init_button(jx, jy, 0.0f, "Delete", button_scene_delete_press);
+    dynamic_list_append(s_scene_editor->focus_manager->focusables, (actor_focusable_T*) s_scene_editor->button_delete);
+    dynamic_list_append(state->actors, s_scene_editor->button_delete);
 
     scene_scene_editor_refresh_state(s_scene_editor);
 
@@ -260,6 +328,8 @@ void scene_scene_editor_tick(scene_T* self)
     go_back_on_escape();
 
     scene_scene_editor_T* s_scene_editor = (scene_scene_editor_T*) self;
+
+    ((actor_focusable_T*)s_scene_editor->button_delete)->visible = s_scene_editor->scene_id != (void*) 0;
 
     focus_manager_tick(s_scene_editor->focus_manager);
 

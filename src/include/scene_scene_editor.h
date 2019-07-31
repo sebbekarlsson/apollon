@@ -27,6 +27,7 @@ typedef struct SCENE_SCENE_EDITOR_STRUCT
     button_T* button_design;
     button_T* button_save;
     button_T* button_new;
+    button_T* button_delete;
     focus_manager_T* focus_manager;
     char* scene_id; // the scene which is currenlty being modified.
 } scene_scene_editor_T;
