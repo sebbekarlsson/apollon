@@ -16,6 +16,7 @@ typedef struct SCENE_SPRITE_EDITOR_STRUCT
     scene_T base;
     grid_T* grid;
     grid_T* grid_color_selector;
+    grid_T* grid_tool_selector;
     grid_T* grid_color_mixer;
     dynamic_list_T* grids;  // sprite frames
     label_T* label_current_sprite;
@@ -28,6 +29,7 @@ typedef struct SCENE_SPRITE_EDITOR_STRUCT
     button_T* button_new;
     button_T* button_delete;
     unsigned int grid_index;
+    unsigned int tool_index;
     char* sprite_id; // the sprite currently being modified
     database_sprite_T* current_database_sprite; // a copy of the current sprite being edited. Only for reading.
     float r;

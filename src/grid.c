@@ -20,6 +20,8 @@ grid_cell_T* init_grid_cell()
     cell->g = 255;
     cell->b = 255;
     cell->a = 0.0f;
+    cell->sprite = (void*) 0;
+    cell->selected = -1;
 
     return cell;
 }
@@ -111,28 +113,48 @@ void grid_draw(actor_T* self)
         {
             float cell_y = self->y + (y * grid->cell_size);
 
-            draw_positioned_sprite(
-                SPRITE_CHECKBOARD,
-                cell_x,
-                cell_y,
-                0.0f,
-                grid->cell_size,
-                grid->cell_size,
-                state
-            );
+            grid_cell_T* cell = grid->cells[x][y];
 
-            draw_positioned_2D_mesh(
-                cell_x,
-                cell_y,
-                0.0f,
-                grid->cell_size,
-                grid->cell_size,
-                grid->cells[x][y]->r,
-                grid->cells[x][y]->g,
-                grid->cells[x][y]->b,
-                grid->cells[x][y]->a,
-                state
-            );
+            if (cell->sprite == (void*) 0)
+            {
+                draw_positioned_sprite(
+                    SPRITE_CHECKBOARD,
+                    cell_x,
+                    cell_y,
+                    0.0f,
+                    grid->cell_size,
+                    grid->cell_size,
+                    state
+                ); 
+            }
+            else
+            {
+                draw_positioned_sprite(
+                    cell->sprite,
+                    cell_x,
+                    cell_y,
+                    0.0f,
+                    grid->cell_size,
+                    grid->cell_size,
+                    state
+                );
+            }
+
+            if (!(grid->cursor_x == x && grid->cursor_y == y && actor_focusable->focused && cell->selected == 0))
+            {
+                draw_positioned_2D_mesh(
+                    cell_x,
+                    cell_y,
+                    0.0f,
+                    grid->cell_size,
+                    grid->cell_size,
+                    cell->selected == 0 ? 0 : grid->cells[x][y]->r,
+                    cell->selected == 0 ? 0 : grid->cells[x][y]->g,
+                    cell->selected == 0 ? 0 : grid->cells[x][y]->b,
+                    cell->selected == 0 ? 0.6 : grid->cells[x][y]->a,
+                    state
+                );
+            }
         }
     }
 
@@ -185,21 +207,30 @@ void grid_draw(actor_T* self)
                     state
                 );
             } 
+            
 
             if (grid->cursor_x == x && grid->cursor_y == y && actor_focusable->focused)
             {
-                draw_positioned_2D_mesh(
-                    cell_x,
-                    cell_y,
-                    0.0f,
-                    grid->cell_size,
-                    grid->cell_size,
-                    255 - cell_r,
-                    255 - cell_g,
-                    255 - cell_b,
-                    1.0f,
-                    state
-                );
+                if (x < grid->width && y < grid->height)
+                {
+                    grid_cell_T* cell = grid->cells[x][y];
+
+                    if (cell->selected == -1)
+                    {
+                        draw_positioned_2D_mesh(
+                            cell_x,
+                            cell_y,
+                            0.0f,
+                            grid->cell_size,
+                            grid->cell_size,
+                            255 - cell_r,
+                            255 - cell_g,
+                            255 - cell_b,
+                            cell->sprite == (void*) 0 ? 1.0f : 0.6,
+                            state
+                        );
+                    }
+                }
             }
         }
     } 
@@ -274,6 +305,17 @@ void grid_copy(grid_T* source_grid, grid_T* target_grid)
             target_grid->cells[x][y]->g = source_grid->cells[x][y]->g;
             target_grid->cells[x][y]->b = source_grid->cells[x][y]->b;
             target_grid->cells[x][y]->a = source_grid->cells[x][y]->a;
+        }
+    }
+}
+
+void grid_unselect_all_cells(grid_T* grid)
+{
+    for (int x = 0; x < grid->width; x++)
+    {
+        for (int y = 0; y < grid->height; y++)
+        {
+            grid->cells[x][y]->selected = 0;
         }
     }
 }

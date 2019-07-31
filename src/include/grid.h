@@ -2,6 +2,7 @@
 #define APOLLON_GRID_H
 #include "actor_focusable.h"
 #include <coelum/textures.h>
+#include <coelum/sprite.h>
 
 
 typedef struct GRID_CELL_STRUCT
@@ -10,6 +11,8 @@ typedef struct GRID_CELL_STRUCT
     float g;
     float b;
     float a;
+    int selected;
+    sprite_T* sprite;
 } grid_cell_T;
 
 grid_cell_T* init_grid_cell();
@@ -49,6 +52,8 @@ int grid_create_image(grid_T* grid, const char* filename);
 texture_T* grid_create_texture(grid_T* grid);
 
 void grid_copy(grid_T* source_grid, grid_T* target_grid);
+
+void grid_unselect_all_cells(grid_T* grid);
 
 void grid_clean(grid_T* grid);
 

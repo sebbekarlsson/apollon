@@ -17,6 +17,8 @@ extern keyboard_state_T* KEYBOARD_STATE;
 extern database_T* DATABASE;
 extern main_state_T* MAIN_STATE;
 extern modal_manager_T* MODAL_MANAGER;
+extern sprite_T* SPRITE_PENCIL;
+extern sprite_T* SPRITE_ERASOR;
 
 
 static void scene_sprite_editor_clear_input_fields(scene_sprite_editor_T* s_sprite_editor)
@@ -338,9 +340,6 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         "grid_canvas"
     );
 
-    // this one is starts as focused
-    ((actor_focusable_T*)s_sprite_editor->grid)->focused = 1;
-
     s_sprite_editor->grids = init_dynamic_list(sizeof(struct GRID_STRUCT*));
 
     s_sprite_editor->grid_color_selector = init_grid(
@@ -355,6 +354,26 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         0,
         "grid_color_selector"
     );
+
+    s_sprite_editor->tool_index = 0;
+
+    s_sprite_editor->grid_tool_selector = init_grid(
+        ((WINDOW_WIDTH / 2) - ((16 * 16) / 2)) + ((16 * 16) + 16) + (4 * 16) + 16,
+        ((WINDOW_HEIGHT / 2) - ((16 * 16) / 2)),
+        0.0f,
+        1,
+        2,
+        16,
+        0,
+        0,
+        0,
+        "grid_tool_selector"
+    );
+    s_sprite_editor->grid_tool_selector->cells[0][0]->sprite = SPRITE_PENCIL;
+    s_sprite_editor->grid_tool_selector->cells[0][1]->sprite = SPRITE_ERASOR;
+    grid_unselect_all_cells(s_sprite_editor->grid_tool_selector);
+
+    dynamic_list_append(state->actors, s_sprite_editor->grid_tool_selector);
 
     // state representation of first grid in frame list.
     dynamic_list_append(
@@ -524,6 +543,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
 
     dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->grid);
+    dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->grid_tool_selector);
     dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->grid_color_selector);
     dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->grid_color_mixer);
 
@@ -564,8 +584,8 @@ void scene_sprite_editor_tick(scene_T* self)
     grid_T* grid = (grid_T*) grid_actor;
     actor_focusable->focused = 1;
 
-    //s_sprite_editor->label_current_sprite->visible = DATABASE->sprites->size > 0;
-    //((actor_focusable_T*)s_sprite_editor->dropdown_list_sprite)->visible = DATABASE->sprites->size > 0;
+
+    s_sprite_editor->grid_tool_selector->cells[0][s_sprite_editor->tool_index]->selected = 1;
 
     if (KEYBOARD_STATE->keys[GLFW_KEY_UP] && !KEYBOARD_STATE->key_locks[GLFW_KEY_UP])
     {
@@ -632,10 +652,21 @@ void scene_sprite_editor_tick(scene_T* self)
                 return;
             }
 
-            grid->cells[grid->cursor_x][grid->cursor_y]->r = s_sprite_editor->r;
-            grid->cells[grid->cursor_x][grid->cursor_y]->g = s_sprite_editor->g;
-            grid->cells[grid->cursor_x][grid->cursor_y]->b = s_sprite_editor->b;
-            grid->cells[grid->cursor_x][grid->cursor_y]->a = s_sprite_editor->a;
+            switch (s_sprite_editor->tool_index)
+            {
+                case 0: { // pencil tool
+                    grid->cells[grid->cursor_x][grid->cursor_y]->r = s_sprite_editor->r;
+                    grid->cells[grid->cursor_x][grid->cursor_y]->g = s_sprite_editor->g;
+                    grid->cells[grid->cursor_x][grid->cursor_y]->b = s_sprite_editor->b;
+                    grid->cells[grid->cursor_x][grid->cursor_y]->a = s_sprite_editor->a;
+                } break;
+                case 1: { // erasor tool
+                    grid->cells[grid->cursor_x][grid->cursor_y]->r = 255;
+                    grid->cells[grid->cursor_x][grid->cursor_y]->g = 255;
+                    grid->cells[grid->cursor_x][grid->cursor_y]->b = 255;
+                    grid->cells[grid->cursor_x][grid->cursor_y]->a = 0.0f;
+                } break;
+            }
         }
 
         if (s_sprite_editor->grids->size)
@@ -645,6 +676,17 @@ void scene_sprite_editor_tick(scene_T* self)
                 s_sprite_editor->grid,
                 s_sprite_editor->grids->items[s_sprite_editor->grid_index]
             );
+        }
+
+        if (KEYBOARD_STATE->keys[GLFW_KEY_1])
+        {
+            s_sprite_editor->tool_index = 0;
+            grid_unselect_all_cells(s_sprite_editor->grid_tool_selector);
+        }
+        if (KEYBOARD_STATE->keys[GLFW_KEY_2])
+        {
+            s_sprite_editor->tool_index = 1;
+            grid_unselect_all_cells(s_sprite_editor->grid_tool_selector);
         }
     }
     else
@@ -665,6 +707,14 @@ void scene_sprite_editor_tick(scene_T* self)
             s_sprite_editor->r = grid->cells[grid->cursor_x][grid->cursor_y]->r;
             s_sprite_editor->g = grid->cells[grid->cursor_x][grid->cursor_y]->g;
             s_sprite_editor->b = grid->cells[grid->cursor_x][grid->cursor_y]->b;
+        }
+    }
+    else if (strcmp(grid_actor->type_name, "grid_tool_selector") == 0)
+    {
+        if (KEYBOARD_STATE->keys[GLFW_KEY_SPACE])
+        {
+            grid_unselect_all_cells(s_sprite_editor->grid_tool_selector);
+            s_sprite_editor->tool_index = grid->cursor_y;
         }
     }
 
