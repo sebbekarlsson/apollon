@@ -15,6 +15,7 @@ extern keyboard_state_T* KEYBOARD_STATE;
 extern database_T* DATABASE;
 extern main_state_T* MAIN_STATE;
 extern const float COLOR_FG[3];
+extern sprite_T* SPRITE_BROKEN;
 
 
 void _free_database_actor_instance(void* item)
@@ -273,8 +274,25 @@ void scene_scene_designer_draw(scene_T* self)
     for (int i = 0; i < s_scene_designer->database_actor_instances->size; i++)
     {
         database_actor_instance_T* database_actor_instance = (database_actor_instance_T*) s_scene_designer->database_actor_instances->items[i];
+
+        database_actor_definition_T* def = database_actor_instance->database_actor_definition;
+        sprite_T* sprite_to_be_drawn = (void*) 0;
+
+        if (def->database_sprite != (void*) 0)
+        {
+            if (def->database_sprite->sprite != (void*) 0)
+            {
+                sprite_to_be_drawn = def->database_sprite->sprite;
+            }
+        }
+
+        if (sprite_to_be_drawn == (void*) 0)
+        {
+            sprite_to_be_drawn = SPRITE_BROKEN;
+        }
+
         draw_positioned_sprite(
-            database_actor_instance->database_actor_definition->database_sprite->sprite,
+            sprite_to_be_drawn,
             database_actor_instance->x,
             database_actor_instance->y,
             database_actor_instance->z,
@@ -291,7 +309,6 @@ void scene_scene_designer_empty_database_actor_instances(scene_scene_designer_T*
     {
         for (int i = s_scene_designer->database_actor_instances->size; i > 0; i--)
         {
-            printf("i: %d\n", i);
             dynamic_list_remove(
                 s_scene_designer->database_actor_instances,
                 s_scene_designer->database_actor_instances->items[i-1],

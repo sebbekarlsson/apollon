@@ -98,9 +98,9 @@ void dropdown_list_option_draw(int i, dropdown_list_option_T* option, dropdown_l
 
     int text_padding = 0;
 
-    if (option->database_sprite)
+    if (option->database_sprite != (void*) 0)
     {
-        if (option->database_sprite->sprite)
+        if (option->database_sprite->sprite != (void*) 0)
         {
             draw_positioned_sprite(
                 option->database_sprite->sprite,
@@ -327,7 +327,7 @@ void dropdown_list_sync_from_table(dropdown_list_T* dropdown_list, database_T* d
         {
             sprite_id = sqlite3_column_text(stmt, sprite_id_column);
             database_sprite = database_get_sprite_by_id(database, sprite_id);
-        }
+        } 
 
         if (dropdown_list_has_option_with_string_value(dropdown_list, value))
         {
@@ -371,7 +371,9 @@ void dropdown_list_reload_sprites(dropdown_list_T* dropdown_list)
     for (int i = 0; i < dropdown_list->options->size; i++)
     {
         dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) dropdown_list->options->items[i];
-        database_sprite_reload_from_disk(dropdown_list_option->database_sprite);
+
+        if (dropdown_list_option->database_sprite != (void*) 0)
+            database_sprite_reload_from_disk(dropdown_list_option->database_sprite);
     }
 }
 

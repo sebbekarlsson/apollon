@@ -61,7 +61,11 @@ void button_draw(actor_T* self)
     button_T* button = (button_T*) self;
     actor_focusable_T* actor_focusable = (actor_focusable_T*) button;
     unsigned int focused = actor_focusable->focused;
+    unsigned int visible = actor_focusable->visible;
     unsigned int disabled = button->disabled;
+
+    if (!visible)
+        return;
 
     scene_T* scene = get_current_scene();
     state_T* state = (state_T*) scene;

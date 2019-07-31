@@ -24,6 +24,7 @@ texture_T* TEXTURE_CHECKBOX_SHEET;
 texture_T* TEXTURE_CHECKBOARD;
 
 sprite_T* SPRITE_CHECKBOARD;
+sprite_T* SPRITE_BROKEN;
 
 
 void load_textures()
@@ -40,6 +41,8 @@ void load_textures()
         TEXTURE_CHECKBOARD->width,
         TEXTURE_CHECKBOARD->height
     );
+
+    SPRITE_BROKEN = init_sprite_from_file("res/img/broken.png", GL_RGBA, 0.0f, 16, 16);
 }
 
 main_state_T* init_main_state()

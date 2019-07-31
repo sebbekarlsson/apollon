@@ -19,6 +19,30 @@ extern main_state_T* MAIN_STATE;
 extern modal_manager_T* MODAL_MANAGER;
 
 
+static void scene_sprite_editor_clear_input_fields(scene_sprite_editor_T* s_sprite_editor)
+{
+    memset(
+        s_sprite_editor->input_field_name->value,
+        '\0',
+        strlen(s_sprite_editor->input_field_name->value) * sizeof(char)
+    ); 
+
+    memset(
+        s_sprite_editor->input_field_frame_delay->value,
+        '\0',
+        strlen(s_sprite_editor->input_field_frame_delay->value) * sizeof(char)
+    );
+}
+
+static void _free_sprite_dropdown_option(void* item)
+{
+    dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) item;
+    
+    free(dropdown_list_option->key);
+    free((char*)dropdown_list_option->value);
+    free(dropdown_list_option);
+}
+
 void scene_sprite_editor_refresh_state(scene_sprite_editor_T* s_sprite_editor)
 {
     dropdown_list_sync_from_table(
@@ -38,13 +62,44 @@ void scene_sprite_editor_refresh_state(scene_sprite_editor_T* s_sprite_editor)
             (const char*) s_sprite_editor->sprite_id 
         );
     }
+    else
+    {
+        scene_sprite_editor_clear_input_fields(s_sprite_editor);
+        scene_sprite_editor_clear_all_frames(s_sprite_editor);
+
+        dynamic_list_append(
+            s_sprite_editor->grids,
+            init_grid(
+                (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
+                (WINDOW_HEIGHT / 2) - ((16 * 16) / 2),
+                0.0f,
+                16,
+                16,
+                16,
+                0,
+                0,
+                0,
+                "grid_canvas"
+            )
+        ); 
+    }
 }
 
 void scene_sprite_editor_delete_grids_reset_sprite_id(scene_sprite_editor_T* s_sprite_editor)
 {
     scene_sprite_editor_clear_all_frames(s_sprite_editor);
-    free(s_sprite_editor->sprite_id);
-    s_sprite_editor->sprite_id = 0;
+
+    if (s_sprite_editor->current_database_sprite != (void*) 0)
+    {
+        database_sprite_free(s_sprite_editor->current_database_sprite);
+        s_sprite_editor->current_database_sprite = (void*) 0;
+    }
+
+    if (s_sprite_editor->sprite_id != (void*) 0)
+    { 
+        free(s_sprite_editor->sprite_id);
+        s_sprite_editor->sprite_id = 0;
+    }
 }
 
 void scene_sprite_editor_set_sprite_id(scene_sprite_editor_T* s_sprite_editor, char* id)
@@ -125,14 +180,17 @@ void dropdown_list_sprite_press(void* dropdown_list, void* option)
 
     s_sprite_editor->current_database_sprite = database_sprite;
 
-    scene_sprite_editor_load_grids_from_sprite(s_sprite_editor, sprite);
-    scene_sprite_editor_refresh_grid(s_sprite_editor);
+    if (sprite == (void*)0)
+    {
+        scene_sprite_editor_clear_all_frames(s_sprite_editor);
+    }
+    else
+    {
+        scene_sprite_editor_load_grids_from_sprite(s_sprite_editor, sprite);
+        scene_sprite_editor_refresh_grid(s_sprite_editor);
+    }
     
-    memset(
-        s_sprite_editor->input_field_name->value,
-        '\0',
-        strlen(s_sprite_editor->input_field_name->value) * sizeof(char)
-    );
+    scene_sprite_editor_clear_input_fields(s_sprite_editor);
 
     s_sprite_editor->input_field_name->value = realloc(
         s_sprite_editor->input_field_name->value,
@@ -141,22 +199,19 @@ void dropdown_list_sprite_press(void* dropdown_list, void* option)
     
     strcpy(s_sprite_editor->input_field_name->value, database_sprite->name);
 
-    memset(
-        s_sprite_editor->input_field_frame_delay->value,
-        '\0',
-        strlen(s_sprite_editor->input_field_frame_delay->value) * sizeof(char)
-    );
+    if (sprite != (void*) 0)
+    {
+        char* frame_delay_str = calloc(128, sizeof(char));
+        frame_delay_str[0] = '\0';
+        sprintf(frame_delay_str, "%1.2f", sprite->frame_delay);
 
-    char* frame_delay_str = calloc(128, sizeof(char));
-    frame_delay_str[0] = '\0';
-    sprintf(frame_delay_str, "%1.2f", sprite->frame_delay);
+        s_sprite_editor->input_field_frame_delay->value = realloc(
+            s_sprite_editor->input_field_frame_delay->value,
+            (strlen(frame_delay_str) + 1) * sizeof(char)
+        );
 
-    s_sprite_editor->input_field_frame_delay->value = realloc(
-        s_sprite_editor->input_field_frame_delay->value,
-        (strlen(frame_delay_str) + 1) * sizeof(char)
-    );
-
-    strcpy(s_sprite_editor->input_field_frame_delay->value, frame_delay_str);
+        strcpy(s_sprite_editor->input_field_frame_delay->value, frame_delay_str);
+    }
 
     scene_sprite_editor_set_sprite_id(s_sprite_editor, database_sprite->id);
 }
@@ -211,6 +266,47 @@ void sprite_button_new_press()
     ); 
 
     state_resort_actors(state);
+}
+
+void sprite_button_delete_press()
+{
+    scene_T* scene = get_current_scene();
+    scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) scene;
+
+    if (s_sprite_editor->sprite_id == (void*) 0)
+    {
+        printf("Not currently modifying a sprite.\n");
+        return;
+    }
+
+    for (int i = 0; i < s_sprite_editor->dropdown_list_sprite->options->size; i++)
+    {
+        dropdown_list_option_T* option = s_sprite_editor->dropdown_list_sprite->options->items[i];
+
+        if (option->value == (void*)0)
+            continue;
+        
+        char* db_sprite_id = (char*) option->value;
+
+        if (strcmp(db_sprite_id, s_sprite_editor->sprite_id) == 0)
+        {
+            dynamic_list_remove(
+                s_sprite_editor->dropdown_list_sprite->options,
+                option,
+                _free_sprite_dropdown_option 
+            );
+
+            break;
+        } 
+    }
+
+    database_delete_sprite_by_id(DATABASE, s_sprite_editor->sprite_id);
+
+    printf("It was deleted\n");
+
+    scene_sprite_editor_delete_grids_reset_sprite_id(s_sprite_editor);
+
+    scene_sprite_editor_refresh_state(s_sprite_editor);
 }
 
 scene_sprite_editor_T* init_scene_sprite_editor()
@@ -351,6 +447,8 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     dynamic_list_append(state->actors, s_sprite_editor->input_field_name);
     dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->input_field_name);
 
+    float button_width = 128;
+
     s_sprite_editor->button_save = init_button(
         (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
         (WINDOW_HEIGHT / 2) + ((16 * 16) / 2) + 16,
@@ -358,18 +456,31 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         "Save",
         sprite_button_save_press
     );
+    s_sprite_editor->button_save->width = button_width;
     dynamic_list_append(state->actors, s_sprite_editor->button_save);
     dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->button_save);
 
     s_sprite_editor->button_new = init_button(
-        (WINDOW_WIDTH / 2) - ((16 * 16) / 2) + 216,
+        (WINDOW_WIDTH / 2) - ((16 * 16) / 2) + button_width + 16,
         (WINDOW_HEIGHT / 2) + ((16 * 16) / 2) + 16,
         0.0f,
         "New",
         sprite_button_new_press
     );
+    s_sprite_editor->button_new->width = button_width;
     dynamic_list_append(state->actors, s_sprite_editor->button_new);
     dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->button_new);
+
+    s_sprite_editor->button_delete = init_button(
+        (WINDOW_WIDTH / 2) - ((16 * 16) / 2) + button_width + button_width + 16 + 16,
+        (WINDOW_HEIGHT / 2) + ((16 * 16) / 2) + 16,
+        0.0f,
+        "Delete",
+        sprite_button_delete_press
+    );
+    s_sprite_editor->button_delete->width = button_width;
+    dynamic_list_append(state->actors, s_sprite_editor->button_delete);
+    dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->button_delete);
     
     int dropdown_list_sprite_width = 160;
     s_sprite_editor->label_current_sprite = init_label(
@@ -434,6 +545,8 @@ void scene_sprite_editor_tick(scene_T* self)
     go_back_on_escape();
 
     scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) self;
+
+    ((actor_focusable_T*)s_sprite_editor->button_delete)->visible = s_sprite_editor->sprite_id != (void*) 0;
     
     focus_manager_tick(s_sprite_editor->focus_manager);
 
@@ -614,17 +727,20 @@ void scene_sprite_editor_draw(scene_T* self)
     {
         if (s_sprite_editor->current_database_sprite != (void*)0)
         {
-            int spr_preview_size = 16;
+            if (s_sprite_editor->current_database_sprite->sprite != (void*)0)
+            {
+                int spr_preview_size = 16;
 
-            draw_positioned_sprite(
-                s_sprite_editor->current_database_sprite->sprite,
-                WINDOW_WIDTH - spr_preview_size - 8,
-                8,
-                0.0f,
-                spr_preview_size,
-                spr_preview_size,
-                state
-            );
+                draw_positioned_sprite(
+                    s_sprite_editor->current_database_sprite->sprite,
+                    WINDOW_WIDTH - spr_preview_size - 8,
+                    8,
+                    0.0f,
+                    spr_preview_size,
+                    spr_preview_size,
+                    state
+                );
+            }
         }
     }
 }

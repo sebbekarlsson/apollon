@@ -26,6 +26,7 @@ typedef struct SCENE_SPRITE_EDITOR_STRUCT
     input_field_T* input_field_name;
     button_T* button_save;
     button_T* button_new;
+    button_T* button_delete;
     unsigned int grid_index;
     char* sprite_id; // the sprite currently being modified
     database_sprite_T* current_database_sprite; // a copy of the current sprite being edited. Only for reading.
