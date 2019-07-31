@@ -591,28 +591,31 @@ void scene_sprite_editor_tick(scene_T* self)
         KEYBOARD_STATE->key_locks[GLFW_KEY_RIGHT] = 1;
     }
 
-    if (KEYBOARD_STATE->keys[GLFW_KEY_Z] && !KEYBOARD_STATE->key_locks[GLFW_KEY_Z])
+    if (((actor_focusable_T*)s_sprite_editor->grid)->focused)
     {
-        scene_sprite_editor_goto_prev(s_sprite_editor);
-        KEYBOARD_STATE->key_locks[GLFW_KEY_Z] = 1;
-    }
+        if (KEYBOARD_STATE->keys[GLFW_KEY_Z] && !KEYBOARD_STATE->key_locks[GLFW_KEY_Z])
+        {
+            scene_sprite_editor_goto_prev(s_sprite_editor);
+            KEYBOARD_STATE->key_locks[GLFW_KEY_Z] = 1;
+        }
 
-    if (KEYBOARD_STATE->keys[GLFW_KEY_X] && !KEYBOARD_STATE->key_locks[GLFW_KEY_X])
-    {
-        scene_sprite_editor_goto_next(s_sprite_editor);
-        KEYBOARD_STATE->key_locks[GLFW_KEY_X] = 1;
-    }
+        if (KEYBOARD_STATE->keys[GLFW_KEY_X] && !KEYBOARD_STATE->key_locks[GLFW_KEY_X])
+        {
+            scene_sprite_editor_goto_next(s_sprite_editor);
+            KEYBOARD_STATE->key_locks[GLFW_KEY_X] = 1;
+        }
 
-    if (KEYBOARD_STATE->keys[GLFW_KEY_C] && !KEYBOARD_STATE->key_locks[GLFW_KEY_C])
-    {
-        scene_sprite_editor_delete_current_frame(s_sprite_editor);
-        KEYBOARD_STATE->key_locks[GLFW_KEY_C] = 1;
-    }
+        if (KEYBOARD_STATE->keys[GLFW_KEY_C] && !KEYBOARD_STATE->key_locks[GLFW_KEY_C])
+        {
+            scene_sprite_editor_delete_current_frame(s_sprite_editor);
+            KEYBOARD_STATE->key_locks[GLFW_KEY_C] = 1;
+        }
 
-    if (KEYBOARD_STATE->keys[GLFW_KEY_S] && !KEYBOARD_STATE->key_locks[GLFW_KEY_S])
-    {
-        grid_create_image(s_sprite_editor->grid, "sheet.png");
-        KEYBOARD_STATE->key_locks[GLFW_KEY_S] = 1;
+        if (KEYBOARD_STATE->keys[GLFW_KEY_S] && !KEYBOARD_STATE->key_locks[GLFW_KEY_S])
+        {
+            grid_create_image(s_sprite_editor->grid, "sheet.png");
+            KEYBOARD_STATE->key_locks[GLFW_KEY_S] = 1;
+        }
     }
 
     if (strcmp(grid_actor->type_name, "grid_canvas") == 0)
