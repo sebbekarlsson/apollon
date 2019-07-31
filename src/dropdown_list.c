@@ -271,6 +271,9 @@ void dropdown_list_update_option_sprite_by_string_value(
     {
         dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) dropdown_list->options->items[i];
 
+        if (dropdown_list_option->database_sprite == (void*) 0)
+            continue;
+
         if (strcmp((char*)dropdown_list_option->value, value) == 0)
         {
             database_sprite_free(dropdown_list_option->database_sprite);
