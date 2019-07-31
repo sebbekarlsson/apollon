@@ -4,6 +4,7 @@
 #include "include/scene_scene_designer.h"
 #include "include/scene_actor_editor.h"
 #include "include/scene_sprite_editor.h"
+#include "include/scene_text_editor.h"
 #include "include/colors.h"
 #include "include/image_utils.h"
 #include "include/modal_manager.h"
@@ -67,6 +68,8 @@ int main(int argc, char* argv[])
     MAIN_STATE = init_main_state();
     DATABASE = init_database();
     MODAL_MANAGER = init_modal_manager();
+
+    scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_text_editor()); // just for testing stuff
 
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_menu());
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_scene_editor());
