@@ -603,6 +603,7 @@ void scene_sprite_editor_draw(scene_T* self)
         0, // r
         0, // g
         0, // b
+        1.0f, // a
         6,
         6,
         0,

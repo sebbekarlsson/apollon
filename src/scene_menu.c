@@ -152,6 +152,7 @@ void scene_menu_draw(scene_T* self)
         COLOR_RED[0],
         COLOR_RED[1],
         COLOR_RED[2],
+        1.0f,
         text_size,
         text_spacing,
         0,

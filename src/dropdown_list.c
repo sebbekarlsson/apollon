@@ -128,6 +128,7 @@ void dropdown_list_option_draw(int i, dropdown_list_option_T* option, dropdown_l
                 COLOR_FG[0], // r
                 COLOR_FG[1], // g
                 COLOR_FG[2], // b
+                1.0f, // a
                 6,
                 6,
                 option->text_limit,
@@ -212,6 +213,7 @@ void dropdown_list_draw(actor_T* self)
                 focused ? 255 : COLOR_FG[0], // r
                 focused ? 255 : COLOR_FG[1], // g
                 focused ? 255 : COLOR_FG[2], // b
+                1.0f, // a
                 6,
                 6,
                 0,

@@ -246,6 +246,7 @@ void scene_scene_designer_draw(scene_T* self)
                 COLOR_FG[0], // r
                 COLOR_FG[1], // g
                 COLOR_FG[2], // b
+                1.0f, // a
                 6,
                 6,
                 0,
@@ -262,6 +263,7 @@ void scene_scene_designer_draw(scene_T* self)
         COLOR_FG[0], // r
         COLOR_FG[1], // g
         COLOR_FG[2], // b
+        1.0f, // a
         6,
         6,
         0,

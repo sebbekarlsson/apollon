@@ -113,6 +113,7 @@ void modal_draw(actor_T* self)
         255,
         255,
         255,
+        1.0f, // a
         6,
         6,
         0,
@@ -127,6 +128,7 @@ void modal_draw(actor_T* self)
         255,
         255,
         255,
+        1.0f, // a
         6,
         6,
         0,

@@ -45,6 +45,7 @@ void label_draw(actor_T* self)
         label->r,
         label->g,
         label->b,
+        1.0f, // a
         label->font_size,
         label->font_spacing,
         0,

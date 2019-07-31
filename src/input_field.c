@@ -74,7 +74,8 @@ void input_field_draw(actor_T* self)
                 self->z,
                 COLOR_FG[0],
                 COLOR_FG[1],
-                COLOR_FG[2], 
+                COLOR_FG[2],
+                1.0f, // a
                 input_field->font_size,
                 input_field->font_spacing,
                 0,
