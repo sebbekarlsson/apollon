@@ -45,6 +45,13 @@ static void _free_sprite_dropdown_option(void* item)
     free(dropdown_list_option);
 }
 
+static void scene_sprite_editor_set_tool(scene_sprite_editor_T* s_sprite_editor, unsigned int tool_index)
+{
+
+    s_sprite_editor->tool_index = tool_index;
+    grid_unselect_all_cells(s_sprite_editor->grid_tool_selector);
+}
+
 void scene_sprite_editor_refresh_state(scene_sprite_editor_T* s_sprite_editor)
 {
     dropdown_list_sync_from_table(
@@ -679,15 +686,9 @@ void scene_sprite_editor_tick(scene_T* self)
         }
 
         if (KEYBOARD_STATE->keys[GLFW_KEY_1])
-        {
-            s_sprite_editor->tool_index = 0;
-            grid_unselect_all_cells(s_sprite_editor->grid_tool_selector);
-        }
+            scene_sprite_editor_set_tool(s_sprite_editor, 0); // pencil
         if (KEYBOARD_STATE->keys[GLFW_KEY_2])
-        {
-            s_sprite_editor->tool_index = 1;
-            grid_unselect_all_cells(s_sprite_editor->grid_tool_selector);
-        }
+            scene_sprite_editor_set_tool(s_sprite_editor, 1); // erasor
     }
     else
     if (strcmp(grid_actor->type_name, "grid_color_selector") == 0 || strcmp(grid_actor->type_name, "grid_color_mixer") == 0)
@@ -713,8 +714,8 @@ void scene_sprite_editor_tick(scene_T* self)
     {
         if (KEYBOARD_STATE->keys[GLFW_KEY_SPACE])
         {
-            grid_unselect_all_cells(s_sprite_editor->grid_tool_selector);
             s_sprite_editor->tool_index = grid->cursor_y;
+            scene_sprite_editor_set_tool(s_sprite_editor, s_sprite_editor->tool_index);
         }
     }
 
