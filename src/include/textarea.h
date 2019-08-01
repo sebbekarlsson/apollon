@@ -9,6 +9,8 @@ typedef struct TEXTAREA_STRUCT
 {
     actor_focusable_T base;
     char* value;
+    char** lines;
+    unsigned int nr_lines;
     unsigned int caret_x;
     unsigned int caret_y;
     unsigned int font_size;
@@ -25,5 +27,7 @@ void textarea_tick(actor_T* self);
 
 void textarea_draw(actor_T* self);
 
-char* textarea_get_copy_of_line(textarea_T* textarea, int nr);
+void textarea_on_character_input(textarea_T* textarea, char c);
+
+void textarea_shift_down(textarea_T* textarea);
 #endif
