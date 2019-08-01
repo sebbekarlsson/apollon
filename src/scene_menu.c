@@ -35,6 +35,11 @@ void press_sprite_editor()
     scene_manager_goto(THEATRE->scene_manager, "sprite_editor");
 }
 
+void press_text_editor()
+{
+    scene_manager_goto(THEATRE->scene_manager, "text_editor");
+}
+
 void press_run()
 {
     printf("Run\n");
@@ -106,6 +111,7 @@ scene_menu_T* init_scene_menu()
     select_list_register_option(s_menu->select_list, "Scene Editor", press_scene_editor);
     select_list_register_option(s_menu->select_list, "Actor Editor", press_actor_editor);
     select_list_register_option(s_menu->select_list, "Sprite Editor", press_sprite_editor);
+    select_list_register_option(s_menu->select_list, "Text Editor", press_text_editor);
     select_list_register_option(s_menu->select_list, "Run", press_run);
     select_list_register_option(s_menu->select_list, "Build", press_build);
     select_list_register_option(s_menu->select_list, "Quit", press_quit);

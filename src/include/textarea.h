@@ -25,5 +25,5 @@ void textarea_tick(actor_T* self);
 
 void textarea_draw(actor_T* self);
 
-char* textarea_get_copy_of_current_line(textarea_T* textarea);
+char* textarea_get_copy_of_line(textarea_T* textarea, int nr);
 #endif

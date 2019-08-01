@@ -69,13 +69,14 @@ int main(int argc, char* argv[])
     DATABASE = init_database();
     MODAL_MANAGER = init_modal_manager();
 
-    scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_text_editor()); // just for testing stuff
 
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_menu());
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_scene_editor());
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_scene_designer());
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_actor_editor());
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_sprite_editor());
+    scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_text_editor());
+
 
     if (coelum_main(argc, argv))
     {

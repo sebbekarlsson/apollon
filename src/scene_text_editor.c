@@ -9,6 +9,8 @@ scene_text_editor_T* init_scene_text_editor()
     scene_constructor(scene, scene_text_editor_tick, scene_text_editor_draw, 2);
     state_T* state = (state_T*) scene;
 
+    scene->type_name = "text_editor";
+
     s_text_editor->focus_manager = init_focus_manager();
 
     s_text_editor->textarea = init_textarea(0.0f, 0.0f, 0.0f, WINDOW_WIDTH, WINDOW_HEIGHT);

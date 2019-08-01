@@ -9,6 +9,43 @@
 extern keyboard_state_T* KEYBOARD_STATE;
 
 
+static char *substring(char *string, int position, int length)
+{
+   char *pointer;
+   int c;
+ 
+   pointer = malloc(length+1);
+   
+   if(pointer == (void*) 0)
+       exit(EXIT_FAILURE);
+ 
+   for(c = 0 ; c < length ; c++)
+      *(pointer+c) = *((string+position-1)+c);      
+       
+   *(pointer+c) = '\0';
+ 
+   return pointer;
+}
+
+static void insert_substring(char *a, char *b, int position)
+{
+   char *f, *e;
+   int length;
+   
+   length = strlen(a);
+   
+   f = substring(a, 1, position - 1 );      
+   e = substring(a, position, length-position+1);
+ 
+   strcpy(a, "");
+   strcat(a, f);
+   free(f);
+   strcat(a, b);
+   strcat(a, e);
+   free(e);
+}
+
+
 textarea_T* init_textarea(float x, float y, float z, int width, int height)
 {
     textarea_T* textarea = calloc(1, sizeof(struct TEXTAREA_STRUCT));
@@ -48,59 +85,90 @@ void textarea_tick(actor_T* self)
         textarea->caret_x = 0;
     }
 
-    if (KEYBOARD_STATE->keys[GLFW_KEY_BACKSPACE] && !KEYBOARD_STATE->key_locks[GLFW_KEY_BACKSPACE])
-    { 
-        if (strlen(textarea->value) > 0)
-        {
-            int len = strlen(textarea->value); 
-             
-            unsigned int erased = 0;
+    if (
+        (KEYBOARD_STATE->keys[GLFW_KEY_BACKSPACE] && !KEYBOARD_STATE->key_locks[GLFW_KEY_BACKSPACE]) ||
+        (KEYBOARD_STATE->keys[GLFW_KEY_LEFT] && !KEYBOARD_STATE->key_locks[GLFW_KEY_LEFT])
+    )
+    {
+        if (textarea->caret_x > 0)
+            textarea->caret_x -= 1;
 
-            textarea->value[len - 1] = '\0';
-            erased -= 1;
-
-            if (textarea->value[len - 2] == '\n')
-            {
-                textarea->value[len - 2] = '\0';
-                erased -= 1;
-            }
-
-            if (textarea->value[len - 3] == '\r')
-            {
-                textarea->value[len - 3] = '\0';
-                erased -= 1;
-            }
-
-            printf("x:%d\n", textarea->caret_x);
-            if (textarea->caret_x == 0 && textarea->caret_y > 0)
-            {
-                printf("y:%d\n", textarea->caret_y);
-                textarea->caret_y -= 1;
-            }
-
-            char* current_line_str = textarea_get_copy_of_current_line(textarea);
-
-            if (current_line_str != (void*) 0)
-            {
-                textarea->caret_x = strlen(current_line_str);
-            }
-            else
-            {
-                textarea->caret_x = 0;
-            } 
-        } 
-        
-        KEYBOARD_STATE->key_locks[GLFW_KEY_BACKSPACE] = 1;
+        if (KEYBOARD_STATE->keys[GLFW_KEY_BACKSPACE])
+            KEYBOARD_STATE->key_locks[GLFW_KEY_BACKSPACE] = 1;
+        else
+            KEYBOARD_STATE->key_locks[GLFW_KEY_LEFT] = 1;
     }
-    else if (KEYBOARD_STATE->character)
+    else
+    if (KEYBOARD_STATE->keys[GLFW_KEY_RIGHT] && !KEYBOARD_STATE->key_locks[GLFW_KEY_RIGHT])
+    {
+        if (textarea->caret_x > 0)
+            textarea->caret_x += 1;
+        
+        KEYBOARD_STATE->key_locks[GLFW_KEY_RIGHT] = 1;
+    }
+    else
+    if (KEYBOARD_STATE->keys[GLFW_KEY_UP] && !KEYBOARD_STATE->key_locks[GLFW_KEY_UP])
+    {
+        if (textarea->caret_y > 0)
+            textarea->caret_y -= 1;
+        
+        KEYBOARD_STATE->key_locks[GLFW_KEY_UP] = 1;
+    }
+    else
+    if (KEYBOARD_STATE->keys[GLFW_KEY_DOWN] && !KEYBOARD_STATE->key_locks[GLFW_KEY_DOWN])
+    {
+        if (textarea->caret_y > 0)
+            textarea->caret_y += 1;
+        
+        KEYBOARD_STATE->key_locks[GLFW_KEY_DOWN] = 1;
+    }
+    else
+    if (KEYBOARD_STATE->character)
     { // alright, we are typing something.
         char* char_str = calloc(2, sizeof(char));
         char_str[0] = KEYBOARD_STATE->character;
         char_str[1] = '\0';
+        int cx = textarea->caret_x;
+        int cy = textarea->caret_y;
+        int l = strlen(textarea->value);
+        int calc = 0;
+        int xx = 0;
+        int yy = 0;
+        int p = cx;
+        int newlines = 0;
+        int line_sizes = 0;
 
-        textarea->value = realloc(textarea->value, strlen(textarea->value) + 2);
 
-        strcat(textarea->value, char_str);
+        for (int i = 0; i < l; i++)
+        {
+            char c = textarea->value[i];
+
+            if (c == '\n')
+            {
+                if (xx <= cx && yy <= cy)
+                {
+                    char* copy = textarea_get_copy_of_line(textarea, newlines);
+                    line_sizes += strlen(copy);
+                    newlines += 1;
+                    free(copy);
+                    yy += 1;
+                    xx = 0;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else
+            {
+                xx += 1;
+            }
+        }
+
+        printf("newlines:%d\n", newlines);
+
+        insert_substring(textarea->value, char_str, (cx + cy + line_sizes) + 1);
+
         textarea->caret_x += 1;
     }
     
@@ -111,9 +179,7 @@ void textarea_tick(actor_T* self)
         char_str[1] = '\n';
         char_str[2] = '\0';
 
-        textarea->value = realloc(textarea->value, strlen(textarea->value) + 3);
-
-        strcat(textarea->value, char_str);
+        insert_substring(textarea->value, char_str, strlen(textarea->value) + 1);
 
         textarea->caret_x = 0;
         textarea->caret_y += 1;
@@ -221,7 +287,7 @@ void textarea_draw(actor_T* self)
     } 
 }
 
-char* textarea_get_copy_of_current_line(textarea_T* textarea)
+char* textarea_get_copy_of_line(textarea_T* textarea, int nr)
 {
     char* line = 0;
     char val[1024];
@@ -232,7 +298,7 @@ char* textarea_get_copy_of_current_line(textarea_T* textarea)
 
     while (ptr)
     {
-        if (line_nr == textarea->caret_y)
+        if (line_nr == nr)
         {
             line = calloc(strlen(ptr) + 1, sizeof(char));
             strcpy(line, ptr);
