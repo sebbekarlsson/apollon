@@ -91,7 +91,7 @@ void actor_textable_draw_text_value(actor_textable_T* self)
     char val[1024];
     strcpy(val, self->value);
 
-    char* ptr = strtok(val, "\r\n");
+    char* ptr = strtok(val, "\r");
 
     if (val[0] == '\r')
         line += 1;
@@ -112,7 +112,8 @@ void actor_textable_draw_text_value(actor_textable_T* self)
         );
 
         line += 1;
-        ptr = strtok((void*)0, "\r\n");
+
+        ptr = strtok((void*)0, "\r");
     }
 
     glDisable(GL_SCISSOR_TEST);
