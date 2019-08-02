@@ -10,9 +10,9 @@ typedef struct TEXTAREA_STRUCT
     actor_focusable_T base;
     char* value;
     char** lines;
-    unsigned int nr_lines;
-    unsigned int caret_x;
-    unsigned int caret_y;
+    int nr_lines;
+    int caret_x;
+    int caret_y;
     unsigned int font_size;
     unsigned int font_spacing;
     unsigned int draw_caret;
@@ -27,7 +27,11 @@ void textarea_tick(actor_T* self);
 
 void textarea_draw(actor_T* self);
 
-void textarea_on_character_input(textarea_T* textarea, char c);
+void textarea_on_character_input(textarea_T* textarea, char c, char* text);
 
 void textarea_shift_down(textarea_T* textarea);
+
+void textarea_reposition_caret(textarea_T* textarea);
+
+void textarea_insert_new_line(textarea_T* textarea, unsigned int position, unsigned int shift);
 #endif

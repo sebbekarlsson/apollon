@@ -177,28 +177,33 @@ void textarea_tick(actor_T* self)
     else
     if (KEYBOARD_STATE->keys[GLFW_KEY_DOWN] && !KEYBOARD_STATE->key_locks[GLFW_KEY_DOWN])
     {
+        if (textarea->caret_y >= textarea->nr_lines - 1)
+            textarea_insert_new_line(textarea, textarea->caret_y, 0);
+
         textarea->caret_y += 1;
-        
+         
         KEYBOARD_STATE->key_locks[GLFW_KEY_DOWN] = 1;
+    }
+    else
+    if (KEYBOARD_STATE->keys[GLFW_KEY_TAB] && !KEYBOARD_STATE->key_locks[GLFW_KEY_TAB])
+    {
+        textarea_on_character_input(textarea, KEYBOARD_STATE->character, "    ");
+        KEYBOARD_STATE->key_locks[GLFW_KEY_TAB] = 1;
     }
     else
     if (KEYBOARD_STATE->character)
     { // alright, we are typing something.
-        textarea_on_character_input(textarea, KEYBOARD_STATE->character); 
+        textarea_on_character_input(textarea, KEYBOARD_STATE->character, (void*) 0); 
     }
+
+    textarea_reposition_caret(textarea);
     
     if (KEYBOARD_STATE->keys[GLFW_KEY_ENTER] && !KEYBOARD_STATE->key_locks[GLFW_KEY_ENTER])
     {
-        textarea->caret_y += 1; 
+        textarea->caret_y += 1;
 
-        textarea->nr_lines += 1;
-        textarea->lines = realloc(textarea->lines, textarea->nr_lines * sizeof(char*));
-        textarea->lines[textarea->nr_lines-1] = calloc(1, sizeof(char));
-        textarea->lines[textarea->nr_lines-1][0] = '\0';
-
-        if (textarea->caret_y < textarea->nr_lines-1)
-            textarea_shift_down(textarea);
-        
+        textarea_insert_new_line(textarea, textarea->caret_y, 1);
+            
         textarea->caret_x = 0;
 
         KEYBOARD_STATE->key_locks[GLFW_KEY_ENTER] = 1;
@@ -287,11 +292,22 @@ void textarea_draw(actor_T* self)
     } 
 }
 
-void textarea_on_character_input(textarea_T* textarea, char c)
+void textarea_on_character_input(textarea_T* textarea, char c, char* text)
 {
-    char* char_str = calloc(2, sizeof(char));
-    char_str[0] = KEYBOARD_STATE->character;
-    char_str[1] = '\0';
+    char* char_str = (void*) 0;
+
+    if (text == (void*)0)
+    {
+        char_str = calloc(2, sizeof(char));
+        char_str[0] = KEYBOARD_STATE->character;
+        char_str[1] = '\0';
+    }
+    else
+    {
+        char_str = calloc(strlen(text) + 1, sizeof(char));
+        strcpy(char_str, text);
+    }
+
     int cx = textarea->caret_x;
     int cy = textarea->caret_y;
 
@@ -332,4 +348,23 @@ void textarea_shift_down(textarea_T* textarea)
         textarea->lines[i-1] = calloc(1, sizeof(char));
         textarea->lines[i-1][0] = '\0';
     }
+}
+
+void textarea_reposition_caret(textarea_T* textarea)
+{
+    size_t line_length = strlen(textarea->lines[textarea->caret_y]);
+
+    if (textarea->caret_x > line_length)
+        textarea->caret_x = line_length;
+}
+
+void textarea_insert_new_line(textarea_T* textarea, unsigned int position, unsigned int shift)
+{
+    textarea->nr_lines += 1;
+    textarea->lines = realloc(textarea->lines, textarea->nr_lines * sizeof(char*));
+    textarea->lines[textarea->nr_lines-1] = calloc(1, sizeof(char));
+    textarea->lines[textarea->nr_lines-1][0] = '\0';
+
+    if (shift && (textarea->caret_y < textarea->nr_lines-1))
+        textarea_shift_down(textarea);
 }
