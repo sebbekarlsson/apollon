@@ -209,8 +209,17 @@ void actor_textable_handle_keyboard_input(actor_textable_T* self)
     {
         if (self->caret_position > 0)
         {
-            self->caret_position -= 1;
-            str_erase(&self->value, self->caret_position);
+            if (self->value[self->caret_position-1] == '\n')
+            {
+                self->caret_position -= 1;
+                str_erase(&self->value, self->caret_position);
+            }
+
+            if (self->caret_position > 0)
+            {
+                self->caret_position -= 1;
+                str_erase(&self->value, self->caret_position); 
+            }
         }
 
         KEYBOARD_STATE->key_locks[GLFW_KEY_BACKSPACE] = 1;
@@ -246,6 +255,52 @@ void actor_textable_handle_keyboard_input(actor_textable_T* self)
             self->caret_position += 1;
 
         KEYBOARD_STATE->key_locks[GLFW_KEY_RIGHT] = 1;
+    }
+
+    if (
+        (KEYBOARD_STATE->keys[GLFW_KEY_UP] && !KEYBOARD_STATE->key_locks[GLFW_KEY_UP]) ||
+        (KEYBOARD_STATE->keys[GLFW_KEY_DOWN] && !KEYBOARD_STATE->key_locks[GLFW_KEY_DOWN])
+    )
+    {
+        int cx = self->caret_x;
+        int i = 0;
+        char c = '\0';
+
+        while ((c = self->value[i]) != '\n' && i < strlen(self->value))
+        {
+            if (KEYBOARD_STATE->keys[GLFW_KEY_UP])
+            {
+                if (self->caret_position > 0)
+                    self->caret_position -= 1;
+            }
+            else
+            {
+                if (self->caret_position < strlen(self->value))
+                    self->caret_position += 1;
+            }
+
+            i+= 1;
+        }
+
+        while (self->caret_x > cx)
+            self->caret_position -= 1;
+
+        while (self->caret_x < cx-1)
+            self->caret_position += 1;
+
+        if (KEYBOARD_STATE->keys[GLFW_KEY_UP])
+        {
+            if (self->caret_position > 0)
+                self->caret_position -= 1;
+        }
+        else
+        {
+            if (self->caret_position < strlen(self->value))
+                self->caret_position += 1;
+        }
+
+        KEYBOARD_STATE->key_locks[GLFW_KEY_UP] = 1;
+        KEYBOARD_STATE->key_locks[GLFW_KEY_DOWN] = 1;
     }
 }
 
