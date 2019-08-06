@@ -126,7 +126,7 @@ void actor_textable_draw_caret(actor_textable_T* self)
 
     state_T* state = get_current_state();
 
-    if (!(self->draw_caret && actor_focusable->focused))
+    if (!actor_focusable->focused)
         return;
 
     int scroll = actor_textable_calculate_scroll(self);
@@ -141,18 +141,21 @@ void actor_textable_draw_caret(actor_textable_T* self)
         {
             self->caret_x = actor->x + (x * (self->font_size + self->font_spacing));
 
-            draw_positioned_2D_mesh(
-                self->caret_x - scroll,
-                actor->y + (y * (self->font_size + self->font_spacing)),
-                actor->z,
-                4,
-                (self->font_size * 2),
-                self->fg_r,
-                self->fg_g,
-                self->fg_b,
-                1.0f,
-                state       
-            );
+            if (self->draw_caret)
+            {
+                draw_positioned_2D_mesh(
+                    self->caret_x - scroll,
+                    actor->y + (y * (self->font_size + self->font_spacing)),
+                    actor->z,
+                    4,
+                    (self->font_size * 2),
+                    self->fg_r,
+                    self->fg_g,
+                    self->fg_b,
+                    1.0f,
+                    state       
+                );
+            }
 
             break;
         }
