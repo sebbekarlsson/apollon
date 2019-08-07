@@ -47,6 +47,7 @@ actor_textable_T* actor_textable_constructor(
     actor_textable->value = calloc(1, sizeof(char));
     actor_textable->value[0] = '\0';
     actor_textable->caret_x = 0;
+    actor_textable->caret_y = 0;
 
     gettimeofday(&actor_textable->timer, 0);
 
@@ -140,6 +141,7 @@ void actor_textable_draw_caret(actor_textable_T* self)
         if (i >= self->caret_position - 1)
         {
             self->caret_x = actor->x + (x * (self->font_size + self->font_spacing));
+            self->caret_y = actor->y + (y * (self->font_size + self->font_spacing));
 
             if (self->draw_caret)
             {
