@@ -10,6 +10,7 @@ typedef struct SCENE_TEXT_EDITOR_STRUCT
     scene_T base;
     focus_manager_T* focus_manager;
     textarea_T* textarea;
+    int line_bar_width;
 } scene_text_editor_T;
 
 

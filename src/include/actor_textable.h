@@ -49,4 +49,6 @@ void actor_textable_handle_character_input(actor_textable_T* self);
 int actor_textable_calculate_scroll(actor_textable_T* actor_textable);
 
 int actor_textable_get_caret_line_number(actor_textable_T* actor_textable);
+
+int actor_textable_get_number_of_lines(actor_textable_T* actor_textable);
 #endif

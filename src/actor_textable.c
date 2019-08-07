@@ -100,7 +100,7 @@ void actor_textable_draw_text_value(actor_textable_T* self)
     {
         draw_text(
             ptr,
-            (float)(-scroll + ((actor->x) + (int)self->font_size)),
+            4 + (float)(-scroll + ((actor->x) + (int)self->font_size)),
             actor->y + self->font_size + (line * (self->font_size + self->font_spacing)),
             actor->z,
             self->fg_r, self->fg_g, self->fg_b, // rgb
@@ -355,6 +355,21 @@ int actor_textable_get_caret_line_number(actor_textable_T* actor_textable)
         char c = actor_textable->value[i];
 
         if (c == '\r')
+            line += 1;
+    }
+
+    return line;
+}
+
+int actor_textable_get_number_of_lines(actor_textable_T* actor_textable)
+{
+    int line = 0;
+    
+    for (int i = 0; i < strlen(actor_textable->value); i++)
+    {
+        char c = actor_textable->value[i];
+
+        if (c == '\n')
             line += 1;
     }
 
