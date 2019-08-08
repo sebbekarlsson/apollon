@@ -1,6 +1,6 @@
 # Apollon
 > The graphical user interface for Coelum.
-![screenshot](menu.png)
+![screenshot](screenshot.png)
 
 ## Installing
 > To install Apollon, you must first install [Coelum](https://github.com/sebbekarlsson/coelum)
