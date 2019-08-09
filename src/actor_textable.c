@@ -57,6 +57,10 @@ actor_textable_T* actor_textable_constructor(
 void actor_textable_tick(actor_T* self)
 {
     actor_textable_T* actor_textable = (actor_textable_T*) self;
+    actor_focusable_T* actor_focusable = (actor_focusable_T*) actor_textable;
+
+    if (!actor_focusable->focused)
+        return;
 
     while(actor_textable->value[actor_textable->caret_position] == '\n')
         actor_textable->caret_position -= 1;
