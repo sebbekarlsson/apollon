@@ -58,6 +58,9 @@ void actor_textable_tick(actor_T* self)
 {
     actor_textable_T* actor_textable = (actor_textable_T*) self;
 
+    while(actor_textable->value[actor_textable->caret_position] == '\n')
+        actor_textable->caret_position -= 1;
+
     actor_textable_caret_blink(actor_textable);
     actor_textable_handle_keyboard_input(actor_textable);
 }
@@ -264,45 +267,27 @@ void actor_textable_handle_keyboard_input(actor_textable_T* self)
         (KEYBOARD_STATE->keys[GLFW_KEY_DOWN] && !KEYBOARD_STATE->key_locks[GLFW_KEY_DOWN])
     )
     {
-        int cx = self->caret_x;
-        int i = 0;
-        char c = '\0';
-
-        while ((c = self->value[i]) != '\n' && i < strlen(self->value))
-        {
-            if (KEYBOARD_STATE->keys[GLFW_KEY_UP])
-            {
-                if (self->caret_position > 0)
-                    self->caret_position -= 1;
-            }
-            else
-            {
-                if (self->caret_position < strlen(self->value))
-                    self->caret_position += 1;
-            }
-
-            i+= 1;
-        }
-
-        while (self->caret_x > cx)
-            self->caret_position -= 1;
-
-        while (self->caret_x < cx-1)
-            self->caret_position += 1;
-
         if (KEYBOARD_STATE->keys[GLFW_KEY_UP])
         {
-            if (self->caret_position > 0)
+            while (self->value[self->caret_position] != '\r' && self->caret_position > 0)
                 self->caret_position -= 1;
-        }
-        else
-        {
-            if (self->caret_position < strlen(self->value))
-                self->caret_position += 1;
+
+            while (self->value[self->caret_position] != '\n' && self->caret_position > 0)
+                self->caret_position -= 1;
+        
+            KEYBOARD_STATE->key_locks[GLFW_KEY_UP] = 1;
         }
 
-        KEYBOARD_STATE->key_locks[GLFW_KEY_UP] = 1;
-        KEYBOARD_STATE->key_locks[GLFW_KEY_DOWN] = 1;
+        if (KEYBOARD_STATE->keys[GLFW_KEY_DOWN])
+        {
+            while (self->value[self->caret_position] != '\n' && self->caret_position < strlen(self->value))
+                self->caret_position += 1;
+
+            while (self->value[self->caret_position] != '\r' && self->caret_position < strlen(self->value))
+                self->caret_position += 1;
+        
+            KEYBOARD_STATE->key_locks[GLFW_KEY_DOWN] = 1;
+        }
     }
 }
 
