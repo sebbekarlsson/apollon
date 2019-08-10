@@ -325,7 +325,7 @@ scene_scene_editor_T* init_scene_scene_editor()
 
 void scene_scene_editor_tick(scene_T* self)
 {
-    go_back_on_escape();
+    go_to_menu_on_escape();
 
     scene_scene_editor_T* s_scene_editor = (scene_scene_editor_T*) self;
 

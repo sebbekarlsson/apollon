@@ -4,6 +4,7 @@
 #include "include/scene_scene_designer.h"
 #include "include/scene_actor_editor.h"
 #include "include/scene_sprite_editor.h"
+#include "include/scene_script_selector.h"
 #include "include/scene_text_editor.h"
 #include "include/colors.h"
 #include "include/image_utils.h"
@@ -54,6 +55,7 @@ main_state_T* init_main_state()
 {
     main_state_T* main_state = calloc(1, sizeof(struct MAIN_STATE_STRUCT));
     main_state->scene_id = (void*) 0;
+    main_state->text_editor_value = (void*)0;
     main_state->modal_is_active = 0;
 
     return main_state;
@@ -75,6 +77,7 @@ int main(int argc, char* argv[])
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_scene_designer());
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_actor_editor());
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_sprite_editor());
+    scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_script_selector());
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_text_editor());
 
 

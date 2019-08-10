@@ -3,6 +3,8 @@
 typedef struct MAIN_STATE_STRUCT
 {
     char* scene_id;
+    char* script_id;
+    char* text_editor_value;
     unsigned int modal_is_active;
 } main_state_T;
 

@@ -37,7 +37,7 @@ void press_sprite_editor()
 
 void press_text_editor()
 {
-    scene_manager_goto(THEATRE->scene_manager, "text_editor");
+    scene_manager_goto(THEATRE->scene_manager, "script_selector");
 }
 
 void press_run()
