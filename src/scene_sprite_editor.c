@@ -20,6 +20,9 @@ extern modal_manager_T* MODAL_MANAGER;
 extern sprite_T* SPRITE_PENCIL;
 extern sprite_T* SPRITE_ERASOR;
 
+#define REFRESH_STATE(s_sprite_editor)\
+    ((scene_base_T*)s_sprite_editor)->refresh_state((scene_base_T*)s_sprite_editor);
+
 
 static void scene_sprite_editor_clear_input_fields(scene_sprite_editor_T* s_sprite_editor)
 {
@@ -47,13 +50,14 @@ static void _free_sprite_dropdown_option(void* item)
 
 static void scene_sprite_editor_set_tool(scene_sprite_editor_T* s_sprite_editor, unsigned int tool_index)
 {
-
     s_sprite_editor->tool_index = tool_index;
     grid_unselect_all_cells(s_sprite_editor->grid_tool_selector);
 }
 
-void scene_sprite_editor_refresh_state(scene_sprite_editor_T* s_sprite_editor)
+void scene_sprite_editor_refresh_state(scene_base_T* scene_base)
 {
+    scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) scene_base;
+
     dropdown_list_sync_from_table(
         s_sprite_editor->dropdown_list_sprite,
         DATABASE,
@@ -172,7 +176,7 @@ void sprite_button_save_press()
         );
     }
 
-    scene_sprite_editor_refresh_state(s_sprite_editor);
+    REFRESH_STATE(s_sprite_editor);
 }
 
 void dropdown_list_sprite_press(void* dropdown_list, void* option)
@@ -318,16 +322,18 @@ void sprite_button_delete_press()
 
     scene_sprite_editor_delete_grids_reset_sprite_id(s_sprite_editor);
 
-    scene_sprite_editor_refresh_state(s_sprite_editor);
+    REFRESH_STATE(s_sprite_editor);
 }
 
 scene_sprite_editor_T* init_scene_sprite_editor()
 {
     scene_sprite_editor_T* s_sprite_editor = calloc(1, sizeof(struct SCENE_SPRITE_EDITOR_STRUCT));
-    scene_T* s = (scene_T*) s_sprite_editor;
+    scene_base_T* scene_base = (scene_base_T*) s_sprite_editor;
+    scene_T* s = (scene_T*) scene_base;
     state_T* state = (state_T*) s; 
 
     scene_constructor(s, scene_sprite_editor_tick, scene_sprite_editor_draw, 2);
+    scene_base_constructor(scene_base, scene_sprite_editor_refresh_state);
 
     s->type_name = "sprite_editor";
     s->bg_r = 255;
@@ -346,6 +352,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         0,
         "grid_canvas"
     );
+    REGISTER_FOCUSABLE(scene_base, s_sprite_editor->grid); 
 
     s_sprite_editor->grids = init_dynamic_list(sizeof(struct GRID_STRUCT*));
 
@@ -361,6 +368,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         0,
         "grid_color_selector"
     );
+    REGISTER_FOCUSABLE(scene_base, s_sprite_editor->grid_color_selector); 
 
     s_sprite_editor->tool_index = 0;
 
@@ -380,7 +388,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     s_sprite_editor->grid_tool_selector->cells[0][1]->sprite = SPRITE_ERASOR;
     grid_unselect_all_cells(s_sprite_editor->grid_tool_selector);
 
-    dynamic_list_append(state->actors, s_sprite_editor->grid_tool_selector);
+    REGISTER_FOCUSABLE(scene_base, s_sprite_editor->grid_tool_selector);
 
     // state representation of first grid in frame list.
     dynamic_list_append(
@@ -452,13 +460,9 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         0,
         "grid_color_mixer"
     );
-    
-    dynamic_list_append(state->actors, s_sprite_editor->grid);
-    dynamic_list_append(state->actors, s_sprite_editor->grid_color_selector);
-    dynamic_list_append(state->actors, s_sprite_editor->grid_color_mixer);
+    REGISTER_FOCUSABLE(scene_base, s_sprite_editor->grid_color_mixer); 
 
-    s_sprite_editor->focus_manager = init_focus_manager();
-    s_sprite_editor->focus_manager->focus_index = 0;
+    scene_base->focus_manager->focus_index = 0;
 
     s_sprite_editor->label_name = init_label(
         (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
@@ -473,8 +477,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         (WINDOW_HEIGHT / 2) - ((16 * 16) / 2) - 64,
         0.0f
     );
-    dynamic_list_append(state->actors, s_sprite_editor->input_field_name);
-    dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->input_field_name);
+    REGISTER_FOCUSABLE(scene_base, s_sprite_editor->input_field_name);
 
     float button_width = 128;
 
@@ -486,8 +489,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         sprite_button_save_press
     );
     s_sprite_editor->button_save->width = button_width;
-    dynamic_list_append(state->actors, s_sprite_editor->button_save);
-    dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->button_save);
+    REGISTER_FOCUSABLE(scene_base, s_sprite_editor->button_save);
 
     s_sprite_editor->button_new = init_button(
         (WINDOW_WIDTH / 2) - ((16 * 16) / 2) + button_width + 16,
@@ -497,8 +499,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         sprite_button_new_press
     );
     s_sprite_editor->button_new->width = button_width;
-    dynamic_list_append(state->actors, s_sprite_editor->button_new);
-    dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->button_new);
+    REGISTER_FOCUSABLE(scene_base, s_sprite_editor->button_new);
 
     s_sprite_editor->button_delete = init_button(
         (WINDOW_WIDTH / 2) - ((16 * 16) / 2) + button_width + button_width + 16 + 16,
@@ -508,8 +509,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         sprite_button_delete_press
     );
     s_sprite_editor->button_delete->width = button_width;
-    dynamic_list_append(state->actors, s_sprite_editor->button_delete);
-    dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->button_delete);
+    REGISTER_FOCUSABLE(scene_base, s_sprite_editor->button_delete);
     
     int dropdown_list_sprite_width = 160;
     s_sprite_editor->label_current_sprite = init_label(
@@ -529,8 +529,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     s_sprite_editor->dropdown_list_sprite->expanded = 0;
     s_sprite_editor->dropdown_list_sprite->width = dropdown_list_sprite_width;
     ((actor_T*)s_sprite_editor->dropdown_list_sprite)->z = 1;
-    dynamic_list_append(s_sprite_editor->focus_manager->focusables, (actor_focusable_T*) s_sprite_editor->dropdown_list_sprite);
-    dynamic_list_append(state->actors, s_sprite_editor->dropdown_list_sprite);
+    REGISTER_FOCUSABLE(scene_base, (actor_focusable_T*)s_sprite_editor->dropdown_list_sprite);
 
     s_sprite_editor->label_frame_delay = init_label(
         (((WINDOW_WIDTH / 2) - ((16 * 16) / 2))) - (dropdown_list_sprite_width + 16),
@@ -545,14 +544,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         0.0f
     );
     s_sprite_editor->input_field_frame_delay->width = s_sprite_editor->dropdown_list_sprite->width;
-    dynamic_list_append(s_sprite_editor->focus_manager->focusables, (actor_focusable_T*) s_sprite_editor->input_field_frame_delay);
-    dynamic_list_append(state->actors, s_sprite_editor->input_field_frame_delay);
-
-
-    dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->grid);
-    dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->grid_tool_selector);
-    dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->grid_color_selector);
-    dynamic_list_append(s_sprite_editor->focus_manager->focusables, s_sprite_editor->grid_color_mixer);
+    REGISTER_FOCUSABLE(scene_base, (actor_focusable_T*) s_sprite_editor->input_field_frame_delay);
 
     s_sprite_editor->grid_index = 0;
     s_sprite_editor->sprite_id = 0;
@@ -565,7 +557,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     state_resort_actors(state);
 
-    scene_sprite_editor_refresh_state(s_sprite_editor);
+    REFRESH_STATE(s_sprite_editor);
 
     return s_sprite_editor;
 }
@@ -575,22 +567,18 @@ void scene_sprite_editor_tick(scene_T* self)
     go_back_on_escape();
 
     scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) self;
+    scene_base_T* scene_base = (scene_base_T*) s_sprite_editor;
 
     ((actor_focusable_T*)s_sprite_editor->button_delete)->visible = s_sprite_editor->sprite_id != (void*) 0;
-    
-    focus_manager_tick(s_sprite_editor->focus_manager);
+    scene_base_tick(scene_base); 
 
-    if (MAIN_STATE->modal_is_active)
-        focus_manager_keep_disabled(s_sprite_editor->focus_manager); 
-
-    if (s_sprite_editor->focus_manager->focus_index == -1)
+    if (scene_base->focus_manager->focus_index == -1)
         return;
 
-    actor_focusable_T* actor_focusable = (actor_focusable_T*) s_sprite_editor->focus_manager->focusables->items[s_sprite_editor->focus_manager->focus_index];
+    actor_focusable_T* actor_focusable = (actor_focusable_T*) scene_base->focus_manager->focusables->items[scene_base->focus_manager->focus_index];
     actor_T* grid_actor = (actor_T*) actor_focusable;
     grid_T* grid = (grid_T*) grid_actor;
     actor_focusable->focused = 1;
-
 
     s_sprite_editor->grid_tool_selector->cells[0][s_sprite_editor->tool_index]->selected = 1;
 
@@ -894,7 +882,6 @@ void scene_sprite_editor_refresh_grid(scene_sprite_editor_T* self)
     grid_T* current_grid_state = (grid_T*) self->grids->items[self->grid_index]; 
     
     grid_clean(self->grid);
-    //grid_clean(current_grid_state);
 
     printf("%d\n", (int)current_grid_state->width);
     grid_copy(current_grid_state, self->grid);
