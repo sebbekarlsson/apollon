@@ -20,9 +20,6 @@ extern modal_manager_T* MODAL_MANAGER;
 extern sprite_T* SPRITE_PENCIL;
 extern sprite_T* SPRITE_ERASOR;
 
-#define REFRESH_STATE(s_sprite_editor)\
-    ((scene_base_T*)s_sprite_editor)->refresh_state((scene_base_T*)s_sprite_editor);
-
 
 static void scene_sprite_editor_clear_input_fields(scene_sprite_editor_T* s_sprite_editor)
 {

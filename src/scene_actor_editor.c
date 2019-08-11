@@ -13,8 +13,6 @@ extern database_T* DATABASE;
 extern modal_manager_T* MODAL_MANAGER;
 extern main_state_T* MAIN_STATE;
 
-#define REFRESH_STATE(s_actor_editor)\
-    ((scene_base_T*)s_actor_editor)->refresh_state((scene_base_T*)s_actor_editor);
 
 static void _free_actor_dropdown_option(void* item)
 {
