@@ -337,9 +337,11 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     s->bg_g = 255;
     s->bg_b = 255;
 
+    float iy = 24.0f;
+
     s_sprite_editor->grid = init_grid(
         (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
-        (WINDOW_HEIGHT / 2) - ((16 * 16) / 2),
+        iy + (WINDOW_HEIGHT / 2) - ((16 * 16) / 2),
         0.0f,
         16,
         16,
@@ -355,7 +357,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     s_sprite_editor->grid_color_selector = init_grid(
         ((WINDOW_WIDTH / 2) - ((16 * 16) / 2)) + ((16 * 16) + 16),
-        ((WINDOW_HEIGHT / 2) - ((16 * 16) / 2)),
+        iy + ((WINDOW_HEIGHT / 2) - ((16 * 16) / 2)),
         0.0f,
         4,
         8,
@@ -371,7 +373,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     s_sprite_editor->grid_tool_selector = init_grid(
         ((WINDOW_WIDTH / 2) - ((16 * 16) / 2)) + ((16 * 16) + 16) + (4 * 16) + 16,
-        ((WINDOW_HEIGHT / 2) - ((16 * 16) / 2)),
+        iy + ((WINDOW_HEIGHT / 2) - ((16 * 16) / 2)),
         0.0f,
         1,
         2,
@@ -392,7 +394,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         s_sprite_editor->grids,
         init_grid(
             (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
-            (WINDOW_HEIGHT / 2) - ((16 * 16) / 2),
+            iy + (WINDOW_HEIGHT / 2) - ((16 * 16) / 2),
             0.0f,
             16,
             16,
@@ -447,7 +449,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     s_sprite_editor->grid_color_mixer = init_grid(
         ((WINDOW_WIDTH / 2) - ((16 * 16) / 2)) + ((16 * 16) + 16),
-        ((WINDOW_HEIGHT / 2) - ((16 * 16) / 2)) + ((16 * 8) + 16),
+        iy + ((WINDOW_HEIGHT / 2) - ((16 * 16) / 2)) + ((16 * 8) + 16),
         0.0f,
         8,
         7,
@@ -463,7 +465,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     s_sprite_editor->label_name = init_label(
         (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
-        (WINDOW_HEIGHT / 2) - ((16 * 16) / 2) - 80,
+        iy + (WINDOW_HEIGHT / 2) - ((16 * 16) / 2) - 80,
         0.0f,
         "Name"
     );
@@ -471,7 +473,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     s_sprite_editor->input_field_name = init_input_field(
         (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
-        (WINDOW_HEIGHT / 2) - ((16 * 16) / 2) - 64,
+        iy + (WINDOW_HEIGHT / 2) - ((16 * 16) / 2) - 64,
         0.0f
     );
     scene_base_register_focusable(scene_base, (actor_focusable_T*) s_sprite_editor->input_field_name);
@@ -480,7 +482,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     s_sprite_editor->button_save = init_button(
         (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
-        (WINDOW_HEIGHT / 2) + ((16 * 16) / 2) + 16,
+        iy + (WINDOW_HEIGHT / 2) + ((16 * 16) / 2) + 16,
         0.0f,
         "Save",
         sprite_button_save_press
@@ -490,7 +492,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     s_sprite_editor->button_new = init_button(
         (WINDOW_WIDTH / 2) - ((16 * 16) / 2) + button_width + 16,
-        (WINDOW_HEIGHT / 2) + ((16 * 16) / 2) + 16,
+        iy + (WINDOW_HEIGHT / 2) + ((16 * 16) / 2) + 16,
         0.0f,
         "New",
         sprite_button_new_press
@@ -500,7 +502,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     s_sprite_editor->button_delete = init_button(
         (WINDOW_WIDTH / 2) - ((16 * 16) / 2) + button_width + button_width + 16 + 16,
-        (WINDOW_HEIGHT / 2) + ((16 * 16) / 2) + 16,
+        iy + (WINDOW_HEIGHT / 2) + ((16 * 16) / 2) + 16,
         0.0f,
         "Delete",
         sprite_button_delete_press
@@ -511,7 +513,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     int dropdown_list_sprite_width = 160;
     s_sprite_editor->label_current_sprite = init_label(
         ((WINDOW_WIDTH / 2) - ((16 * 16) / 2)) - (dropdown_list_sprite_width + 16),
-        (WINDOW_HEIGHT / 2) - ((16 * 16) / 2) - (8 + 8),
+        iy + (WINDOW_HEIGHT / 2) - ((16 * 16) / 2) - (8 + 8),
         0.0f,
         "Sprite"
     );
@@ -519,7 +521,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     s_sprite_editor->dropdown_list_sprite = init_dropdown_list(
         (((WINDOW_WIDTH / 2) - ((16 * 16) / 2))) - (dropdown_list_sprite_width + 16),
-        (WINDOW_HEIGHT / 2) - ((16 * 16) / 2),
+        iy + (WINDOW_HEIGHT / 2) - ((16 * 16) / 2),
         0.0f,
         dropdown_list_sprite_press
     );
@@ -530,14 +532,14 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     s_sprite_editor->label_frame_delay = init_label(
         (((WINDOW_WIDTH / 2) - ((16 * 16) / 2))) - (dropdown_list_sprite_width + 16),
-        (WINDOW_HEIGHT / 2) - ((16 * 16) / 2) + 64,
+        iy + (WINDOW_HEIGHT / 2) - ((16 * 16) / 2) + 64,
         0.0f,
         "Delay"
     );
     dynamic_list_append(state->actors, s_sprite_editor->label_frame_delay);
     s_sprite_editor->input_field_frame_delay = init_input_field(
         (((WINDOW_WIDTH / 2) - ((16 * 16) / 2))) - (dropdown_list_sprite_width + 16),
-        (WINDOW_HEIGHT / 2) - ((16 * 16) / 2) + 64 + 16,
+        iy + (WINDOW_HEIGHT / 2) - ((16 * 16) / 2) + 64 + 16,
         0.0f
     );
     s_sprite_editor->input_field_frame_delay->width = s_sprite_editor->dropdown_list_sprite->width;
