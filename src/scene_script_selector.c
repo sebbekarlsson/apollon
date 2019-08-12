@@ -155,7 +155,7 @@ scene_script_selector_T* init_scene_script_selector()
     state_T* state = (state_T*) s; 
 
     scene_constructor(s, scene_script_selector_tick, scene_script_selector_draw, 2);
-    scene_base_constructor(scene_base, scene_script_selector_refresh_state);
+    scene_base_constructor(scene_base, scene_script_selector_refresh_state, "Script Selector");
 
     s->load = scene_script_selector_load;
 
@@ -269,7 +269,10 @@ void scene_script_selector_tick(scene_T* self)
     scene_base_tick((scene_base_T*) self);
 }
 
-void scene_script_selector_draw(scene_T* self) { /* silence */ }
+void scene_script_selector_draw(scene_T* self)
+{
+    scene_base_draw((scene_base_T*) self);
+}
 
 void scene_script_selector_refresh_state(scene_base_T* scene_base)
 {

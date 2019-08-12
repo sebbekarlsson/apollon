@@ -229,7 +229,7 @@ scene_scene_editor_T* init_scene_scene_editor()
     state_T* state = (state_T*) s; 
 
     scene_constructor(s, scene_scene_editor_tick, scene_scene_editor_draw, 2);
-    scene_base_constructor(scene_base, scene_scene_editor_refresh_state);
+    scene_base_constructor(scene_base, scene_scene_editor_refresh_state, "Scene Editor");
 
     s->unload = scene_scene_editor_unload;
 
@@ -329,4 +329,7 @@ void scene_scene_editor_tick(scene_T* self)
     scene_base_tick((scene_base_T*)s_scene_editor);
 }
 
-void scene_scene_editor_draw(scene_T* self) { /* silence */ }
+void scene_scene_editor_draw(scene_T* self)
+{
+    scene_base_draw((scene_base_T*) self);
+}

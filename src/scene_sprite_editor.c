@@ -330,7 +330,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     state_T* state = (state_T*) s; 
 
     scene_constructor(s, scene_sprite_editor_tick, scene_sprite_editor_draw, 2);
-    scene_base_constructor(scene_base, scene_sprite_editor_refresh_state);
+    scene_base_constructor(scene_base, scene_sprite_editor_refresh_state, "Sprite Editor");
 
     s->type_name = "sprite_editor";
     s->bg_r = 255;
@@ -742,6 +742,8 @@ void scene_sprite_editor_draw(scene_T* self)
 {
     state_T* state = (state_T*) self;
     scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) self;
+
+    scene_base_draw((scene_base_T*) s_sprite_editor);
 
     int number_of_frames = (int)(
         s_sprite_editor->grids->size > 0 ? s_sprite_editor->grids->size - 1 : 0

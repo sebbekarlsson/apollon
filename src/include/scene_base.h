@@ -10,11 +10,16 @@ typedef struct SCENE_BASE_STRUCT
     scene_T base;
     focus_manager_T* focus_manager;
     void (*refresh_state)(struct SCENE_BASE_STRUCT* self);
+    char* title;
 } scene_base_T;
 
-scene_base_T* scene_base_constructor(scene_base_T* scene_base, void (*refresh_state)(struct SCENE_BASE_STRUCT* self));
+scene_base_T* scene_base_constructor(scene_base_T* scene_base, void (*refresh_state)(struct SCENE_BASE_STRUCT* self), const char* title);
 
 void scene_base_tick(scene_base_T* scene_base);
+
+void scene_base_draw(scene_base_T* scene_base);
+
+void scene_base_draw_title_bar(scene_base_T* scene_base);
 
 actor_focusable_T* scene_base_register_focusable(scene_base_T* scene_base, actor_focusable_T* focusable);
 

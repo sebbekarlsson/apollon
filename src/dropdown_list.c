@@ -80,14 +80,16 @@ void dropdown_list_option_draw(int i, dropdown_list_option_T* option, dropdown_l
     actor_focusable_T* actor_focusable = (actor_focusable_T*) dropdown_list;
     actor_T* self = (actor_T*) actor_focusable;
 
+    int h = 28;
+
     if ((i == dropdown_list->option_index || i == dropdown_list->selected_index) && actor_focusable->focused)
     {
         draw_positioned_2D_mesh(
             self->x,
-            (self->y + (i * 32)),
+            (self->y + (i * h)),
             0.0f,
             dropdown_list->width,
-            32,
+            h,
             COLOR_BG_DARK_BRIGHT[0],
             COLOR_BG_DARK_BRIGHT[1],
             COLOR_BG_DARK_BRIGHT[2],
@@ -105,7 +107,7 @@ void dropdown_list_option_draw(int i, dropdown_list_option_T* option, dropdown_l
             draw_positioned_sprite(
                 option->database_sprite->sprite,
                 self->x + 4,
-                (self->y + (i * 32)) + 8,
+                self->y + (i * h) + ((h/2) - 8),
                 0.0f,
                 16,
                 16,
@@ -122,8 +124,8 @@ void dropdown_list_option_draw(int i, dropdown_list_option_T* option, dropdown_l
         {
             draw_text(
                 option->key,
-                self->x + (32 / 2) + text_padding,
-                (self->y + (i * 32)) + (32 / 2),
+                self->x + (h / 2) + text_padding,
+                (self->y + (i * h)) + (h / 2),
                 0,
                 COLOR_FG[0], // r
                 COLOR_FG[1], // g
@@ -150,6 +152,8 @@ void dropdown_list_draw(actor_T* self)
     scene_T* scene = scene_manager_get_current_scene(THEATRE->scene_manager);
     state_T* state = (state_T*) scene;
 
+    int h = 28;
+
     if (dropdown_list->expanded)
     {
         draw_positioned_2D_mesh(
@@ -157,7 +161,7 @@ void dropdown_list_draw(actor_T* self)
             self->y + 4,
             0.0f,
             dropdown_list->width,
-            32 * (dropdown_list->expanded && dropdown_list->options->size > 0 ? dropdown_list->options->size : 1),
+            h * (dropdown_list->expanded && dropdown_list->options->size > 0 ? dropdown_list->options->size : 1),
             0,
             0,
             0,
@@ -171,7 +175,7 @@ void dropdown_list_draw(actor_T* self)
         self->y,
         0.0f,
         dropdown_list->width,
-        32 * (dropdown_list->expanded && dropdown_list->options->size > 0 ? dropdown_list->options->size : 1),
+        h * (dropdown_list->expanded && dropdown_list->options->size > 0 ? dropdown_list->options->size : 1),
         COLOR_BG_DARK[0],
         COLOR_BG_DARK[1],
         COLOR_BG_DARK[2],
@@ -207,8 +211,8 @@ void dropdown_list_draw(actor_T* self)
         {
             draw_text(
                 "EMPTY",
-                self->x + (32 / 2),
-                (self->y + (32 / 2)),
+                self->x + (h / 2),
+                (self->y + (h / 2)),
                 0,
                 focused ? 255 : COLOR_FG[0], // r
                 focused ? 255 : COLOR_FG[1], // g
