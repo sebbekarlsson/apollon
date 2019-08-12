@@ -11,38 +11,6 @@ extern database_T* DATABASE;
 extern main_state_T* MAIN_STATE;
 extern theatre_T* THEATRE;
 
-static void scene_script_selector_refresh_state(scene_script_selector_T* s_script_selector)
-{
-    if (s_script_selector->script_id == (void*)0)
-    {
-        s_script_selector->button_edit->disabled = 1;
-        MAIN_STATE->script_id = (void*)0;
-    }
-    else
-    {
-        MAIN_STATE->script_id = s_script_selector->script_id;
-        s_script_selector->button_edit->disabled = 0;
-    }
-    
-    if (s_script_selector->current_database_script != (void*) 0)
-    {
-        database_script_T* database_script = s_script_selector->current_database_script;
-
-        s_script_selector->input_field_name->value = realloc(
-            s_script_selector->input_field_name->value,
-            (strlen(database_script->name) + 1) * sizeof(char)
-        );
-        strcpy(s_script_selector->input_field_name->value, database_script->name);
-    }
-
-    dropdown_list_sync_from_table(
-        s_script_selector->dropdown_list_script,
-        DATABASE,
-        "scripts",
-        1,
-        -1
-    );
-}
 
 static void scene_script_selector_reset_script_id(scene_script_selector_T* s_script_selector)
 {
@@ -69,7 +37,7 @@ static void scene_script_selector_reset_state(scene_script_selector_T* s_script_
         sizeof(char) * strlen(s_script_selector->input_field_name->value)
     );
     
-    scene_script_selector_refresh_state(s_script_selector);
+    REFRESH_STATE(s_script_selector);
 }
 
 static void scene_script_selector_set_current_script(
@@ -89,7 +57,7 @@ static void scene_script_selector_set_current_script(
         new_id
     );
 
-    scene_script_selector_refresh_state(s_script_selector);
+    REFRESH_STATE(s_script_selector);
 }
 
 static void dropdown_list_script_press(void* dropdown_list, void* option)
@@ -138,7 +106,7 @@ static void button_save_press()
             fclose (fp);
         }
 
-        scene_script_selector_refresh_state(s_script_selector);
+        REFRESH_STATE(s_script_selector);
     }
     else
     {
@@ -176,16 +144,18 @@ void scene_script_selector_load(void* s)
     scene_T* scene = (scene_T*) s;
     scene_script_selector_T* s_script_selector = (scene_script_selector_T*) scene;
 
-    scene_script_selector_refresh_state(s_script_selector);
+    REFRESH_STATE(s_script_selector);
 }
 
 scene_script_selector_T* init_scene_script_selector()
 {
     scene_script_selector_T* s_script_selector = calloc(1, sizeof(struct SCENE_SCRIPT_SELECTOR_STRUCT));
-    scene_T* s = (scene_T*) s_script_selector;
+    scene_base_T* scene_base = (scene_base_T*) s_script_selector;
+    scene_T* s = (scene_T*) scene_base;
     state_T* state = (state_T*) s; 
 
     scene_constructor(s, scene_script_selector_tick, scene_script_selector_draw, 2);
+    scene_base_constructor(scene_base, scene_script_selector_refresh_state);
 
     s->load = scene_script_selector_load;
 
@@ -193,8 +163,6 @@ scene_script_selector_T* init_scene_script_selector()
     s->bg_r = 255;
     s->bg_g = 255;
     s->bg_b = 255; 
-
-    s_script_selector->focus_manager = init_focus_manager();
 
     s_script_selector->script_id = (void*) 0;
 
@@ -222,8 +190,7 @@ scene_script_selector_T* init_scene_script_selector()
         0.0f,
         dropdown_list_script_press
     );
-    dynamic_list_append(s_script_selector->focus_manager->focusables, s_script_selector->dropdown_list_script);
-    dynamic_list_append(state->actors, s_script_selector->dropdown_list_script);
+    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_script_selector->dropdown_list_script);
 
     /* ==== END OF LEFT ==== */
 
@@ -247,8 +214,7 @@ scene_script_selector_T* init_scene_script_selector()
         jy,
         0.0f        
     );
-    dynamic_list_append(s_script_selector->focus_manager->focusables, s_script_selector->input_field_name);
-    dynamic_list_append(state->actors, s_script_selector->input_field_name);
+    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_script_selector->input_field_name);
 
     jy += margin;
 
@@ -259,8 +225,7 @@ scene_script_selector_T* init_scene_script_selector()
         "Save",
         button_save_press        
     );
-    dynamic_list_append(s_script_selector->focus_manager->focusables, s_script_selector->button_save);
-    dynamic_list_append(state->actors, s_script_selector->button_save);
+    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_script_selector->button_save);
 
     jy += margin;
 
@@ -271,8 +236,7 @@ scene_script_selector_T* init_scene_script_selector()
         "Edit",
         button_edit_press        
     );
-    dynamic_list_append(s_script_selector->focus_manager->focusables, s_script_selector->button_edit);
-    dynamic_list_append(state->actors, s_script_selector->button_edit);
+    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_script_selector->button_edit);
 
     jy += margin;
 
@@ -283,8 +247,7 @@ scene_script_selector_T* init_scene_script_selector()
         "Delete",
         button_delete_press        
     );
-    dynamic_list_append(s_script_selector->focus_manager->focusables, s_script_selector->button_delete);
-    dynamic_list_append(state->actors, s_script_selector->button_delete);
+    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_script_selector->button_delete);
 
     jy += margin;
 
@@ -295,22 +258,50 @@ scene_script_selector_T* init_scene_script_selector()
         "New",
         button_new_press        
     );
-    dynamic_list_append(s_script_selector->focus_manager->focusables, s_script_selector->button_new);
-    dynamic_list_append(state->actors, s_script_selector->button_new);
+    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_script_selector->button_new);
 
     return s_script_selector;
 }
 
 void scene_script_selector_tick(scene_T* self)
 {
-    scene_script_selector_T* s_script_selector = (scene_script_selector_T*) self;
-
     go_to_menu_on_escape();
-
-    focus_manager_tick(s_script_selector->focus_manager);
+    scene_base_tick((scene_base_T*) self);
 }
 
-void scene_script_selector_draw(scene_T* self)
+void scene_script_selector_draw(scene_T* self) { /* silence */ }
+
+void scene_script_selector_refresh_state(scene_base_T* scene_base)
 {
-    //state_T* state = (state_T*) self;
+    scene_script_selector_T* s_script_selector = (scene_script_selector_T*) scene_base;
+    
+    if (s_script_selector->script_id == (void*)0)
+    {
+        s_script_selector->button_edit->disabled = 1;
+        MAIN_STATE->script_id = (void*)0;
+    }
+    else
+    {
+        MAIN_STATE->script_id = s_script_selector->script_id;
+        s_script_selector->button_edit->disabled = 0;
+    }
+    
+    if (s_script_selector->current_database_script != (void*) 0)
+    {
+        database_script_T* database_script = s_script_selector->current_database_script;
+
+        s_script_selector->input_field_name->value = realloc(
+            s_script_selector->input_field_name->value,
+            (strlen(database_script->name) + 1) * sizeof(char)
+        );
+        strcpy(s_script_selector->input_field_name->value, database_script->name);
+    }
+
+    dropdown_list_sync_from_table(
+        s_script_selector->dropdown_list_script,
+        DATABASE,
+        "scripts",
+        1,
+        -1
+    );
 }

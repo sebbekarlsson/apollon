@@ -256,7 +256,7 @@ scene_scene_editor_T* init_scene_scene_editor()
     s_scene_editor->dropdown_list_scene->expanded = 0;
     ((actor_T*)s_scene_editor->dropdown_list_scene)->z = 1;
     dynamic_list_append(state->actors, s_scene_editor->label_scene);
-    REGISTER_FOCUSABLE(scene_base, s_scene_editor->dropdown_list_scene);
+    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_scene_editor->dropdown_list_scene);
 
     iy += margin;
 
@@ -271,7 +271,7 @@ scene_scene_editor_T* init_scene_scene_editor()
     iy += label_margin + 16;
 
     s_scene_editor->button_new = init_button(ix, iy, 0.0f, "New Scene", button_scene_new_press);
-    REGISTER_FOCUSABLE(scene_base, s_scene_editor->button_new);
+    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_scene_editor->button_new);
     dynamic_list_append(state->actors, s_scene_editor->button_new);
 
 
@@ -285,7 +285,7 @@ scene_scene_editor_T* init_scene_scene_editor()
     jy += label_margin;
     s_scene_editor->input_field_name = init_input_field(jx, jy, 0.0f);
     dynamic_list_append(state->actors, s_scene_editor->label_name);
-    REGISTER_FOCUSABLE(scene_base, s_scene_editor->input_field_name);
+    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_scene_editor->input_field_name);
     jy += margin;
 
     /* ==== checkbox_main_scene ====*/
@@ -293,22 +293,22 @@ scene_scene_editor_T* init_scene_scene_editor()
     jy += label_margin;
     s_scene_editor->checkbox_main_scene = init_checkbox(jx, jy, 0.0f);
     dynamic_list_append(state->actors, s_scene_editor->label_main_scene);
-    REGISTER_FOCUSABLE(scene_base, s_scene_editor->checkbox_main_scene);
+    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_scene_editor->checkbox_main_scene);
     jy += margin;
 
     /* ==== design button ====*/
     s_scene_editor->button_design = init_button(jx, jy, 0.0f, "Design", button_scene_design_press);
-    REGISTER_FOCUSABLE(scene_base, s_scene_editor->button_design);
+    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_scene_editor->button_design);
     jy += margin;
 
     /* ==== save button ====*/
     s_scene_editor->button_save = init_button(jx, jy, 0.0f, "Save", button_scene_save_press);
-    REGISTER_FOCUSABLE(scene_base, s_scene_editor->button_save);
+    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_scene_editor->button_save);
     jy += margin;
 
     /* ==== save button ====*/
     s_scene_editor->button_delete = init_button(jx, jy, 0.0f, "Delete", button_scene_delete_press);
-    REGISTER_FOCUSABLE(scene_base, s_scene_editor->button_delete);
+    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_scene_editor->button_delete);
     jy += margin;
 
     REFRESH_STATE(s_scene_editor);

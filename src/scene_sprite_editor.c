@@ -349,7 +349,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         0,
         "grid_canvas"
     );
-    REGISTER_FOCUSABLE(scene_base, s_sprite_editor->grid); 
+    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_sprite_editor->grid); 
 
     s_sprite_editor->grids = init_dynamic_list(sizeof(struct GRID_STRUCT*));
 
@@ -365,7 +365,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         0,
         "grid_color_selector"
     );
-    REGISTER_FOCUSABLE(scene_base, s_sprite_editor->grid_color_selector); 
+    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_sprite_editor->grid_color_selector); 
 
     s_sprite_editor->tool_index = 0;
 
@@ -385,7 +385,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     s_sprite_editor->grid_tool_selector->cells[0][1]->sprite = SPRITE_ERASOR;
     grid_unselect_all_cells(s_sprite_editor->grid_tool_selector);
 
-    REGISTER_FOCUSABLE(scene_base, s_sprite_editor->grid_tool_selector);
+    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_sprite_editor->grid_tool_selector);
 
     // state representation of first grid in frame list.
     dynamic_list_append(
@@ -457,7 +457,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         0,
         "grid_color_mixer"
     );
-    REGISTER_FOCUSABLE(scene_base, s_sprite_editor->grid_color_mixer); 
+    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_sprite_editor->grid_color_mixer); 
 
     scene_base->focus_manager->focus_index = 0;
 
@@ -474,7 +474,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         (WINDOW_HEIGHT / 2) - ((16 * 16) / 2) - 64,
         0.0f
     );
-    REGISTER_FOCUSABLE(scene_base, s_sprite_editor->input_field_name);
+    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_sprite_editor->input_field_name);
 
     float button_width = 128;
 
@@ -486,7 +486,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         sprite_button_save_press
     );
     s_sprite_editor->button_save->width = button_width;
-    REGISTER_FOCUSABLE(scene_base, s_sprite_editor->button_save);
+    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_sprite_editor->button_save);
 
     s_sprite_editor->button_new = init_button(
         (WINDOW_WIDTH / 2) - ((16 * 16) / 2) + button_width + 16,
@@ -496,7 +496,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         sprite_button_new_press
     );
     s_sprite_editor->button_new->width = button_width;
-    REGISTER_FOCUSABLE(scene_base, s_sprite_editor->button_new);
+    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_sprite_editor->button_new);
 
     s_sprite_editor->button_delete = init_button(
         (WINDOW_WIDTH / 2) - ((16 * 16) / 2) + button_width + button_width + 16 + 16,
@@ -506,7 +506,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         sprite_button_delete_press
     );
     s_sprite_editor->button_delete->width = button_width;
-    REGISTER_FOCUSABLE(scene_base, s_sprite_editor->button_delete);
+    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_sprite_editor->button_delete);
     
     int dropdown_list_sprite_width = 160;
     s_sprite_editor->label_current_sprite = init_label(
@@ -526,7 +526,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     s_sprite_editor->dropdown_list_sprite->expanded = 0;
     s_sprite_editor->dropdown_list_sprite->width = dropdown_list_sprite_width;
     ((actor_T*)s_sprite_editor->dropdown_list_sprite)->z = 1;
-    REGISTER_FOCUSABLE(scene_base, (actor_focusable_T*)s_sprite_editor->dropdown_list_sprite);
+    scene_base_register_focusable(scene_base, (actor_focusable_T*)s_sprite_editor->dropdown_list_sprite);
 
     s_sprite_editor->label_frame_delay = init_label(
         (((WINDOW_WIDTH / 2) - ((16 * 16) / 2))) - (dropdown_list_sprite_width + 16),
@@ -541,7 +541,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         0.0f
     );
     s_sprite_editor->input_field_frame_delay->width = s_sprite_editor->dropdown_list_sprite->width;
-    REGISTER_FOCUSABLE(scene_base, (actor_focusable_T*) s_sprite_editor->input_field_frame_delay);
+    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_sprite_editor->input_field_frame_delay);
 
     s_sprite_editor->grid_index = 0;
     s_sprite_editor->sprite_id = 0;
