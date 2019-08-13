@@ -96,72 +96,52 @@ void press_quit()
 scene_menu_T* init_scene_menu()
 {
     scene_menu_T* s_menu = calloc(1, sizeof(struct SCENE_MENU_STRUCT));
-    scene_T* s = (scene_T*) s_menu;
-    state_T* state = (state_T*) s; 
+    scene_base_T* scene_base = (scene_base_T*) s_menu;
+    scene_T* s = (scene_T*) scene_base;
+    //state_T* state = (state_T*) s; 
 
     scene_constructor(s, scene_menu_tick, scene_menu_draw, 2);
+    scene_base_constructor(scene_base, scene_menu_refresh_state, "Menu");
 
     s->type_name = "menu";
-    s->bg_r = COLOR_BG_DARK[0];
-    s->bg_g = COLOR_BG_DARK[1];
-    s->bg_b = COLOR_BG_DARK[2]; 
+    s->bg_r = 255;
+    s->bg_g = 255;
+    s->bg_b = 255;
 
-    s_menu->select_list = init_select_list(state);
+    float button_width = 200;
+    float ix = (WINDOW_WIDTH / 2) - (button_width / 2);
+    float iy = 96.0f;
+    float margin = 42;
 
-    select_list_register_option(s_menu->select_list, "Scene Editor", press_scene_editor);
-    select_list_register_option(s_menu->select_list, "Actor Editor", press_actor_editor);
-    select_list_register_option(s_menu->select_list, "Sprite Editor", press_sprite_editor);
-    select_list_register_option(s_menu->select_list, "Text Editor", press_text_editor);
-    select_list_register_option(s_menu->select_list, "Run", press_run);
-    select_list_register_option(s_menu->select_list, "Build", press_build);
-    select_list_register_option(s_menu->select_list, "Quit", press_quit);
+    s_menu->button_scene_editor = (button_T*) scene_base_register_focusable(scene_base, (actor_focusable_T*) init_button(ix, iy, 0.0f, "Scene Editor", press_scene_editor));
+    iy += margin;
+    s_menu->button_actor_editor = (button_T*) scene_base_register_focusable(scene_base, (actor_focusable_T*) init_button(ix, iy, 0.0f, "Actor Editor", press_actor_editor));
+    iy += margin;
+    s_menu->button_sprite_editor = (button_T*) scene_base_register_focusable(scene_base, (actor_focusable_T*) init_button(ix, iy, 0.0f, "Sprite Editor", press_sprite_editor));
+    iy += margin;
+    s_menu->button_text_editor = (button_T*) scene_base_register_focusable(scene_base, (actor_focusable_T*) init_button(ix, iy, 0.0f, "Text Editor", press_text_editor));
+    iy += margin;
+    s_menu->button_run = (button_T*) scene_base_register_focusable(scene_base, (actor_focusable_T*) init_button(ix, iy, 0.0f, "Run", press_run));
+    iy += margin;
+    s_menu->button_build = (button_T*) scene_base_register_focusable(scene_base, (actor_focusable_T*) init_button(ix, iy, 0.0f, "Build", press_build));
+    iy += margin;
+    s_menu->button_quit = (button_T*) scene_base_register_focusable(scene_base, (actor_focusable_T*) init_button(ix, iy, 0.0f, "Quit", press_quit));
 
     return s_menu;
 }
 
 void scene_menu_tick(scene_T* self)
 {
-    scene_menu_T* scene_menu = (scene_menu_T*) self;
-    select_list_T* select_list = scene_menu->select_list;
-    select_list_tick(select_list);
+    scene_base_tick((scene_base_T*) self);
+    //scene_menu_T* scene_menu = (scene_menu_T*) self;
 }
 
 void scene_menu_draw(scene_T* self)
 {
-    state_T* state = (state_T*) self;
+    scene_base_draw((scene_base_T*) self);
+    //state_T* state = (state_T*) self;
+}
 
-    char* text = "Coelum";
-
-    float text_size = 32;
-    float text_spacing = 24;
-
-    float banner_height = 148;
-
-    draw_positioned_2D_mesh(
-        0,
-        0,
-        0,
-        WINDOW_WIDTH,
-        banner_height,
-        COLOR_BG_DARK_BRIGHT[0],
-        COLOR_BG_DARK_BRIGHT[1],
-        COLOR_BG_DARK_BRIGHT[2],
-        1.0f,
-        state
-    );
-
-    draw_text(
-        text,
-        ((WINDOW_WIDTH / 2) - ((strlen(text) * (text_size + text_spacing)) / 2)) + (text_size / 2),
-        78,
-        0,
-        COLOR_RED[0],
-        COLOR_RED[1],
-        COLOR_RED[2],
-        1.0f,
-        text_size,
-        text_spacing,
-        0,
-        state
-    );
+void scene_menu_refresh_state(scene_base_T* scene_base)
+{
 }
