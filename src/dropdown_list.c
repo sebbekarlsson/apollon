@@ -9,6 +9,7 @@
 
 extern theatre_T* THEATRE;
 extern keyboard_state_T* KEYBOARD_STATE;
+extern sprite_T* SPRITE_ARROW_DOWN;
 
 extern float COLOR_BG_DARK[3];
 extern float COLOR_BG_DARK_BRIGHT[3];
@@ -168,7 +169,7 @@ void dropdown_list_draw(actor_T* self)
             0.6f,
             state
         );
-    }
+    } 
 
     draw_positioned_2D_mesh(
         self->x,
@@ -225,6 +226,20 @@ void dropdown_list_draw(actor_T* self)
             );
         }
     }
+
+    SPRITE_ARROW_DOWN->r = COLOR_FG[0];
+    SPRITE_ARROW_DOWN->g = COLOR_FG[1];
+    SPRITE_ARROW_DOWN->b = COLOR_FG[2];
+
+    draw_positioned_sprite(
+        SPRITE_ARROW_DOWN,
+        self->x + dropdown_list->width - SPRITE_ARROW_DOWN->width - 4,
+        self->y + (h / 2) - (SPRITE_ARROW_DOWN->height / 2),
+        0.0f,
+        SPRITE_ARROW_DOWN->width,
+        SPRITE_ARROW_DOWN->height,
+        state
+    );
 }
 
 dropdown_list_option_T* init_dropdown_list_option(database_sprite_T* database_sprite, char* key, void* value, unsigned int text_limit)
