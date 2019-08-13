@@ -57,6 +57,8 @@ static void scene_script_selector_set_current_script(
         new_id
     );
 
+    MAIN_STATE->text_editor_value = s_script_selector->current_database_script->contents;
+
     REFRESH_STATE(s_script_selector);
 }
 

@@ -9,11 +9,24 @@
 extern main_state_T* MAIN_STATE;
 
 
+static void scene_text_editor_load(void* s)
+{
+    scene_T* self = (scene_T*) s;
+    scene_text_editor_T* s_text_editor = (scene_text_editor_T*) self;
+
+    if (MAIN_STATE->script_id != (void*)0 && MAIN_STATE->text_editor_value != (void*)0)
+    {
+        
+        ((actor_textable_T*)s_text_editor->textarea)->value = MAIN_STATE->text_editor_value;
+    }
+}
+
 scene_text_editor_T* init_scene_text_editor()
 {
     scene_text_editor_T* s_text_editor = calloc(1, sizeof(struct SCENE_TEXT_EDITOR_STRUCT));
     scene_T* scene = (scene_T*) s_text_editor;
     scene_constructor(scene, scene_text_editor_tick, scene_text_editor_draw, 2);
+    scene->load = scene_text_editor_load;
     state_T* state = (state_T*) scene;
 
     scene->type_name = "text_editor";
