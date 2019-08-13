@@ -83,6 +83,62 @@ void button_draw(actor_T* self)
         state
     );
 
+    // top gloss
+    draw_positioned_2D_mesh(
+        self->x,
+        self->y,
+        0.0f,
+        button->width,
+        4,
+        255,
+        255,
+        255,
+        0.4,
+        state
+    );
+
+    // left gloss
+    draw_positioned_2D_mesh(
+        self->x,
+        self->y,
+        0.0f,
+        4,
+        button->height,
+        255,
+        255,
+        255,
+        0.6,
+        state
+    );
+
+    // bottom shadow 
+    draw_positioned_2D_mesh(
+        self->x,
+        self->y + button->height - 4,
+        0.0f,
+        button->width,
+        4,
+        0,
+        0,
+        0,
+        button->alpha - 0.6f,
+        state
+    );
+
+    // right shadow 
+    draw_positioned_2D_mesh(
+        self->x + button->width - 4,
+        self->y,
+        0.0f,
+        4,
+        button->height,
+        0,
+        0,
+        0,
+        button->alpha - 0.6f,
+        state
+    );
+
     draw_text(
         button->text,
         self->x + (button->width / 2) - ((strlen(button->text) * (button->font_size + button->font_spacing)) / 2),
