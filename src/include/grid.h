@@ -29,6 +29,7 @@ typedef struct GRID_STRUCT
     int cursor_x;
     int cursor_y;
     grid_cell_T*** cells;
+    struct GRID_STRUCT* onion;
 } grid_T;
 
 grid_T* init_grid(

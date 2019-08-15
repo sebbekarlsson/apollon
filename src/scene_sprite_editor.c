@@ -579,6 +579,11 @@ void scene_sprite_editor_tick(scene_T* self)
     grid_T* grid = (grid_T*) grid_actor;
     actor_focusable->focused = 1;
 
+    if (s_sprite_editor->grid_index > 0)
+    {
+        s_sprite_editor->grid->onion = (grid_T*) s_sprite_editor->grids->items[s_sprite_editor->grid_index-1];
+    }
+
     s_sprite_editor->grid_tool_selector->cells[0][s_sprite_editor->tool_index]->selected = 1;
 
     if (KEYBOARD_STATE->keys[GLFW_KEY_UP] && !KEYBOARD_STATE->key_locks[GLFW_KEY_UP])
