@@ -147,20 +147,19 @@ void grid_draw(actor_T* self)
             {
                 grid_T* onion = (grid_T*) grid->onion;
 
-
                 if (onion->cells[x][y]->a >= 1)
-                draw_positioned_2D_mesh(
-                    cell_x,
-                    cell_y,
-                    0.0f,
-                    onion->cell_size,
-                    onion->cell_size,
-                    onion->cells[x][y]->r,
-                    onion->cells[x][y]->g,
-                    onion->cells[x][y]->b,
-                    0.5f,
-                    state
-                );
+                    draw_positioned_2D_mesh(
+                        cell_x,
+                        cell_y,
+                        0.0f,
+                        onion->cell_size,
+                        onion->cell_size,
+                        onion->cells[x][y]->r,
+                        onion->cells[x][y]->g,
+                        onion->cells[x][y]->b,
+                        0.5f,
+                        state
+                    );
             }
 
             if (!(grid->cursor_x == x && grid->cursor_y == y && actor_focusable->focused && cell->selected == 0))
