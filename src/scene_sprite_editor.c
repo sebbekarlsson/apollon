@@ -54,6 +54,7 @@ static void scene_sprite_editor_set_tool(scene_sprite_editor_T* s_sprite_editor,
 void scene_sprite_editor_refresh_state(scene_base_T* scene_base)
 {
     scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) scene_base;
+    s_sprite_editor->grid->onion = (void*)0; // reset onion skin
 
     dropdown_list_sync_from_table(
         s_sprite_editor->dropdown_list_sprite,

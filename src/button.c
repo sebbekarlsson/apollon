@@ -31,7 +31,9 @@ button_T* init_button(float x, float y, float z, char* text, void (*press)())
     button->font_size = 6;
     button->font_spacing = 6;
     button->width = 200;
+    actor->width = button->width;
     button->height = 32;
+    actor->height = button->height;
     button->press = press;
     button->disabled = 0;
 
@@ -44,7 +46,9 @@ void button_tick(actor_T* self)
     actor_focusable_T* actor_focusable = (actor_focusable_T*) button;
     unsigned int focused = actor_focusable->focused;
 
-    if (focused && !button->disabled)
+    actor_focusable_tick(actor_focusable); 
+
+    if ((focused || actor_focusable->hover) && !button->disabled)
     {
         if (KEYBOARD_STATE->keys[GLFW_KEY_ENTER] && !KEYBOARD_STATE->key_locks[GLFW_KEY_ENTER])
         {
@@ -61,6 +65,7 @@ void button_draw(actor_T* self)
     button_T* button = (button_T*) self;
     actor_focusable_T* actor_focusable = (actor_focusable_T*) button;
     unsigned int focused = actor_focusable->focused;
+    unsigned int hover = actor_focusable->hover;
     unsigned int visible = actor_focusable->visible;
     unsigned int disabled = button->disabled;
 
@@ -76,9 +81,9 @@ void button_draw(actor_T* self)
         0.0f,
         button->width,
         button->height,
-        disabled ? COLOR_RED[0] : (focused ? COLOR_BG_DARK_BRIGHT[0] : button->bg_r),
-        disabled ? COLOR_RED[1] : (focused ? COLOR_BG_DARK_BRIGHT[1] : button->bg_g),
-        disabled ? COLOR_RED[2] : (focused ? COLOR_BG_DARK_BRIGHT[2] : button->bg_b),
+        disabled ? COLOR_RED[0] : ((focused || hover) ? COLOR_BG_DARK_BRIGHT[0] : button->bg_r),
+        disabled ? COLOR_RED[1] : ((focused || hover) ? COLOR_BG_DARK_BRIGHT[1] : button->bg_g),
+        disabled ? COLOR_RED[2] : ((focused || hover) ? COLOR_BG_DARK_BRIGHT[2] : button->bg_b),
         button->alpha,
         state
     );
@@ -144,9 +149,9 @@ void button_draw(actor_T* self)
         self->x + (button->width / 2) - ((strlen(button->text) * (button->font_size + button->font_spacing)) / 2),
         self->y + button->height / 2,
         0,
-        focused ? 255 : button->fg_r,
-        focused ? 255 : button->fg_g,
-        focused ? 255 : button->fg_b,
+        focused || hover ? 255 : button->fg_r,
+        focused || hover ? 255 : button->fg_g,
+        focused || hover ? 255 : button->fg_b,
         1.0f, // a
         button->font_size,
         button->font_spacing,

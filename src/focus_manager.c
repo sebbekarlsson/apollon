@@ -43,7 +43,6 @@ void focus_manager_tick(focus_manager_T* focus_manager)
     for (int i = 0; i < focus_manager->focusables->size; i++)
         ((actor_focusable_T*)focus_manager->focusables->items[i])->focused = 0;
 
-
     if (focus_manager->focus_index != -1)
     {
         actor_focusable_T* actor_focusable = (actor_focusable_T*) focus_manager->focusables->items[focus_manager->focus_index];

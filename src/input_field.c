@@ -9,6 +9,7 @@
 extern keyboard_state_T* KEYBOARD_STATE;
 
 extern const float COLOR_BG_BRIGHT[3];
+extern const float COLOR_BG_DARK_BRIGHT[3];
 extern const float COLOR_FG[3];
 
 input_field_T* init_input_field(float x, float y, float z)
@@ -24,7 +25,9 @@ input_field_T* init_input_field(float x, float y, float z)
     input_field->font_size = 6;
     input_field->font_spacing = input_field->font_size + 4;
     input_field->width = 256;
+    actor->width = input_field->width;
     input_field->height = 24;
+    actor->height = input_field->height;
 
     input_field->caret_position = 0;
     input_field->draw_caret = 1;
@@ -38,6 +41,7 @@ void input_field_draw(actor_T* self)
 {
     input_field_T* input_field = (input_field_T*) self;
     actor_focusable_T* actor_focusable = (actor_focusable_T*) input_field;
+    unsigned int hover = actor_focusable->hover;
     state_T* state = (state_T*) get_current_scene();
 
     draw_positioned_2D_mesh(
@@ -46,9 +50,9 @@ void input_field_draw(actor_T* self)
         self->z,
         input_field->width,
         input_field->height,
-        COLOR_BG_BRIGHT[0],
-        COLOR_BG_BRIGHT[1],
-        COLOR_BG_BRIGHT[2],
+        hover ? COLOR_BG_DARK_BRIGHT[0] : COLOR_BG_BRIGHT[0],
+        hover ? COLOR_BG_DARK_BRIGHT[1] : COLOR_BG_BRIGHT[1],
+        hover ? COLOR_BG_DARK_BRIGHT[2] : COLOR_BG_BRIGHT[2],
         1.0f,
         state 
     );
@@ -119,6 +123,8 @@ void input_field_tick(actor_T* self)
 {
     input_field_T* input_field = (input_field_T*) self;
     actor_focusable_T* actor_focusable = (actor_focusable_T*) input_field;
+
+    actor_focusable_tick(actor_focusable);
 
     if (!actor_focusable->focused)
     {

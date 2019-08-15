@@ -49,7 +49,9 @@ grid_T* init_grid(
     actor_focusable_constructor(actor_focusable);
 
     grid->width = width;
+    actor->width = grid->width * cell_size;
     grid->height = height;
+    actor->height = grid->height * cell_size;
     grid->cell_size = cell_size;
     grid->r = r;
     grid->g = g;
@@ -76,6 +78,7 @@ grid_T* init_grid(
 void grid_tick(actor_T* self)
 {
     grid_T* grid = (grid_T*) self;
+    actor_focusable_tick((actor_focusable_T*) grid);
 
     if (grid->cursor_x > grid->width - 1)
     {
@@ -162,7 +165,7 @@ void grid_draw(actor_T* self)
                     );
             }
 
-            if (!(grid->cursor_x == x && grid->cursor_y == y && actor_focusable->focused && cell->selected == 0))
+            if (!(grid->cursor_x == x && grid->cursor_y == y && (actor_focusable->focused || actor_focusable->hover) && cell->selected == 0))
             {
                 draw_positioned_2D_mesh(
                     cell_x,
@@ -192,7 +195,7 @@ void grid_draw(actor_T* self)
             cell_x,
             self->y + (grid->height * grid->cell_size),
             0.0f,
-            grid->r + x == 0 || x == grid->width ? actor_focusable->focused * 255 : 0,
+            grid->r + x == 0 || x == grid->width ? (actor_focusable->focused || actor_focusable->hover) * 255 : 0,
             grid->g,
             grid->b,
             state
@@ -223,15 +226,14 @@ void grid_draw(actor_T* self)
                     self->x + (grid->width * grid->cell_size),
                     cell_y,
                     0.0f,
-                    grid->r + y == 0 || y == grid->height ? actor_focusable->focused * 255 : 0,
+                    grid->r + y == 0 || y == grid->height ? (actor_focusable->focused || actor_focusable->hover) * 255 : 0,
                     grid->g,
                     grid->b,
                     state
                 );
             } 
-            
 
-            if (grid->cursor_x == x && grid->cursor_y == y && actor_focusable->focused)
+            if (grid->cursor_x == x && grid->cursor_y == y && (actor_focusable->focused || actor_focusable->hover))
             {
                 if (x < grid->width && y < grid->height)
                 {
