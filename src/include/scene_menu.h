@@ -1,12 +1,18 @@
 #ifndef APOLLON_SCENE_MENU_H
 #define APOLLON_SCENE_MENU_H
-#include <coelum/scene.h>
-#include "select_list.h"
+#include "scene_base.h"
+#include "button.h"
 
 
 typedef struct SCENE_MENU_STRUCT {
-    scene_T base;
-    select_list_T* select_list;
+    scene_base_T base;
+    button_T* button_scene_editor;
+    button_T* button_actor_editor;
+    button_T* button_sprite_editor;
+    button_T* button_text_editor;
+    button_T* button_run;
+    button_T* button_build;
+    button_T* button_quit;
 } scene_menu_T;
 
 scene_menu_T* init_scene_menu();
@@ -14,4 +20,6 @@ scene_menu_T* init_scene_menu();
 void scene_menu_tick(scene_T* self);
 
 void scene_menu_draw(scene_T* self);
+
+void scene_menu_refresh_state(scene_base_T* scene_base);
 #endif

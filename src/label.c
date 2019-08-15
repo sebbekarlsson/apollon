@@ -13,8 +13,8 @@ label_T* init_label(float x, float y, float z, char* text)
     actor_constructor(actor, x, y, z, label_tick, label_draw, "label");
 
     label->text = text;
-    label->font_size = 8;
-    label->font_spacing = label->font_size + 4;
+    label->font_size = 6;
+    label->font_spacing = label->font_size;
     label->r = COLOR_FG[0];
     label->g = COLOR_FG[1];
     label->b = COLOR_FG[2];

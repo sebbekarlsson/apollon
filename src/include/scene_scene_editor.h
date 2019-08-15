@@ -1,6 +1,6 @@
 #ifndef APOLLON_SCENE_SCENE_EDITOR_H
 #define APOLLON_SCENE_SCENE_EDITOR_H
-#include <coelum/scene.h>
+#include "scene_base.h"
 #include "focus_manager.h"
 #include "dropdown_list.h"
 #include "button.h"
@@ -11,7 +11,7 @@
 
 typedef struct SCENE_SCENE_EDITOR_STRUCT
 {
-    scene_T base;
+    scene_base_T base;
 
     label_T* label_scene;
     dropdown_list_T* dropdown_list_scene;
@@ -28,7 +28,6 @@ typedef struct SCENE_SCENE_EDITOR_STRUCT
     button_T* button_save;
     button_T* button_new;
     button_T* button_delete;
-    focus_manager_T* focus_manager;
     char* scene_id; // the scene which is currenlty being modified.
 } scene_scene_editor_T;
 
@@ -37,4 +36,6 @@ scene_scene_editor_T* init_scene_scene_editor();
 void scene_scene_editor_tick(scene_T* self);
 
 void scene_scene_editor_draw(scene_T* self);
+
+void scene_scene_editor_refresh_state(scene_base_T* scene_base);
 #endif

@@ -21,10 +21,10 @@ input_field_T* init_input_field(float x, float y, float z)
 
     input_field->value = calloc(1, sizeof(char));
     input_field->value[0] = '\0';
-    input_field->font_size = 8;
+    input_field->font_size = 6;
     input_field->font_spacing = input_field->font_size + 4;
     input_field->width = 256;
-    input_field->height = 32;
+    input_field->height = 24;
 
     input_field->caret_position = 0;
     input_field->draw_caret = 1;

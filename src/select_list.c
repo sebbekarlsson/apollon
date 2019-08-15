@@ -34,9 +34,9 @@ select_list_option_T* select_list_register_option(select_list_T* select_list, ch
 
     dynamic_list_append(select_list->options, menu_option);
 
-    float text_size = 18;
-    float text_spacing = 12;
-    float text_y_spacing = 48;
+    float text_size = 15;
+    float text_spacing = 10;
+    float text_y_spacing = 44;
 
     actor_text_T* actor_text = init_actor_text(
         (WINDOW_WIDTH / 2) - (((strlen(name)-1) * (text_size + text_spacing)) / 2),

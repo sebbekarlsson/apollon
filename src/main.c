@@ -4,6 +4,8 @@
 #include "include/scene_scene_designer.h"
 #include "include/scene_actor_editor.h"
 #include "include/scene_sprite_editor.h"
+#include "include/scene_script_selector.h"
+#include "include/scene_text_editor.h"
 #include "include/colors.h"
 #include "include/image_utils.h"
 #include "include/modal_manager.h"
@@ -27,6 +29,7 @@ sprite_T* SPRITE_CHECKBOARD;
 sprite_T* SPRITE_BROKEN;
 sprite_T* SPRITE_PENCIL;
 sprite_T* SPRITE_ERASOR;
+sprite_T* SPRITE_ARROW_DOWN;
 
 
 void load_textures()
@@ -47,12 +50,14 @@ void load_textures()
     SPRITE_BROKEN = init_sprite_from_file("res/img/broken.png", GL_RGBA, 0.0f, 16, 16);
     SPRITE_PENCIL = init_sprite_from_file("res/img/pencil_16.png", GL_RGBA, 0.0f, 16, 16);
     SPRITE_ERASOR = init_sprite_from_file("res/img/erasor.png", GL_RGBA, 0.0f, 16, 16);
+    SPRITE_ARROW_DOWN = init_sprite_from_file("res/img/arrow.png", GL_RGBA, 0.0f, 16, 16);
 }
 
 main_state_T* init_main_state()
 {
     main_state_T* main_state = calloc(1, sizeof(struct MAIN_STATE_STRUCT));
     main_state->scene_id = (void*) 0;
+    main_state->text_editor_value = (void*)0;
     main_state->modal_is_active = 0;
 
     return main_state;
@@ -68,11 +73,15 @@ int main(int argc, char* argv[])
     DATABASE = init_database();
     MODAL_MANAGER = init_modal_manager();
 
+
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_menu());
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_scene_editor());
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_scene_designer());
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_actor_editor());
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_sprite_editor());
+    scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_script_selector());
+    scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_text_editor());
+
 
     if (coelum_main(argc, argv))
     {

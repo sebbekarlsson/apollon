@@ -68,6 +68,8 @@ grid_T* init_grid(
         }
     }
 
+    grid->onion = (void*)0;
+
     return grid;
 }
 
@@ -136,6 +138,27 @@ void grid_draw(actor_T* self)
                     0.0f,
                     grid->cell_size,
                     grid->cell_size,
+                    state
+                );
+            }
+
+            // onion
+            if (grid->onion != (void*)0)
+            {
+                grid_T* onion = (grid_T*) grid->onion;
+
+
+                if (onion->cells[x][y]->a >= 1)
+                draw_positioned_2D_mesh(
+                    cell_x,
+                    cell_y,
+                    0.0f,
+                    onion->cell_size,
+                    onion->cell_size,
+                    onion->cells[x][y]->r,
+                    onion->cells[x][y]->g,
+                    onion->cells[x][y]->b,
+                    0.5f,
                     state
                 );
             }
