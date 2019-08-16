@@ -25,15 +25,15 @@ typedef struct SCENE_ACTOR_EDITOR_STRUCT
 
     /* ==== init_script ==== */
     label_T* label_init_script;
-    input_field_T* input_field_init_script;
+    dropdown_list_T* dropdown_list_init_script;
 
     /* ==== tick_script ==== */
     label_T* label_tick_script;
-    input_field_T* input_field_tick_script;
+    dropdown_list_T* dropdown_list_tick_script;
 
     /* ==== draw_script ==== */
     label_T* label_draw_script;
-    input_field_T* input_field_draw_script;
+    dropdown_list_T* dropdown_list_draw_script;
     
     /* ==== new actor button ==== */
     button_T* button_new_actor;

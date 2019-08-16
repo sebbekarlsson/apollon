@@ -24,6 +24,11 @@ dropdown_list_T* init_dropdown_list(float x, float y, float z, void (*press)(voi
     actor_focusable_constructor(actor_focusable);
     
     dropdown_list->options = init_dynamic_list(sizeof(struct DROPDOWN_LIST_OPTION_STRUCT*));
+    dynamic_list_append(
+        dropdown_list->options,
+        init_dropdown_list_option((void*)0, "Nothing", (void*)0, 0)
+    );
+
     dropdown_list->option_index = 0;
     dropdown_list->expanded = 0;
     dropdown_list->selected_index = 0;
@@ -259,6 +264,9 @@ void dropdown_list_set_selected_option_by_string_value(dropdown_list_T* dropdown
     {
         dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) dropdown_list->options->items[i];
 
+        if (dropdown_list_option->value == (void*)0)
+            continue;
+
         if (strcmp((char*)dropdown_list_option->value, value) == 0)
         {
             dropdown_list->selected_index = i;
@@ -272,6 +280,9 @@ unsigned int dropdown_list_has_option_with_string_value(dropdown_list_T* dropdow
     for (int i = 0; i < dropdown_list->options->size; i++)
     {
         dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) dropdown_list->options->items[i];
+
+        if (dropdown_list_option->value == (void*)0)
+            continue;
 
         if (strcmp((char*)dropdown_list_option->value, value) == 0)
             return 1;
@@ -293,6 +304,9 @@ void dropdown_list_update_option_sprite_by_string_value(
         if (dropdown_list_option->database_sprite == (void*) 0)
             continue;
 
+        if (dropdown_list_option->value == (void*) 0)
+            continue;
+
         if (strcmp((char*)dropdown_list_option->value, value) == 0)
         {
             database_sprite_free(dropdown_list_option->database_sprite);
@@ -312,6 +326,9 @@ void dropdown_list_update_option_key_by_string_value(
     for (int i = 0; i < dropdown_list->options->size; i++)
     {
         dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) dropdown_list->options->items[i];
+
+        if (dropdown_list_option->value == (void*)0)
+            continue;
 
         if (strcmp((char*)dropdown_list_option->value, value) == 0)
         {
@@ -404,6 +421,7 @@ dropdown_list_option_T* dropdown_list_get_selected_option(dropdown_list_T* dropd
     for (int i = 0; i < dropdown_list->options->size; i++)
     {
         dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) dropdown_list->options->items[i];
+
         if (i == dropdown_list->selected_index)
         {
             return dropdown_list_option;

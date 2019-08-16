@@ -30,24 +30,6 @@ static void scene_actor_editor_clear_input_fields(scene_actor_editor_T* s_actor_
         0,
         sizeof(char) * strlen(s_actor_editor->input_field_type_name->value)
     );
-
-    memset(
-        s_actor_editor->input_field_init_script->value,
-        0,
-        sizeof(char) * strlen(s_actor_editor->input_field_init_script->value)
-    );
-
-    memset(
-        s_actor_editor->input_field_tick_script->value,
-        0,
-        sizeof(char) * strlen(s_actor_editor->input_field_tick_script->value)
-    );
-
-    memset(
-        s_actor_editor->input_field_draw_script->value,
-        0,
-        sizeof(char) * strlen(s_actor_editor->input_field_draw_script->value)
-    );
 }
 
 void scene_actor_editor_refresh_state(scene_base_T* scene_base)
@@ -62,7 +44,7 @@ void scene_actor_editor_refresh_state(scene_base_T* scene_base)
         "sprites",
         1,
         0
-    );
+    ); 
 
     dropdown_list_sync_from_table(
         s_actor_editor->dropdown_list_actor,
@@ -71,6 +53,31 @@ void scene_actor_editor_refresh_state(scene_base_T* scene_base)
         1,
         5
     );
+
+    dropdown_list_sync_from_table(
+        s_actor_editor->dropdown_list_init_script,
+        DATABASE,
+        "scripts",
+        1,
+        -1
+    );
+
+    dropdown_list_sync_from_table(
+        s_actor_editor->dropdown_list_tick_script,
+        DATABASE,
+        "scripts",
+        1,
+        -1
+    );
+
+    dropdown_list_sync_from_table(
+        s_actor_editor->dropdown_list_draw_script,
+        DATABASE,
+        "scripts",
+        1,
+        -1
+    );
+
     dropdown_list_reload_sprites(s_actor_editor->dropdown_list_actor);
     dropdown_list_reload_sprites(s_actor_editor->dropdown_list_sprite);
 
@@ -79,7 +86,7 @@ void scene_actor_editor_refresh_state(scene_base_T* scene_base)
         dropdown_list_set_selected_option_by_string_value(
             s_actor_editor->dropdown_list_actor,
             (const char*) s_actor_editor->actor_definition_id 
-        );
+        ); 
     }
     else
     {
@@ -130,18 +137,48 @@ void button_save_press()
         printf("No sprite selected!\n");
         return;
     }
+
+    char* option_init_script_value = (void*) 0;
+    char* option_tick_script_value = (void*) 0;
+    char* option_draw_script_value = (void*) 0;
+
+    dropdown_list_option_T* option_init_script = dropdown_list_get_selected_option(s_actor_editor->dropdown_list_init_script);
+    dropdown_list_option_T* option_tick_script = dropdown_list_get_selected_option(s_actor_editor->dropdown_list_tick_script);
+    dropdown_list_option_T* option_draw_script = dropdown_list_get_selected_option(s_actor_editor->dropdown_list_draw_script);
+
+    if (option_init_script != (void*) 0)
+        if (option_init_script->value != (void*) 0)
+            option_init_script_value = (char*) option_init_script->value;
+
+    if (option_tick_script != (void*) 0)
+        if (option_tick_script->value != (void*) 0)
+            option_tick_script_value = (char*) option_tick_script->value;
+
+    if (option_draw_script != (void*) 0)
+        if (option_draw_script->value != (void*) 0)
+            option_draw_script_value = (char*) option_draw_script->value;
+
+
+    if (option_init_script_value == (void*)0)
+        printf("init void\n");
+
+    if (option_tick_script_value == (void*)0)
+        printf("tick void\n");
+
+    if (option_draw_script_value == (void*)0)
+        printf("draw void\n");
     
     if (s_actor_editor->actor_definition_id == (void*)0)
     {
-        printf("Insert new actor.\n");
+        printf("Insert new actor.\n"); 
 
         char* actor_definition_id = database_insert_actor_definition(
             DATABASE,
             s_actor_editor->input_field_type_name->value,
             (char*) option_selected_sprite->value,
-            s_actor_editor->input_field_init_script->value,
-            s_actor_editor->input_field_tick_script->value,
-            s_actor_editor->input_field_draw_script->value
+            option_init_script_value,
+            option_tick_script_value,
+            option_draw_script_value
         );
 
         s_actor_editor->actor_definition_id = actor_definition_id;
@@ -155,9 +192,9 @@ void button_save_press()
             s_actor_editor->actor_definition_id,
             s_actor_editor->input_field_type_name->value,
             (char*) option_selected_sprite->value,
-            s_actor_editor->input_field_init_script->value,
-            s_actor_editor->input_field_tick_script->value,
-            s_actor_editor->input_field_draw_script->value        
+            option_init_script_value,
+            option_tick_script_value,
+            option_draw_script_value        
         );
     }
 
@@ -226,27 +263,24 @@ void actor_editor_actor_press(void* dropdown_list, void* option)
     );
     strcpy(s_actor_editor->input_field_type_name->value, database_actor_definition->name);
 
-    s_actor_editor->input_field_init_script->value = realloc(
-        s_actor_editor->input_field_init_script->value,
-        (strlen(database_actor_definition->init_script) + 1) * sizeof(char)
-    );
-    strcpy(s_actor_editor->input_field_init_script->value, database_actor_definition->init_script);
-
-    s_actor_editor->input_field_tick_script->value = realloc(
-        s_actor_editor->input_field_tick_script->value,
-        (strlen(database_actor_definition->tick_script) + 1) * sizeof(char)
-    );
-    strcpy(s_actor_editor->input_field_tick_script->value, database_actor_definition->tick_script);
-
-    s_actor_editor->input_field_draw_script->value = realloc(
-        s_actor_editor->input_field_draw_script->value,
-        (strlen(database_actor_definition->draw_script) + 1) * sizeof(char)
-    );
-    strcpy(s_actor_editor->input_field_draw_script->value, database_actor_definition->draw_script);
-
     dropdown_list_set_selected_option_by_string_value(
         s_actor_editor->dropdown_list_sprite,
         (const char*) database_actor_definition->sprite_id        
+    );
+
+    dropdown_list_set_selected_option_by_string_value(
+        s_actor_editor->dropdown_list_init_script,
+        (const char*) database_actor_definition->init_script_id
+    );
+
+    dropdown_list_set_selected_option_by_string_value(
+        s_actor_editor->dropdown_list_init_script,
+        (const char*) database_actor_definition->tick_script_id
+    );
+
+    dropdown_list_set_selected_option_by_string_value(
+        s_actor_editor->dropdown_list_init_script,
+        (const char*) database_actor_definition->draw_script_id
     );
 }
 
@@ -300,28 +334,28 @@ scene_actor_editor_T* init_scene_actor_editor()
     /* ==== init_script ====*/
     s_actor_editor->label_init_script = init_label(ix, iy, 0.0f, "Init Script");
     iy += label_margin;
-    s_actor_editor->input_field_init_script = init_input_field(ix, iy, 0.0f);
-    s_actor_editor->input_field_init_script->width = s_actor_editor->dropdown_list_actor->width;
+    s_actor_editor->dropdown_list_init_script = init_dropdown_list(ix, iy, 0.0f, (void*)0);
+    s_actor_editor->dropdown_list_init_script->width = s_actor_editor->dropdown_list_actor->width;
     dynamic_list_append(state->actors, s_actor_editor->label_init_script);
-    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_actor_editor->input_field_init_script);
+    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_actor_editor->dropdown_list_init_script);
     iy += margin;
 
     /* ==== tick_script ====*/
     s_actor_editor->label_tick_script = init_label(ix, iy, 0.0f, "Tick Script");
     iy += label_margin;
-    s_actor_editor->input_field_tick_script = init_input_field(ix, iy, 0.0f);
-    s_actor_editor->input_field_tick_script->width = s_actor_editor->dropdown_list_actor->width;
+    s_actor_editor->dropdown_list_tick_script = init_dropdown_list(ix, iy, 0.0f, (void*)0);
+    s_actor_editor->dropdown_list_tick_script->width = s_actor_editor->dropdown_list_actor->width;
     dynamic_list_append(state->actors, s_actor_editor->label_tick_script);
-    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_actor_editor->input_field_tick_script);
+    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_actor_editor->dropdown_list_tick_script);
     iy += margin;
 
     /* ==== draw_script ====*/
     s_actor_editor->label_draw_script = init_label(ix, iy, 0.0f, "Draw Script");
     iy += label_margin;
-    s_actor_editor->input_field_draw_script = init_input_field(ix, iy, 0.0f);
-    s_actor_editor->input_field_draw_script->width = s_actor_editor->dropdown_list_actor->width;
+    s_actor_editor->dropdown_list_draw_script = init_dropdown_list(ix, iy, 0.0f, (void*)0);
+    s_actor_editor->dropdown_list_draw_script->width = s_actor_editor->dropdown_list_actor->width;
     dynamic_list_append(state->actors, s_actor_editor->label_draw_script);
-    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_actor_editor->input_field_draw_script);
+    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_actor_editor->dropdown_list_draw_script);
     iy += margin;
 
     s_actor_editor->button_new_actor = init_button(ix, iy, 0.0f, "New Actor", button_new_actor_press);
