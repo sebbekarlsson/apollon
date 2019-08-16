@@ -26,7 +26,7 @@ dropdown_list_T* init_dropdown_list(float x, float y, float z, void (*press)(voi
     dropdown_list->options = init_dynamic_list(sizeof(struct DROPDOWN_LIST_OPTION_STRUCT*));
     dynamic_list_append(
         dropdown_list->options,
-        init_dropdown_list_option((void*)0, "Nothing", (void*)0, 0)
+        init_dropdown_list_option((void*)0, "No Option", (void*)0, 0)
     );
 
     dropdown_list->option_index = 0;
