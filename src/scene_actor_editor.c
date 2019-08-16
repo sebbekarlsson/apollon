@@ -274,12 +274,12 @@ void actor_editor_actor_press(void* dropdown_list, void* option)
     );
 
     dropdown_list_set_selected_option_by_string_value(
-        s_actor_editor->dropdown_list_init_script,
+        s_actor_editor->dropdown_list_tick_script,
         (const char*) database_actor_definition->tick_script_id
     );
 
     dropdown_list_set_selected_option_by_string_value(
-        s_actor_editor->dropdown_list_init_script,
+        s_actor_editor->dropdown_list_draw_script,
         (const char*) database_actor_definition->draw_script_id
     );
 }
