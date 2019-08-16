@@ -1,6 +1,7 @@
 #include "include/scene_script_selector.h"
 #include "include/etc.h"
 #include "include/main.h"
+#include "include/modal_manager.h"
 #include <coelum/current.h>
 #include <coelum/theatre.h>
 #include <athena/database.h>
@@ -10,6 +11,7 @@
 extern database_T* DATABASE;
 extern main_state_T* MAIN_STATE;
 extern theatre_T* THEATRE;
+extern modal_manager_T* MODAL_MANAGER;
 
 
 static void scene_script_selector_reset_script_id(scene_script_selector_T* s_script_selector)
@@ -82,6 +84,13 @@ static void button_save_press()
 
     // name
     char* name = s_script_selector->input_field_name->value;
+
+    if (!strlen(name))
+    {
+        modal_manager_show_modal(MODAL_MANAGER, "error", "You need to enter a name.");
+
+        return;
+    }
 
     // filepath
     const char* filepath_template = "scripts/%s.he";

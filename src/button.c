@@ -57,7 +57,7 @@ void button_tick(actor_T* self)
             KEYBOARD_STATE->key_locks[GLFW_KEY_ENTER] = 1;
         }
 
-        if (MOUSE_STATE->button_left)
+        if (MOUSE_STATE->button_left && actor_focusable->hover)
             button->press();
     }
 

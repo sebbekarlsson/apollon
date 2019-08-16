@@ -74,7 +74,7 @@ void dropdown_list_tick(actor_T* self)
         dropdown_list->selected_index = dropdown_list->option_index;
         KEYBOARD_STATE->key_locks[GLFW_KEY_ENTER] = 1;
 
-        if (dropdown_list->press && dropdown_list->options->size > 0)
+        if (dropdown_list->press && dropdown_list->options->size > 0 && dropdown_list->option_index > 0)
         {
             dropdown_list->press(dropdown_list, dropdown_list->options->items[dropdown_list->option_index]);
         }
@@ -265,7 +265,17 @@ void dropdown_list_set_selected_option_by_string_value(dropdown_list_T* dropdown
         dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) dropdown_list->options->items[i];
 
         if (dropdown_list_option->value == (void*)0)
-            continue;
+        {
+            if (value == (void*) 0)
+            {
+                dropdown_list->selected_index = i;
+                break;
+            }
+            else
+            {
+                continue;
+            }
+        }
 
         if (strcmp((char*)dropdown_list_option->value, value) == 0)
         {
