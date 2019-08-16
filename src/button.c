@@ -11,6 +11,7 @@ extern const float COLOR_FG[3];
 extern const float COLOR_RED[3];
 
 extern keyboard_state_T* KEYBOARD_STATE;
+extern mouse_state_T* MOUSE_STATE;
 
 button_T* init_button(float x, float y, float z, char* text, void (*press)())
 {
@@ -55,6 +56,9 @@ void button_tick(actor_T* self)
             button->press();
             KEYBOARD_STATE->key_locks[GLFW_KEY_ENTER] = 1;
         }
+
+        if (MOUSE_STATE->button_left)
+            button->press();
     }
 
     button->alpha = button->disabled ? 0.6f : 1.0f;
