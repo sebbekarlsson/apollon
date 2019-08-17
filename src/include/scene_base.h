@@ -2,6 +2,7 @@
 #define APOLLON_SCENE_BASE_H
 #include "focus_manager.h"
 #include "actor_focusable.h"
+#include "component_pane.h"
 #include <coelum/scene.h>
 
 
@@ -11,6 +12,7 @@ typedef struct SCENE_BASE_STRUCT
     focus_manager_T* focus_manager;
     void (*refresh_state)(struct SCENE_BASE_STRUCT* self);
     char* title;
+    component_pane_T* component_pane;
 } scene_base_T;
 
 scene_base_T* scene_base_constructor(scene_base_T* scene_base, void (*refresh_state)(struct SCENE_BASE_STRUCT* self), const char* title);
