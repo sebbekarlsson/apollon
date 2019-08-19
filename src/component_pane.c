@@ -168,14 +168,10 @@ void component_pane_adjust(component_pane_T* component_pane)
         }
 
         if (y < (component_pane->y + padding))
-        {
             y -= (y - (component_pane->y + padding));
-        }
 
         if (x < (component_pane->x + padding))
-        {
             x -= (x - (component_pane->x + padding));
-        }
 
         a->x = x;
         a->y = y;
