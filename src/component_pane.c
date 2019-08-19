@@ -139,7 +139,6 @@ void component_pane_adjust(component_pane_T* component_pane)
     int padding = 4;
     int x = 0;
     int y = 0;
-    int component_width = component_pane->width / component_pane->components->size > 0 ? component_pane->components->size : 1;
     int col_width = component_pane->width / (int)(component_pane->cols->size > 0 ? component_pane->cols->size : 1);
     int row_height = component_pane->height / (int)(component_pane->rows->size > 0 ? component_pane->rows->size : 1);
 
@@ -200,15 +199,10 @@ void component_pane_adjust(component_pane_T* component_pane)
 
         child_pane->width = col_width;
         child_pane->width = child_pane->width > component_pane->width ? component_pane->width : child_pane->width;
-        child_pane->height - component_pane->height;
+        child_pane->height = component_pane->height;
 
-        if (i != 0)
-        {
-            if (ap->x + child_pane->width < component_pane->width)
-            {
-                x += col_width;
-            }
-        }
+        if (ap->x + child_pane->width < component_pane->width && i != 0)
+            x += col_width;
 
         child_pane->x = component_pane->x + x;
         child_pane->y = component_pane->y;
@@ -234,13 +228,8 @@ void component_pane_adjust(component_pane_T* component_pane)
         child_pane->height = child_pane->height > component_pane->height ? component_pane->height : child_pane->height;
         child_pane->width = component_pane->width;
 
-        if (i != 0)
-        {
-            if (ap->y + ap->height*2 < component_pane->height)
-            {
-                y += row_height;
-            }
-        }
+        if (ap->y + ap->height*2 < component_pane->height && i != 0)
+            y += row_height;
 
         child_pane->y = component_pane->y;
         child_pane->x = component_pane->x;
