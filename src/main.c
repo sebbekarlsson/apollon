@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
 
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_test());
 
-    /*
+   /* 
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_menu());
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_scene_editor());
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_scene_designer());

@@ -3,6 +3,7 @@
 #include <coelum/dynamic_list.h>
 #include <coelum/state.h>
 #include <coelum/scene.h>
+#include <glad/glad.h>
 #include "actor_component.h"
 
 
@@ -16,6 +17,8 @@ typedef struct COMPONENT_PANE_STRUCT
 
     scene_T base;
     dynamic_list_T* components;
+    dynamic_list_T* rows;
+    dynamic_list_T* cols;
     int component_index;
     int width;
     int height;

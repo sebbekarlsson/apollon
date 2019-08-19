@@ -47,7 +47,7 @@ void component_button_tick(actor_T* self)
     actor_component_T* actor_component = (actor_component_T*) component_button;
     unsigned int focused = actor_component->focused;
 
-    //component_tick(actor_component); 
+    actor_component_tick(actor_component); 
 
     if ((focused || actor_component->hovered) && !component_button->disabled)
     {

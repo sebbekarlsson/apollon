@@ -4,6 +4,7 @@
 #include "actor_focusable.h"
 #include "component_pane.h"
 #include <coelum/scene.h>
+#include <glad/glad.h>
 
 
 typedef struct SCENE_BASE_STRUCT

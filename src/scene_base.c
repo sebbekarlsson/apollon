@@ -30,6 +30,9 @@ scene_base_T* scene_base_constructor(scene_base_T* scene_base, void (*refresh_st
 void scene_base_tick(scene_base_T* scene_base)
 {
     ((scene_T*)scene_base->component_pane)->tick((scene_T*)scene_base->component_pane);
+    state_T* state = (state_T*)((scene_T*)scene_base->component_pane);
+
+    state_tick(state);
 
     focus_manager_tick(scene_base->focus_manager);
 
@@ -39,11 +42,17 @@ void scene_base_tick(scene_base_T* scene_base)
 
 void scene_base_draw(scene_base_T* scene_base)
 {
-    ((scene_T*)scene_base->component_pane)->draw((scene_T*)scene_base->component_pane);
 
     state_T* s = (state_T*) ((scene_T*)scene_base->component_pane);
     state_T* state = (state_T*)((scene_T*)scene_base->component_pane);
+    
+    glEnable(GL_SCISSOR_TEST);
+    glScissor((int)scene_base->component_pane->x, (int)(WINDOW_HEIGHT - scene_base->component_pane->y - scene_base->component_pane->height), (int)scene_base->component_pane->width, (int)scene_base->component_pane->height); 
+    
+    ((scene_T*)scene_base->component_pane)->draw((scene_T*)scene_base->component_pane);
     state_draw(state);
+
+    glDisable(GL_SCISSOR_TEST);
 
     scene_base_draw_title_bar(scene_base);
 }

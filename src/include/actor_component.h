@@ -13,4 +13,6 @@ typedef struct ACTOR_COMPONENT_STRUCT
 } actor_component_T;
 
 actor_component_T* component_constructor(actor_component_T* actor_component, void (*on_click)(actor_T* self));
+
+void actor_component_tick(actor_component_T* actor_component);
 #endif
