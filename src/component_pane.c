@@ -204,7 +204,7 @@ void component_pane_adjust(component_pane_T* component_pane)
 
         if (i != 0)
         {
-            if (ap->x + ap->width*2 < component_pane->width)
+            if (ap->x + child_pane->width < component_pane->width)
             {
                 x += col_width;
             }
