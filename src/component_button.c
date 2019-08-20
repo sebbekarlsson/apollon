@@ -56,9 +56,6 @@ void component_button_tick(actor_T* self)
             component_button->press();
             KEYBOARD_STATE->key_locks[GLFW_KEY_ENTER] = 1;
         }
-
-        if (MOUSE_STATE->button_left && actor_component->hovered)
-            component_button->press();
     }
 
     component_button->alpha = component_button->disabled ? 0.6f : 1.0f;
