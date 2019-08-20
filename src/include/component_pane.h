@@ -5,6 +5,7 @@
 #include <coelum/scene.h>
 #include <glad/glad.h>
 #include "actor_component.h"
+#include "focus_manager.h"
 
 
 typedef struct COMPONENT_PANE_STRUCT
@@ -19,6 +20,7 @@ typedef struct COMPONENT_PANE_STRUCT
     dynamic_list_T* components;
     dynamic_list_T* rows;
     dynamic_list_T* cols;
+    focus_manager_T* focus_manager;
     int component_index;
     int width;
     int height;
@@ -27,7 +29,7 @@ typedef struct COMPONENT_PANE_STRUCT
     state_T* state;
 } component_pane_T;
 
-component_pane_T* init_component_pane(state_T* state, int x, int y, int width, int height);
+component_pane_T* init_component_pane(state_T* state, focus_manager_T* focus_manager, int x, int y, int width, int height);
 
 void component_pane_tick(scene_T* self);
 

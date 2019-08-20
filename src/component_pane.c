@@ -3,7 +3,7 @@
 #include <coelum/constants.h>
 
 
-component_pane_T* init_component_pane(state_T* state, int x, int y, int width, int height)
+component_pane_T* init_component_pane(state_T* state, focus_manager_T* focus_manager, int x, int y, int width, int height)
 {
     component_pane_T* component_pane = calloc(1, sizeof(struct COMPONENT_PANE_STRUCT));
     scene_T* scene = (scene_T*) component_pane;
@@ -16,6 +16,7 @@ component_pane_T* init_component_pane(state_T* state, int x, int y, int width, i
     component_pane->width = width;
     component_pane->height = height;
     component_pane->state = state;
+    component_pane->focus_manager = focus_manager;
     component_pane->components = init_dynamic_list(sizeof(struct COMPONENT_STRUCT*));
     component_pane->rows = init_dynamic_list(sizeof(struct COMPONENT_PANE_STRUCT*));
     component_pane->cols = init_dynamic_list(sizeof(struct COMPONENT_PANE_STRUCT*));
@@ -130,6 +131,7 @@ actor_component_T* component_pane_add_component(component_pane_T* component_pane
 
     dynamic_list_append(state->actors, (actor_T*) actor_component);
     dynamic_list_append(component_pane->components, actor_component);
+    dynamic_list_append(component_pane->focus_manager->components, actor_component);
 
     return actor_component;
 }

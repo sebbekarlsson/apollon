@@ -1,6 +1,7 @@
 #ifndef APOLLON_COMPONENT_BUTTON_H
 #define APOLLON_COMPONENT_BUTTON_H
 #include "actor_component.h"
+#include "focus_manager.h"
 
 
 typedef struct COMPONENT_BUTTON_STRUCT
@@ -20,7 +21,7 @@ typedef struct COMPONENT_BUTTON_STRUCT
     void (*press)();
 } component_button_T;
 
-component_button_T* init_component_button(float x, float y, float z, char* text, void (*press)());
+component_button_T* init_component_button(focus_manager_T* focus_manager, float x, float y, float z, char* text, void (*press)());
 
 void component_button_tick(actor_T* self);
 

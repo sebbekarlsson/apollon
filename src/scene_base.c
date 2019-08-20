@@ -16,6 +16,7 @@ scene_base_T* scene_base_constructor(scene_base_T* scene_base, void (*refresh_st
     strcpy(scene_base->title, title);
     state_T* state = (state_T*)((scene_T*) scene_base);
     scene_base->component_pane = init_component_pane(
+      scene_base->focus_manager,
       state,
       0.0f,
       0.0f,
