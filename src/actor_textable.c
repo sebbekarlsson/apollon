@@ -299,7 +299,9 @@ void actor_textable_handle_character_input(actor_textable_T* self)
 {
     char c = KEYBOARD_STATE->character;
 
-    char* char_str = hermes_char_to_string(c);
+    char* char_str = calloc(2, sizeof(char));
+    char_str[0] = c;
+    char_str[1] = '\0';
 
     self->value = realloc(self->value, (strlen(self->value) + strlen(char_str) + 1) * sizeof(char));
     insert_substring(self->value, char_str, self->caret_position + 1);

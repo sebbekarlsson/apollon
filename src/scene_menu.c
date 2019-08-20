@@ -6,7 +6,7 @@
 #include <coelum/theatre.h>
 #include <coelum/scene_manager.h>
 #include <coelum/draw_utils.h>
-#include <hermes/lexer.h>
+#include <hermes/hermes_lexer.h>
 #include <hermes/hermes_parser.h>
 #include <hermes/hermes_runtime.h>
 #include <hermes/io.h>
@@ -46,8 +46,8 @@ void press_run()
     char* leto_bin_path = 0;
 
     // TODO: move config parsing to separate file / function.
-    lexer_T* lexer = init_lexer(read_file("config.he"));
-    hermes_parser_T* parser = init_hermes_parser(lexer);
+    hermes_lexer_T* hermes_lexer = init_hermes_lexer(read_file("config.he"));
+    hermes_parser_T* parser = init_hermes_parser(hermes_lexer);
     AST_T* scenes_node = hermes_parser_parse(parser, (void*) 0);
     runtime_T* runtime = init_runtime();
     runtime_visit(runtime, scenes_node);
