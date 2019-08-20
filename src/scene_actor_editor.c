@@ -1,6 +1,6 @@
 #include "include/scene_actor_editor.h"
 #include "include/etc.h"
-#include "include/dropdown_list.h"
+#include "include/component_dropdown_list.h"
 #include "include/modal_manager.h"
 #include "include/main.h"
 #include <coelum/input.h>
@@ -16,19 +16,19 @@ extern main_state_T* MAIN_STATE;
 
 static void _free_actor_dropdown_option(void* item)
 {
-    dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) item;
+    component_dropdown_list_option_T* component_dropdown_list_option = (component_dropdown_list_option_T*) item;
     
-    free(dropdown_list_option->key);
-    free((char*)dropdown_list_option->value);
-    free(dropdown_list_option);
+    free(component_dropdown_list_option->key);
+    free((char*)component_dropdown_list_option->value);
+    free(component_dropdown_list_option);
 }
 
-static void scene_actor_editor_clear_input_fields(scene_actor_editor_T* s_actor_editor)
+static void scene_actor_editor_clear_component_input_fields(scene_actor_editor_T* s_actor_editor)
 {
     memset(
-        s_actor_editor->input_field_type_name->value,
+        s_actor_editor->component_input_field_type_name->value,
         0,
-        sizeof(char) * strlen(s_actor_editor->input_field_type_name->value)
+        sizeof(char) * strlen(s_actor_editor->component_input_field_type_name->value)
     );
 }
 
@@ -38,59 +38,59 @@ void scene_actor_editor_refresh_state(scene_base_T* scene_base)
 
     printf("Refreshing state...\n");
 
-    dropdown_list_sync_from_table(
-        s_actor_editor->dropdown_list_sprite,
+    component_dropdown_list_sync_from_table(
+        s_actor_editor->component_dropdown_list_sprite,
         DATABASE,
         "sprites",
         1,
         0
     ); 
 
-    dropdown_list_sync_from_table(
-        s_actor_editor->dropdown_list_actor,
+    component_dropdown_list_sync_from_table(
+        s_actor_editor->component_dropdown_list_actor,
         DATABASE,
         "actor_definitions",
         1,
         5
     );
 
-    dropdown_list_sync_from_table(
-        s_actor_editor->dropdown_list_init_script,
+    component_dropdown_list_sync_from_table(
+        s_actor_editor->component_dropdown_list_init_script,
         DATABASE,
         "scripts",
         1,
         -1
     );
 
-    dropdown_list_sync_from_table(
-        s_actor_editor->dropdown_list_tick_script,
+    component_dropdown_list_sync_from_table(
+        s_actor_editor->component_dropdown_list_tick_script,
         DATABASE,
         "scripts",
         1,
         -1
     );
 
-    dropdown_list_sync_from_table(
-        s_actor_editor->dropdown_list_draw_script,
+    component_dropdown_list_sync_from_table(
+        s_actor_editor->component_dropdown_list_draw_script,
         DATABASE,
         "scripts",
         1,
         -1
     );
 
-    dropdown_list_reload_sprites(s_actor_editor->dropdown_list_actor);
-    dropdown_list_reload_sprites(s_actor_editor->dropdown_list_sprite);
+    component_dropdown_list_reload_sprites(s_actor_editor->component_dropdown_list_actor);
+    component_dropdown_list_reload_sprites(s_actor_editor->component_dropdown_list_sprite);
 
     if (s_actor_editor->actor_definition_id != (void*) 0)
     {
-        dropdown_list_set_selected_option_by_string_value(
-            s_actor_editor->dropdown_list_actor,
+        component_dropdown_list_set_selected_option_by_string_value(
+            s_actor_editor->component_dropdown_list_actor,
             (const char*) s_actor_editor->actor_definition_id 
         ); 
     }
     else
     {
-        scene_actor_editor_clear_input_fields(s_actor_editor);
+        scene_actor_editor_clear_component_input_fields(s_actor_editor);
     }
 }
 
@@ -104,32 +104,32 @@ void scene_actor_editor_reset_actor_definition_id(scene_actor_editor_T* s_actor_
     s_actor_editor->actor_definition_id = (void*) 0;
 }
 
-void button_new_actor_press()
+void component_button_new_actor_press()
 {
-    printf("button_new_actor_press\n");
+    printf("component_button_new_actor_press\n");
 
     scene_T* scene = get_current_scene();
     scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) scene;
     scene_actor_editor_reset_actor_definition_id(s_actor_editor);
 
-    scene_actor_editor_clear_input_fields(s_actor_editor);
+    scene_actor_editor_clear_component_input_fields(s_actor_editor);
 }
 
-void button_save_press()
+void component_button_save_press()
 {
-    printf("button_save_press\n");
+    printf("component_button_save_press\n");
 
     scene_T* scene = get_current_scene();
     scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) scene;
 
-    if (!strlen(s_actor_editor->input_field_type_name->value))
+    if (!strlen(s_actor_editor->component_input_field_type_name->value))
     {
         modal_manager_show_modal(MODAL_MANAGER, "error", "You need to enter a name.");
         return;
     }
 
-    dropdown_list_option_T* option_selected_sprite = dropdown_list_get_selected_option(
-        s_actor_editor->dropdown_list_sprite
+    component_dropdown_list_option_T* option_selected_sprite = component_dropdown_list_get_selected_option(
+        s_actor_editor->component_dropdown_list_sprite
     );
 
     if (option_selected_sprite == (void*) 0)
@@ -142,9 +142,9 @@ void button_save_press()
     char* option_tick_script_value = (void*) 0;
     char* option_draw_script_value = (void*) 0;
 
-    dropdown_list_option_T* option_init_script = dropdown_list_get_selected_option(s_actor_editor->dropdown_list_init_script);
-    dropdown_list_option_T* option_tick_script = dropdown_list_get_selected_option(s_actor_editor->dropdown_list_tick_script);
-    dropdown_list_option_T* option_draw_script = dropdown_list_get_selected_option(s_actor_editor->dropdown_list_draw_script);
+    component_dropdown_list_option_T* option_init_script = component_dropdown_list_get_selected_option(s_actor_editor->component_dropdown_list_init_script);
+    component_dropdown_list_option_T* option_tick_script = component_dropdown_list_get_selected_option(s_actor_editor->component_dropdown_list_tick_script);
+    component_dropdown_list_option_T* option_draw_script = component_dropdown_list_get_selected_option(s_actor_editor->component_dropdown_list_draw_script);
 
     if (option_init_script != (void*) 0)
         if (option_init_script->value != (void*) 0)
@@ -174,7 +174,7 @@ void button_save_press()
 
         char* actor_definition_id = database_insert_actor_definition(
             DATABASE,
-            s_actor_editor->input_field_type_name->value,
+            s_actor_editor->component_input_field_type_name->value,
             (char*) option_selected_sprite->value,
             option_init_script_value,
             option_tick_script_value,
@@ -190,7 +190,7 @@ void button_save_press()
         database_update_actor_definition_by_id(
             DATABASE,
             s_actor_editor->actor_definition_id,
-            s_actor_editor->input_field_type_name->value,
+            s_actor_editor->component_input_field_type_name->value,
             (char*) option_selected_sprite->value,
             option_init_script_value,
             option_tick_script_value,
@@ -201,7 +201,7 @@ void button_save_press()
     REFRESH_STATE(s_actor_editor);
 }
 
-void button_delete_press()
+void component_button_delete_press()
 {
     printf("Pressed delete\n");
 
@@ -210,9 +210,9 @@ void button_delete_press()
 
     database_delete_actor_definition_by_id(DATABASE, s_actor_editor->actor_definition_id);
 
-    for (int i = 0; i < s_actor_editor->dropdown_list_actor->options->size; i++)
+    for (int i = 0; i < s_actor_editor->component_dropdown_list_actor->options->size; i++)
     {
-        dropdown_list_option_T* option = s_actor_editor->dropdown_list_actor->options->items[i];
+        component_dropdown_list_option_T* option = s_actor_editor->component_dropdown_list_actor->options->items[i];
 
         if (option->value == (void*)0)
             continue;
@@ -222,7 +222,7 @@ void button_delete_press()
         if (strcmp(db_actor_definition_id, s_actor_editor->actor_definition_id) == 0)
         {
             dynamic_list_remove(
-                s_actor_editor->dropdown_list_actor->options,
+                s_actor_editor->component_dropdown_list_actor->options,
                 option,
                 _free_actor_dropdown_option 
             );
@@ -236,17 +236,17 @@ void button_delete_press()
     REFRESH_STATE(s_actor_editor);
 }
 
-void actor_editor_sprite_press(void* dropdown_list, void* option) { /* silence */ }
+void actor_editor_sprite_press(void* component_dropdown_list, void* option) { /* silence */ }
 
-void actor_editor_actor_press(void* dropdown_list, void* option)
+void actor_editor_actor_press(void* component_dropdown_list, void* option)
 {
     printf("Press actor dropdown\n");
-    dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) option;
+    component_dropdown_list_option_T* component_dropdown_list_option = (component_dropdown_list_option_T*) option;
 
     scene_T* scene = get_current_scene();
     scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) scene;
 
-    char* option_value = (char*) dropdown_list_option->value;
+    char* option_value = (char*) component_dropdown_list_option->value;
     char* actor_definition_id_new = calloc(strlen(option_value) + 1, sizeof(char));
     strcpy(actor_definition_id_new, option_value);
 
@@ -257,29 +257,29 @@ void actor_editor_actor_press(void* dropdown_list, void* option)
         s_actor_editor->actor_definition_id 
     );
 
-    s_actor_editor->input_field_type_name->value = realloc(
-        s_actor_editor->input_field_type_name->value,
+    s_actor_editor->component_input_field_type_name->value = realloc(
+        s_actor_editor->component_input_field_type_name->value,
         (strlen(database_actor_definition->name) + 1) * sizeof(char)
     );
-    strcpy(s_actor_editor->input_field_type_name->value, database_actor_definition->name);
+    strcpy(s_actor_editor->component_input_field_type_name->value, database_actor_definition->name);
 
-    dropdown_list_set_selected_option_by_string_value(
-        s_actor_editor->dropdown_list_sprite,
+    component_dropdown_list_set_selected_option_by_string_value(
+        s_actor_editor->component_dropdown_list_sprite,
         (const char*) database_actor_definition->sprite_id        
     );
 
-    dropdown_list_set_selected_option_by_string_value(
-        s_actor_editor->dropdown_list_init_script,
+    component_dropdown_list_set_selected_option_by_string_value(
+        s_actor_editor->component_dropdown_list_init_script,
         (const char*) database_actor_definition->init_script_id
     );
 
-    dropdown_list_set_selected_option_by_string_value(
-        s_actor_editor->dropdown_list_tick_script,
+    component_dropdown_list_set_selected_option_by_string_value(
+        s_actor_editor->component_dropdown_list_tick_script,
         (const char*) database_actor_definition->tick_script_id
     );
 
-    dropdown_list_set_selected_option_by_string_value(
-        s_actor_editor->dropdown_list_draw_script,
+    component_dropdown_list_set_selected_option_by_string_value(
+        s_actor_editor->component_dropdown_list_draw_script,
         (const char*) database_actor_definition->draw_script_id
     );
 }
@@ -310,93 +310,119 @@ scene_actor_editor_T* init_scene_actor_editor()
 
     s_actor_editor->actor_definition_id = (void*) 0;
 
-    float margin = 64;
-    float label_margin = 16; 
+    component_pane_T* left = init_component_pane(state, scene_base->focus_manager, 0.0f, 0.0f, 0.0f, 0.0f);
+    left->centered = 1;
+    component_pane_T* right = init_component_pane(state, scene_base->focus_manager, 0.0f, 0.0f, 0.0f, 0.0f);
+    right->centered = 1;
+
+    dynamic_list_append(scene_base->component_pane->cols, left);
+    dynamic_list_append(scene_base->component_pane->cols, right);
 
 
     /* ==== LEFT ==== */
 
-    float ix = margin;
-    float iy = margin;
-
     /* ==== actor ==== */
-    s_actor_editor->label_actor = init_label(ix, iy, 0.0f, "Actor");
-    iy += label_margin;
-    s_actor_editor->dropdown_list_actor = init_dropdown_list(ix, iy, 0.0f, actor_editor_actor_press);
-    s_actor_editor->dropdown_list_actor->expanded = 0;
-    s_actor_editor->dropdown_list_actor->width = 220;
-    ((actor_T*)s_actor_editor->dropdown_list_actor)->z = 1;
-
-    dynamic_list_append(state->actors, s_actor_editor->label_actor);
-    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_actor_editor->dropdown_list_actor);
-    iy += margin;
+    s_actor_editor->component_label_actor = init_component_label(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Actor");
+    s_actor_editor->component_dropdown_list_actor = init_component_dropdown_list(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, actor_editor_actor_press);
+    s_actor_editor->component_dropdown_list_actor->expanded = 0;
+    ((actor_T*)s_actor_editor->component_dropdown_list_actor)->z = 1;
+    
+    component_pane_add_component(
+        left,
+        (actor_component_T*) s_actor_editor->component_label_actor        
+    );
+    component_pane_add_component(
+        left,
+        (actor_component_T*) s_actor_editor->component_dropdown_list_actor 
+    );
 
     /* ==== init_script ====*/
-    s_actor_editor->label_init_script = init_label(ix, iy, 0.0f, "Init Script");
-    iy += label_margin;
-    s_actor_editor->dropdown_list_init_script = init_dropdown_list(ix, iy, 0.0f, (void*)0);
-    s_actor_editor->dropdown_list_init_script->width = s_actor_editor->dropdown_list_actor->width;
-    dynamic_list_append(state->actors, s_actor_editor->label_init_script);
-    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_actor_editor->dropdown_list_init_script);
-    iy += margin;
+    s_actor_editor->component_label_init_script = init_component_label(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Init Script");
+    s_actor_editor->component_dropdown_list_init_script = init_component_dropdown_list(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, (void*)0);
+    component_pane_add_component(
+        left,
+        (actor_component_T*) s_actor_editor->component_label_init_script
+    );
+    component_pane_add_component(
+        left,
+        (actor_component_T*) s_actor_editor->component_dropdown_list_init_script
+    );
 
     /* ==== tick_script ====*/
-    s_actor_editor->label_tick_script = init_label(ix, iy, 0.0f, "Tick Script");
-    iy += label_margin;
-    s_actor_editor->dropdown_list_tick_script = init_dropdown_list(ix, iy, 0.0f, (void*)0);
-    s_actor_editor->dropdown_list_tick_script->width = s_actor_editor->dropdown_list_actor->width;
-    dynamic_list_append(state->actors, s_actor_editor->label_tick_script);
-    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_actor_editor->dropdown_list_tick_script);
-    iy += margin;
+    s_actor_editor->component_label_tick_script = init_component_label(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Tick Script");
+    s_actor_editor->component_dropdown_list_tick_script = init_component_dropdown_list(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, (void*)0);
+    component_pane_add_component(
+        left,
+        (actor_component_T*) s_actor_editor->component_label_tick_script
+    );
+    component_pane_add_component(
+        left,
+        (actor_component_T*) s_actor_editor->component_dropdown_list_tick_script
+    );
 
     /* ==== draw_script ====*/
-    s_actor_editor->label_draw_script = init_label(ix, iy, 0.0f, "Draw Script");
-    iy += label_margin;
-    s_actor_editor->dropdown_list_draw_script = init_dropdown_list(ix, iy, 0.0f, (void*)0);
-    s_actor_editor->dropdown_list_draw_script->width = s_actor_editor->dropdown_list_actor->width;
-    dynamic_list_append(state->actors, s_actor_editor->label_draw_script);
-    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_actor_editor->dropdown_list_draw_script);
-    iy += margin;
+    s_actor_editor->component_label_draw_script = init_component_label(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Draw Script");
+    s_actor_editor->component_dropdown_list_draw_script = init_component_dropdown_list(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, (void*)0);
+    component_pane_add_component(
+        left,
+        (actor_component_T*) s_actor_editor->component_label_draw_script
+    );
+    component_pane_add_component(
+        left,
+        (actor_component_T*) s_actor_editor->component_dropdown_list_draw_script
+    );
 
-    s_actor_editor->button_new_actor = init_button(ix, iy, 0.0f, "New Actor", button_new_actor_press);
-    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_actor_editor->button_new_actor);
+    s_actor_editor->component_button_new_actor = init_component_button(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "New Actor", component_button_new_actor_press);
+    component_pane_add_component(
+        left,
+        (actor_component_T*) s_actor_editor->component_button_new_actor
+    );
 
 
     /* ==== RIGHT ==== */
     
-    float jx = 640 / 2;
-    float jy = margin;
-
     /* ==== type_name ====*/
-    s_actor_editor->label_type_name = init_label(jx, jy, 0.0f, "Name");
-    jy += label_margin;
-    s_actor_editor->input_field_type_name = init_input_field(jx, jy, 0.0f);
-    dynamic_list_append(state->actors, s_actor_editor->label_type_name);
-    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_actor_editor->input_field_type_name);
-    jy += margin;
-
+    s_actor_editor->component_label_type_name = init_component_label(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Name");
+    s_actor_editor->component_input_field_type_name = init_component_input_field(scene_base->focus_manager, 0.0f, 0.0f, 0.0f);
+    dynamic_list_append(state->actors, s_actor_editor->component_label_type_name);
+    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_actor_editor->component_input_field_type_name);
+    component_pane_add_component(
+        right,
+        (actor_component_T*) s_actor_editor->component_label_type_name
+    );
+    component_pane_add_component(
+        right,
+        (actor_component_T*) s_actor_editor->component_input_field_type_name
+    );
     
     /* ==== sprite ==== */
-    s_actor_editor->label_sprite = init_label(jx, jy, 0.0f, "Sprite");
-    jy += label_margin;
-    s_actor_editor->dropdown_list_sprite = init_dropdown_list(jx, jy, 0.0f, actor_editor_sprite_press);
-    s_actor_editor->dropdown_list_sprite->expanded = 0;
-    ((actor_T*)s_actor_editor->dropdown_list_sprite)->z = 1;
+    s_actor_editor->component_label_sprite = init_component_label(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Sprite");
+    s_actor_editor->component_dropdown_list_sprite = init_component_dropdown_list(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, actor_editor_sprite_press);
+    s_actor_editor->component_dropdown_list_sprite->expanded = 0;
+    ((actor_T*)s_actor_editor->component_dropdown_list_sprite)->z = 1;
 
-    dynamic_list_append(state->actors, s_actor_editor->label_sprite);
-    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_actor_editor->dropdown_list_sprite);
-    jy += margin; 
+    component_pane_add_component(
+        right,
+        (actor_component_T*) s_actor_editor->component_label_sprite
+    );
+    component_pane_add_component(
+        right,
+        (actor_component_T*) s_actor_editor->component_dropdown_list_sprite
+    );
 
-    /* ==== save button ====*/
-    s_actor_editor->button_save = init_button(jx, jy, 0.0f, "Save", button_save_press);
-    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_actor_editor->button_save);
-    jy += margin; 
+    /* ==== save component_button ====*/
+    s_actor_editor->component_button_save = init_component_button(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Save", component_button_save_press);
+    component_pane_add_component(
+        right,
+        (actor_component_T*) s_actor_editor->component_button_save
+    );
 
-
-    /* ==== delete button ====*/
-    s_actor_editor->button_delete = init_button(jx, jy, 0.0f, "Delete", button_delete_press);
-    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_actor_editor->button_delete);
-    dynamic_list_append(state->actors, s_actor_editor->button_delete);
+    /* ==== delete component_button ====*/
+    s_actor_editor->component_button_delete = init_component_button(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Delete", component_button_delete_press);
+    component_pane_add_component(
+        right,
+        (actor_component_T*) s_actor_editor->component_button_delete
+    );
 
     state_resort_actors(state);
 
@@ -409,7 +435,7 @@ void scene_actor_editor_tick(scene_T* self)
 
     scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) self;
 
-    ((actor_focusable_T*)s_actor_editor->button_delete)->visible = s_actor_editor->actor_definition_id != (void*)0;
+    ((actor_focusable_T*)s_actor_editor->component_button_delete)->visible = s_actor_editor->actor_definition_id != (void*)0;
     scene_base_tick((scene_base_T*)self);
 }
 
