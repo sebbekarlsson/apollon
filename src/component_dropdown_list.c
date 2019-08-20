@@ -108,7 +108,7 @@ void component_dropdown_list_option_draw(int i, component_dropdown_list_option_T
     }
 
     int text_padding = 0;
-
+    
     if (option->database_sprite != (void*) 0)
     {
         if (option->database_sprite->sprite != (void*) 0)

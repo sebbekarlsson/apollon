@@ -67,10 +67,12 @@ scene_test_T* init_scene_test()
         (actor_component_T*)init_component_label(focus_manager, 0.0f, 0.0f, 0.0f, "Hello World")       
     );
 
+    component_dropdown_list_T* dropdown_list = init_component_dropdown_list(focus_manager, 0.0f, 0.0f, 0.0f, (void*)0);
+    dynamic_list_append(dropdown_list->options, init_component_dropdown_list_option((void*)0, "hey", (void*)0, 0));
 
     component_pane_add_component(
        (component_pane_T*)(((component_pane_T*)scene_base->component_pane->cols->items[0])->rows->items[0]),
-        (actor_component_T*)init_component_dropdown_list(focus_manager, 0.0f, 0.0f, 0.0f, (void*)0)       
+        (actor_component_T*)dropdown_list       
     );
 
 
