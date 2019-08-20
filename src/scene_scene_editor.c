@@ -43,14 +43,6 @@ void scene_scene_editor_unload(void* self)
 
 void scene_scene_editor_reset_component_label_number_of_actors(scene_scene_editor_T* s_scene_editor)
 {
-    unsigned int nr_actors = 0;
-
-    const char* nr_actors_template = "Actors: %d";
-    char* nr_actors_text = calloc(strlen(nr_actors_template) + 100, sizeof(char));
-    sprintf(nr_actors_text, nr_actors_template, nr_actors);
-
-    free(s_scene_editor->component_label_number_of_actors->text);
-    s_scene_editor->component_label_number_of_actors->text = nr_actors_text;
 }
 
 void scene_scene_editor_refresh_state(scene_base_T* scene_base)
@@ -67,14 +59,6 @@ void scene_scene_editor_refresh_state(scene_base_T* scene_base)
 
     if (s_scene_editor->scene_id != (void*) 0)
     {
-        unsigned int nr_actors = database_count_actors_in_scene(DATABASE, s_scene_editor->scene_id);
-
-        const char* nr_actors_template = "Actors: %d";
-        char* nr_actors_text = calloc(strlen(nr_actors_template) + 100, sizeof(char));
-        sprintf(nr_actors_text, nr_actors_template, nr_actors);
-
-        free(s_scene_editor->component_label_number_of_actors->text);
-        s_scene_editor->component_label_number_of_actors->text = nr_actors_text;
         s_scene_editor->component_button_design->disabled = 0;
     }
     else
@@ -248,20 +232,12 @@ scene_scene_editor_T* init_scene_scene_editor()
     dynamic_list_append(scene_base->component_pane->cols, left);
     dynamic_list_append(scene_base->component_pane->cols, right);
 
-    float margin = 64;
-    float component_label_margin = 16; 
-
-
     /* ==== LEFT ==== */
 
-    float ix = margin;
-    float iy = margin;
-
     /* ==== actor ==== */
-    s_scene_editor->component_label_scene = init_component_label(scene_base->focus_manager, ix, iy, 0.0f, "Scene");
+    s_scene_editor->component_label_scene = init_component_label(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Scene");
     ((actor_component_T*)s_scene_editor->component_label_scene)->margin_y = 4;
-    iy += component_label_margin;
-    s_scene_editor->component_dropdown_list_scene = init_component_dropdown_list(scene_base->focus_manager, ix, iy, 0.0f, scene_editor_scene_press);
+    s_scene_editor->component_dropdown_list_scene = init_component_dropdown_list(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, scene_editor_scene_press);
     ((actor_component_T*)s_scene_editor->component_dropdown_list_scene)->margin_y = 4;
     s_scene_editor->component_dropdown_list_scene->expanded = 0;
     ((actor_T*)s_scene_editor->component_dropdown_list_scene)->z = 1;
@@ -275,22 +251,11 @@ scene_scene_editor_T* init_scene_scene_editor()
         (actor_component_T*) s_scene_editor->component_dropdown_list_scene 
     );
 
-    iy += margin;
-
     const char* _number_of_actors_text = "Actors:";
     char* number_of_actors_text = calloc(strlen(_number_of_actors_text) + 1, sizeof(char));
     strcpy(number_of_actors_text, _number_of_actors_text);
 
-    s_scene_editor->component_label_number_of_actors = init_component_label(scene_base->focus_manager, ix, iy, 0.0f, number_of_actors_text);
-    s_scene_editor->component_label_number_of_actors->font_size = 6;
-    s_scene_editor->component_label_number_of_actors->font_spacing = 6;
-    /*component_pane_add_component(
-        left,
-        (actor_component_T*) s_scene_editor->component_label_number_of_actors 
-    );*/
-    iy += component_label_margin + 16;
-
-    s_scene_editor->component_button_new = init_component_button(scene_base->focus_manager, ix, iy, 0.0f, "New Scene", component_button_scene_new_press);
+    s_scene_editor->component_button_new = init_component_button(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "New Scene", component_button_scene_new_press);
     ((actor_component_T*)s_scene_editor->component_button_new)->margin_y = 4;
     component_pane_add_component(
         left,
@@ -299,14 +264,10 @@ scene_scene_editor_T* init_scene_scene_editor()
 
     /* ==== RIGHT ==== */
     
-    float jx = 640 / 2;
-    float jy = margin;
-
     /* ==== type_name ====*/
-    s_scene_editor->component_label_name = init_component_label(scene_base->focus_manager, jx, jy, 0.0f, "Name");
+    s_scene_editor->component_label_name = init_component_label(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Name");
     ((actor_component_T*)s_scene_editor->component_label_name)->margin_y = 4;
-    jy += component_label_margin;
-    s_scene_editor->component_input_field_name = init_component_input_field(scene_base->focus_manager, jx, jy, 0.0f);
+    s_scene_editor->component_input_field_name = init_component_input_field(scene_base->focus_manager, 0.0f, 0.0f, 0.0f);
     ((actor_component_T*)s_scene_editor->component_input_field_name)->margin_y = 4;
     component_pane_add_component(
         right,
@@ -316,12 +277,11 @@ scene_scene_editor_T* init_scene_scene_editor()
         right,
         (actor_component_T*) s_scene_editor->component_input_field_name
     );
-    jy += margin;
 
     /* ==== checkbox_main_scene ====*/
-    s_scene_editor->component_label_main_scene = init_component_label(scene_base->focus_manager, jx, jy, 0.0f, "Main");
-    jy += component_label_margin;
-    s_scene_editor->component_checkbox_main_scene = init_component_checkbox(scene_base->focus_manager, jx, jy, 0.0f);
+    s_scene_editor->component_label_main_scene = init_component_label(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Main");
+    s_scene_editor->component_checkbox_main_scene = init_component_checkbox(scene_base->focus_manager, 0.0f, 0.0f, 0.0f);
+    ((actor_component_T*)s_scene_editor->component_label_main_scene)->margin_y = 4;
     ((actor_component_T*)s_scene_editor->component_checkbox_main_scene)->margin_y = 4;
     /*component_pane_add_component(
         right,
@@ -332,34 +292,30 @@ scene_scene_editor_T* init_scene_scene_editor()
         (actor_component_T*) s_scene_editor->component_checkbox_main_scene
     );
     //scene_base_register_focusable(scene_base, (actor_focusable_T*) s_scene_editor->component_checkbox_main_scene);
-    jy += margin;
 
     /* ==== design component_button ====*/
-    s_scene_editor->component_button_design = init_component_button(scene_base->focus_manager, jx, jy, 0.0f, "Design", component_button_scene_design_press);
+    s_scene_editor->component_button_design = init_component_button(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Design", component_button_scene_design_press);
     ((actor_component_T*)s_scene_editor->component_button_design)->margin_y = 4;
     component_pane_add_component(
         right,
         (actor_component_T*) s_scene_editor->component_button_design
     );
-    jy += margin;
 
     /* ==== save component_button ====*/
-    s_scene_editor->component_button_save = init_component_button(scene_base->focus_manager, jx, jy, 0.0f, "Save", component_button_scene_save_press);
+    s_scene_editor->component_button_save = init_component_button(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Save", component_button_scene_save_press);
     ((actor_component_T*)s_scene_editor->component_button_save)->margin_y = 4;
     component_pane_add_component(
         right,
         (actor_component_T*) s_scene_editor->component_button_save
     );
-    jy += margin;
 
     /* ==== save component_button ====*/
-    s_scene_editor->component_button_delete = init_component_button(scene_base->focus_manager, jx, jy, 0.0f, "Delete", component_button_scene_delete_press);
+    s_scene_editor->component_button_delete = init_component_button(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Delete", component_button_scene_delete_press);
     ((actor_component_T*)s_scene_editor->component_button_delete)->margin_y = 4;
     component_pane_add_component(
         right,
         (actor_component_T*) s_scene_editor->component_button_delete
     );
-    jy += margin;
 
     REFRESH_STATE(s_scene_editor);
 

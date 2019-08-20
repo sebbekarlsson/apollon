@@ -15,8 +15,6 @@ typedef struct SCENE_SCENE_EDITOR_STRUCT
     component_label_T* component_label_scene;
     component_dropdown_list_T* component_dropdown_list_scene;
 
-    component_label_T* component_label_number_of_actors;
-
     component_label_T* component_label_name;
     component_input_field_T* component_input_field_name;
 
