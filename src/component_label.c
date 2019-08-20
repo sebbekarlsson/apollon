@@ -21,7 +21,7 @@ component_label_T* init_component_label(focus_manager_T* focus_manager, float x,
     component_label->r = COLOR_FG[0];
     component_label->g = COLOR_FG[1];
     component_label->b = COLOR_FG[2];
-    actor->height = (component_label->font_size * 2) + component_label->font_spacing;
+    actor->height = component_label->font_size + component_label->font_spacing;
 
     return component_label;
 }
@@ -43,10 +43,23 @@ void component_label_draw(actor_T* self)
     scene_T* scene = get_current_scene();
     state_T* state = (state_T*) scene;
 
+    /*draw_positioned_2D_mesh(
+        self->x,
+        self->y,
+        0.0f,
+        self->width,
+        self->height,
+        255,
+        0,
+        0,
+        1,
+        state
+    );*/
+
     draw_text(
         component_label->text,
         self->x + ((component_label->font_size + component_label->font_spacing) / 2),
-        self->y,
+        self->y + (self->height / 2),
         0.0f,
         component_label->r,
         component_label->g,
