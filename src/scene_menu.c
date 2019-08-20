@@ -1,5 +1,6 @@
 #include "include/scene_menu.h"
 #include "include/bin_utils.h"
+#include "include/component_button.h"
 #include <coelum/main.h>
 #include <coelum/constants.h>
 #include <coelum/actor_text.h>
@@ -103,11 +104,107 @@ scene_menu_T* init_scene_menu()
     scene_constructor(s, scene_menu_tick, scene_menu_draw, 2);
     scene_base_constructor(scene_base, scene_menu_refresh_state, "Menu");
 
+    scene_base->component_pane->centered = 1;
+
     s->type_name = "menu";
     s->bg_r = 255;
     s->bg_g = 255;
     s->bg_b = 255;
 
+    int margin = 4;
+
+    component_button_T* button_scene_editor = init_component_button(
+        scene_base->focus_manager,
+        0.0f, 0.0f, 0.0f,
+        "Scene Editor",
+        press_scene_editor
+    );
+    ((actor_component_T*)button_scene_editor)->margin_y = margin;
+
+    component_pane_add_component(
+        scene_base->component_pane,
+        (actor_component_T*) button_scene_editor        
+    );
+
+    component_button_T* button_actor_editor = init_component_button(
+        scene_base->focus_manager,
+        0.0f, 0.0f, 0.0f,
+        "Actor Editor",
+        press_actor_editor 
+    );
+    ((actor_component_T*)button_actor_editor)->margin_y = margin;
+
+    component_pane_add_component(
+        scene_base->component_pane,
+        (actor_component_T*) button_actor_editor        
+    );
+
+    component_button_T* button_sprite_editor = init_component_button(
+        scene_base->focus_manager,
+        0.0f, 0.0f, 0.0f,
+        "Sprite Editor",
+        press_sprite_editor 
+    );
+    ((actor_component_T*)button_sprite_editor)->margin_y = margin;
+
+    component_pane_add_component(
+        scene_base->component_pane,
+        (actor_component_T*) button_sprite_editor        
+    );
+
+    component_button_T* button_text_editor = init_component_button(
+        scene_base->focus_manager,
+        0.0f, 0.0f, 0.0f,
+        "Text Editor",
+        press_text_editor
+    );
+    ((actor_component_T*)button_text_editor)->margin_y = margin;
+
+    component_pane_add_component(
+        scene_base->component_pane,
+        (actor_component_T*) button_text_editor        
+    );
+
+    component_button_T* button_run = init_component_button(
+        scene_base->focus_manager,
+        0.0f, 0.0f, 0.0f,
+        "Run",
+        press_run 
+    );
+    ((actor_component_T*)button_run)->margin_y = margin;
+
+    component_pane_add_component(
+        scene_base->component_pane,
+        (actor_component_T*) button_run        
+    );
+
+    component_button_T* button_build = init_component_button(
+        scene_base->focus_manager,
+        0.0f, 0.0f, 0.0f,
+        "Build",
+        press_build 
+    );
+    ((actor_component_T*)button_build)->margin_y = margin;
+
+    component_pane_add_component(
+        scene_base->component_pane,
+        (actor_component_T*) button_build        
+    );
+
+    component_button_T* button_quit = init_component_button(
+        scene_base->focus_manager,
+        0.0f, 0.0f, 0.0f,
+        "Quit",
+        press_quit 
+    );
+    ((actor_component_T*)button_quit)->margin_y = margin;
+
+    component_pane_add_component(
+        scene_base->component_pane,
+        (actor_component_T*) button_quit  
+    );
+
+    /*
     float button_width = 200;
     float ix = (WINDOW_WIDTH / 2) - (button_width / 2);
     float iy = 96.0f;
@@ -125,7 +222,7 @@ scene_menu_T* init_scene_menu()
     iy += margin;
     s_menu->button_build = (button_T*) scene_base_register_focusable(scene_base, (actor_focusable_T*) init_button(ix, iy, 0.0f, "Build", press_build));
     iy += margin;
-    s_menu->button_quit = (button_T*) scene_base_register_focusable(scene_base, (actor_focusable_T*) init_button(ix, iy, 0.0f, "Quit", press_quit));
+    s_menu->button_quit = (button_T*) scene_base_register_focusable(scene_base, (actor_focusable_T*) init_button(ix, iy, 0.0f, "Quit", press_quit));*/
 
     return s_menu;
 }

@@ -13,13 +13,11 @@ extern const float COLOR_RED[3];
 extern keyboard_state_T* KEYBOARD_STATE;
 extern mouse_state_T* MOUSE_STATE;
 
-void tmp_click(actor_T* self) {}
-
 component_button_T* init_component_button(focus_manager_T* focus_manager, float x, float y, float z, char* text, void (*press)())
 {
     component_button_T* component_button = calloc(1, sizeof(struct COMPONENT_BUTTON_STRUCT));
     actor_component_T* component = (actor_component_T*) component_button;
-    actor_component_constructor(component, focus_manager, tmp_click);
+    actor_component_constructor(component, focus_manager, press);
     actor_T* actor = (actor_T*) component_button;
     actor_constructor(actor, x, y, z, component_button_tick, component_button_draw, "component_button");
 

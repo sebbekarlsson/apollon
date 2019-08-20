@@ -10,12 +10,6 @@
 
 typedef struct COMPONENT_PANE_STRUCT
 {
-    enum
-    {
-        COMPONENT_PANE_POSITION_ROW,
-        COMPONENT_PANE_POSITION_COL
-    } position;
-
     scene_T base;
     dynamic_list_T* components;
     dynamic_list_T* rows;
@@ -26,6 +20,7 @@ typedef struct COMPONENT_PANE_STRUCT
     int height;
     int x;
     int y;
+    unsigned int centered;
     state_T* state;
 } component_pane_T;
 

@@ -6,7 +6,6 @@
 
 typedef struct FOCUS_MANAGER_STRUCT
 {
-    dynamic_list_T* focusables;
     dynamic_list_T* components;
     int focus_index;
 } focus_manager_T;

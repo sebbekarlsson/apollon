@@ -575,7 +575,7 @@ void scene_sprite_editor_tick(scene_T* self)
     if (scene_base->focus_manager->focus_index == -1)
         return;
 
-    actor_focusable_T* actor_focusable = (actor_focusable_T*) scene_base->focus_manager->focusables->items[scene_base->focus_manager->focus_index];
+    /*actor_focusable_T* actor_focusable = (actor_focusable_T*) scene_base->focus_manager->focusables->items[scene_base->focus_manager->focus_index];
     actor_T* grid_actor = (actor_T*) actor_focusable;
     grid_T* grid = (grid_T*) grid_actor;
     actor_focusable->focused = 1;
@@ -743,7 +743,7 @@ void scene_sprite_editor_tick(scene_T* self)
 
             KEYBOARD_STATE->key_locks[GLFW_KEY_SPACE] = 1;
         }
-    }
+    }*/
 }
 
 void scene_sprite_editor_draw(scene_T* self)

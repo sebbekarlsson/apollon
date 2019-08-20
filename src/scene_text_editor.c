@@ -34,7 +34,7 @@ scene_text_editor_T* init_scene_text_editor()
     s_text_editor->focus_manager = init_focus_manager();
 
     s_text_editor->textarea = init_textarea(0.0f, 0.0f, WINDOW_WIDTH, WINDOW_HEIGHT);
-    dynamic_list_append(s_text_editor->focus_manager->focusables, s_text_editor->textarea);
+    //dynamic_list_append(s_text_editor->focus_manager->focusables, s_text_editor->textarea);
     dynamic_list_append(state->actors, s_text_editor->textarea);
 
     s_text_editor->line_bar_width = 24;

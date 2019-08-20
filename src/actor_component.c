@@ -13,6 +13,8 @@ actor_component_T* actor_component_constructor(actor_component_T* actor_componen
     actor_component->hovered = 0;
     actor_component->focused = 0;
     actor_component->focus_manager = focus_manager;
+    actor_component->margin_x = 0;
+    actor_component->margin_y = 0;
 
     return actor_component;
 }

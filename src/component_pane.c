@@ -146,37 +146,66 @@ void component_pane_adjust(component_pane_T* component_pane)
 
     /** ==== adjust position of child components === **/
 
-    for (int i = 0; i < component_pane->components->size; i++)
+    if (component_pane->centered)
     {
-        actor_component_T* ac = (actor_component_T*) component_pane->components->items[i];
-        actor_component_T* acp =
-            (actor_component_T*) component_pane->components->items[
-            i > 0 ? i-1 : 0
-        ];
-        actor_T* a = (actor_T*) ac;
-        actor_T* ap = (actor_T*) acp;
+        int final_height = 0;
 
-        if (i != 0)
+        for (int i = 0; i < component_pane->components->size; i++)
         {
-            if (ap->x + ap->width*2 < component_pane->width)
-            {
-                x += ap->width;
-            }
-            else
-            {
-                x = 0;
-                y += ap->height;
-            }
+            actor_component_T* ac = (actor_component_T*) component_pane->components->items[i];
+            actor_T* a = (actor_T*) ac;
+
+            final_height += a->height + ac->margin_y;
         }
 
-        if (y < (component_pane->y + padding))
-            y -= (y - (component_pane->y + padding));
+        for (int i = 0; i < component_pane->components->size; i++)
+        {
+            actor_component_T* ac = (actor_component_T*) component_pane->components->items[i];
+            actor_component_T* acp =
+                (actor_component_T*) component_pane->components->items[
+                i > 0 ? i-1 : 0
+            ];
+            actor_T* a = (actor_T*) ac;
+            actor_T* ap = (actor_T*) acp;
 
-        if (x < (component_pane->x + padding))
-            x -= (x - (component_pane->x + padding));
+            a->x = (component_pane->width / 2) - a->width / 2;
+            a->y = ((component_pane->height / 2) + (i * (a->height + ac->margin_y))) - final_height / 2;
+        }
+    }
+    else
+    {
+        for (int i = 0; i < component_pane->components->size; i++)
+        {
+            actor_component_T* ac = (actor_component_T*) component_pane->components->items[i];
+            actor_component_T* acp =
+                (actor_component_T*) component_pane->components->items[
+                i > 0 ? i-1 : 0
+            ];
+            actor_T* a = (actor_T*) ac;
+            actor_T* ap = (actor_T*) acp;
 
-        a->x = x;
-        a->y = y;
+            if (i != 0)
+            {
+                if (ap->x + ap->width*2 < component_pane->width)
+                {
+                    x += ap->width;
+                }
+                else
+                {
+                    x = 0;
+                    y += ap->height + acp->margin_y;
+                }
+            }
+
+            if (y < (component_pane->y + padding))
+                y -= (y - (component_pane->y + padding));
+
+            if (x < (component_pane->x + padding))
+                x -= (x - (component_pane->x + padding));
+
+            a->x = x;
+            a->y = y;
+        }
     }
     
     /** ==== adjust position of child columns === **/

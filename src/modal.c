@@ -41,7 +41,7 @@ modal_T* init_modal(float x, float y, char* title, char* text, state_T* state)
     );
     
     dynamic_list_append(state->actors, modal->button);
-    dynamic_list_append(modal->focus_manager->focusables, modal->button);
+    //dynamic_list_append(modal->focus_manager->focusables, modal->button);
 
     return modal;
 }

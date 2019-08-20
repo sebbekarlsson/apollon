@@ -123,8 +123,8 @@ void scene_base_draw_title_bar(scene_base_T* scene_base)
 
 actor_focusable_T* scene_base_register_focusable(scene_base_T* scene_base, actor_focusable_T* focusable)
 {
-    dynamic_list_append(scene_base->focus_manager->focusables, focusable);
-    dynamic_list_append(((state_T*)((scene_T*)scene_base))->actors, (actor_T*)focusable);
+    //dynamic_list_append(scene_base->focus_manager->focusables, focusable);
+    //dynamic_list_append(((state_T*)((scene_T*)scene_base))->actors, (actor_T*)focusable);
 
     return focusable;
 }
