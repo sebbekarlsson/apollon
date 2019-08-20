@@ -168,8 +168,8 @@ void component_pane_adjust(component_pane_T* component_pane)
             actor_T* a = (actor_T*) ac;
             actor_T* ap = (actor_T*) acp;
 
-            a->x = (component_pane->width / 2) - a->width / 2;
-            a->y = ((component_pane->height / 2) + (i * (a->height + ac->margin_y))) - final_height / 2;
+            a->x = component_pane->x + (component_pane->width / 2) - a->width / 2;
+            a->y = component_pane->y + ((component_pane->height / 2) + (i * (a->height + ac->margin_y))) - final_height / 2;
         }
     }
     else
