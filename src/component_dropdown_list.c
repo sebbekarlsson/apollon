@@ -91,12 +91,17 @@ void component_dropdown_list_option_draw(int i, component_dropdown_list_option_T
 
     int h = self->height;
 
+    float base_z = self->z;
+
+    if (component_dropdown_list->expanded)
+        base_z += 0.8f;
+
     if ((i == component_dropdown_list->option_index || i == component_dropdown_list->selected_index) && actor_component->focused)
     {
         draw_positioned_2D_mesh(
             self->x,
             (self->y + (i * h)),
-            self->z + 0.2f,
+            base_z,
             self->width,
             h,
             COLOR_BG_DARK_BRIGHT[0],
@@ -117,7 +122,7 @@ void component_dropdown_list_option_draw(int i, component_dropdown_list_option_T
                 option->database_sprite->sprite,
                 self->x + 4,
                 self->y + (i * h) + ((h/2) - 8),
-                self->z + 0.2f,
+                base_z + 0.1f,
                 16,
                 16,
                 state
@@ -135,7 +140,7 @@ void component_dropdown_list_option_draw(int i, component_dropdown_list_option_T
                 option->key,
                 self->x + (h / 2) + text_padding,
                 (self->y + (i * h)) + (h / 2),
-                self->z + 0.1f,
+                base_z + 0.1f,
                 COLOR_FG[0], // r
                 COLOR_FG[1], // g
                 COLOR_FG[2], // b
@@ -163,12 +168,17 @@ void component_dropdown_list_draw(actor_T* self)
 
     int h = 28;
 
+    float base_z = self->z;
+
+    if (component_dropdown_list->expanded)
+        base_z += 0.3f;
+
     if (component_dropdown_list->expanded)
     {
         draw_positioned_2D_mesh(
             self->x + 4,
             self->y + 4,
-            self->z,
+            base_z + 0.1f,
             self->width,
             h * (component_dropdown_list->expanded && component_dropdown_list->options->size > 0 ? component_dropdown_list->options->size : 1),
             0,
@@ -182,7 +192,7 @@ void component_dropdown_list_draw(actor_T* self)
     draw_positioned_2D_mesh(
         self->x,
         self->y,
-        self->z + 0.1f,
+        base_z + 0.4f,
         self->width,
         h * (component_dropdown_list->expanded && component_dropdown_list->options->size > 0 ? component_dropdown_list->options->size : 1),
         COLOR_BG_DARK[0],
@@ -222,7 +232,7 @@ void component_dropdown_list_draw(actor_T* self)
                 "EMPTY",
                 self->x + (h / 2),
                 (self->y + (h / 2)),
-                self->z + 0.1f,
+                base_z + 0.1f,
                 focused ? 255 : COLOR_FG[0], // r
                 focused ? 255 : COLOR_FG[1], // g
                 focused ? 255 : COLOR_FG[2], // b
@@ -243,7 +253,7 @@ void component_dropdown_list_draw(actor_T* self)
         SPRITE_ARROW_DOWN,
         self->x + self->width - SPRITE_ARROW_DOWN->width - 4,
         self->y + (h / 2) - (SPRITE_ARROW_DOWN->height / 2),
-        self->z + 0.2f,
+        base_z + 0.2f,
         SPRITE_ARROW_DOWN->width,
         SPRITE_ARROW_DOWN->height,
         state
