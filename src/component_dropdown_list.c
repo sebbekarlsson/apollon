@@ -9,6 +9,7 @@
 
 extern theatre_T* THEATRE;
 extern keyboard_state_T* KEYBOARD_STATE;
+extern mouse_state_T* MOUSE_STATE;
 extern sprite_T* SPRITE_ARROW_DOWN;
 
 extern float COLOR_BG_DARK[3];
@@ -77,6 +78,32 @@ void component_dropdown_list_tick(actor_T* self)
         component_dropdown_list->selected_index = component_dropdown_list->option_index;
         KEYBOARD_STATE->key_locks[GLFW_KEY_ENTER] = 1;
 
+        if (component_dropdown_list->press && component_dropdown_list->options->size > 0 && component_dropdown_list->option_index > 0)
+        {
+            component_dropdown_list->press(component_dropdown_list, component_dropdown_list->options->items[component_dropdown_list->option_index]);
+        }
+    }
+
+    for (int i = 0; i < component_dropdown_list->options->size; i++)
+    {
+        component_dropdown_list_option_T* option = (component_dropdown_list_option_T*) component_dropdown_list->options->items[i];
+
+        int x = self->x;
+        int y = self->y + (i * self->height);
+
+        if (MOUSE_STATE->x >= x && MOUSE_STATE->x <= x + self->width)
+        {
+            if (MOUSE_STATE->y >= y && MOUSE_STATE->y <= y + self->height)
+            {
+                component_dropdown_list->option_index = i;
+            }
+        }
+    }
+
+    if (MOUSE_STATE->button_left)
+    {
+        component_dropdown_list->selected_index = component_dropdown_list->option_index;
+        
         if (component_dropdown_list->press && component_dropdown_list->options->size > 0 && component_dropdown_list->option_index > 0)
         {
             component_dropdown_list->press(component_dropdown_list, component_dropdown_list->options->items[component_dropdown_list->option_index]);
