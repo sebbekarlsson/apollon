@@ -136,6 +136,16 @@ actor_component_T* component_pane_add_component(component_pane_T* component_pane
     return actor_component;
 }
 
+static int compare( const void* a, const void* b)
+{
+     int int_a = * ( (int*) a );
+     int int_b = * ( (int*) b );
+
+     if ( int_a == int_b ) return 0;
+     else if ( int_a < int_b ) return -1;
+     else return 1;
+}
+
 void component_pane_adjust(component_pane_T* component_pane)
 {
     int padding = 4;
@@ -192,6 +202,9 @@ void component_pane_adjust(component_pane_T* component_pane)
     }
     else
     {
+        int* heights = (void*)0;
+        size_t heights_size = 0;
+
         for (int i = 0; i < component_pane->components->size; i++)
         {
             actor_component_T* ac = (actor_component_T*) component_pane->components->items[i];
@@ -202,16 +215,28 @@ void component_pane_adjust(component_pane_T* component_pane)
             actor_T* a = (actor_T*) ac;
             actor_T* ap = (actor_T*) acp;
 
+            heights_size += 1;
+            if (heights == (void*)0)
+            {
+                heights = calloc(heights_size, sizeof(int));
+            }
+            else
+            {
+                heights = realloc(heights, heights_size * sizeof(int));
+            }
+            heights[heights_size-1] = ap->height;
+
+            qsort(heights, heights_size, sizeof(int), compare);
+            int highest = heights_size ? heights[heights_size-1] : 0;
+
             if (i != 0)
             {
-                if (ap->x + ap->width*2 < component_pane->width)
+                x = ap->x + ap->width;
+
+                if (x > component_pane->x + component_pane->width)
                 {
-                    x += ap->width;
-                }
-                else
-                {
+                    y += highest + acp->margin_y;
                     x = 0;
-                    y += ap->height + acp->margin_y;
                 }
             }
 

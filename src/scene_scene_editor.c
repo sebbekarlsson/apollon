@@ -283,10 +283,10 @@ scene_scene_editor_T* init_scene_scene_editor()
     s_scene_editor->component_checkbox_main_scene = init_component_checkbox(scene_base->focus_manager, 0.0f, 0.0f, 0.0f);
     ((actor_component_T*)s_scene_editor->component_label_main_scene)->margin_y = 4;
     ((actor_component_T*)s_scene_editor->component_checkbox_main_scene)->margin_y = 4;
-    /*component_pane_add_component(
+    component_pane_add_component(
         right,
         (actor_component_T*) s_scene_editor->component_label_main_scene
-    );*/
+    );
     component_pane_add_component(
         right,
         (actor_component_T*) s_scene_editor->component_checkbox_main_scene
