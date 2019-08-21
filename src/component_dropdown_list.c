@@ -8,7 +8,6 @@
 
 
 extern theatre_T* THEATRE;
-extern keyboard_state_T* KEYBOARD_STATE;
 extern mouse_state_T* MOUSE_STATE;
 extern sprite_T* SPRITE_ARROW_DOWN;
 
@@ -55,33 +54,6 @@ void component_dropdown_list_tick(actor_T* self)
     else
     {
         component_dropdown_list->expanded = 1;
-    }
-
-    if (KEYBOARD_STATE->keys[GLFW_KEY_UP] && !KEYBOARD_STATE->key_locks[GLFW_KEY_UP])
-    {
-        if (component_dropdown_list->option_index > 0)
-            component_dropdown_list->option_index -= 1;
-
-        KEYBOARD_STATE->key_locks[GLFW_KEY_UP] = 1;
-    }
-
-    if (KEYBOARD_STATE->keys[GLFW_KEY_DOWN] && !KEYBOARD_STATE->key_locks[GLFW_KEY_DOWN])
-    {
-        if (component_dropdown_list->option_index < component_dropdown_list->options->size - 1)
-            component_dropdown_list->option_index += 1;
-
-        KEYBOARD_STATE->key_locks[GLFW_KEY_DOWN] = 1;
-    }
-    
-    if (KEYBOARD_STATE->keys[GLFW_KEY_ENTER] && !KEYBOARD_STATE->key_locks[GLFW_KEY_ENTER])
-    {
-        component_dropdown_list->selected_index = component_dropdown_list->option_index;
-        KEYBOARD_STATE->key_locks[GLFW_KEY_ENTER] = 1;
-
-        if (component_dropdown_list->press && component_dropdown_list->options->size > 0 && component_dropdown_list->option_index > 0)
-        {
-            component_dropdown_list->press(component_dropdown_list, component_dropdown_list->options->items[component_dropdown_list->option_index]);
-        }
     }
 
     for (int i = 0; i < component_dropdown_list->options->size; i++)
