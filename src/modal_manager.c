@@ -1,4 +1,5 @@
 #include "include/modal_manager.h"
+#include "include/scene_base.h"
 #include "include/main.h"
 #include <coelum/current.h>
 #include <coelum/constants.h>
@@ -28,13 +29,13 @@ void modal_manager_draw(modal_manager_T* modal_manager)
         draw_positioned_2D_mesh(
             0.0f,
             0.0f,
-            0.0f,
+            1.0f,
             WINDOW_WIDTH,
             WINDOW_HEIGHT,
             255,
             255,
             255,
-            0.6f,
+            0.1f,
             state
         );
     }
@@ -58,7 +59,8 @@ modal_T* modal_manager_show_modal(modal_manager_T* modal_manager, char* title, c
         WINDOW_HEIGHT / 2,
         title,
         text,
-        state
+        state,
+        ((scene_base_T*)scene)->focus_manager
     );
 
     modal_manager_register_modal(modal_manager, modal);
@@ -77,7 +79,6 @@ void modal_manager_close_modal(modal_manager_T* modal_manager, modal_T* modal)
 
     dynamic_list_remove(modal_manager->modals, modal, (void*) 0);
     dynamic_list_remove(state->actors, modal, (void*) 0);
-    dynamic_list_remove(state->actors, modal->button, (void*) 0);
 
 
     modal_free(modal);

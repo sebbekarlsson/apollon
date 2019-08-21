@@ -1,5 +1,6 @@
 #include "include/modal.h"
 #include "include/modal_manager.h"
+#include "include/component_label.h"
 #include <coelum/current.h>
 #include <coelum/draw_utils.h>
 #include <coelum/constants.h>
@@ -11,50 +12,60 @@ extern const float COLOR_BG_DARK_BRIGHT[3];
 
 extern modal_manager_T* MODAL_MANAGER;
 
-void modal_button_press()
+
+static void modal_click(actor_T* a)
 {
-    printf("Pressed modal button!\n");
-    modal_manager_close_all_modals(MODAL_MANAGER);
 }
 
-modal_T* init_modal(float x, float y, char* title, char* text, state_T* state)
+modal_T* init_modal(float x, float y, char* title, char* text, state_T* state, focus_manager_T* focus_manager)
 {
     modal_T* modal = calloc(1, sizeof(struct MODAL_STRUCT));
     actor_T* actor = (actor_T*) modal;
-    actor_constructor(actor, x, y, 10.0f, modal_tick, modal_draw, "modal");
+    actor_constructor(actor, x, y, 1.1f, modal_tick, modal_draw, "modal");
 
     modal->title = title;
     modal->text = text;
     modal->width = 400;
     modal->height = 256;
-    modal->focus_manager = init_focus_manager();
+    modal->component_pane = init_component_pane(
+        state, focus_manager, x - modal->width/2, y - modal->height/2, modal->width, modal->height        
+    );
+    modal->component_pane->z = actor->z + 0.6f;
+    modal->component_pane->centered = 1;
+    modal->component_button = init_component_button(
+        focus_manager, x, y, actor->z + 0.7f, "OK", modal_click        
+    );
+    component_pane_add_component(modal->component_pane, (actor_component_T*) init_component_label(focus_manager, 0.0f, 0.0f, 0.0f, modal->title));
+    component_pane_add_component(modal->component_pane, (actor_component_T*) init_component_label(focus_manager, 0.0f, 0.0f, 0.0f, modal->text));
+    component_pane_add_component(modal->component_pane, (actor_component_T*) modal->component_button);
 
     actor->x -= (modal->width / 2);
     actor->y -= (modal->height / 2);
-
-    modal->button = init_button(
-        actor->x + 100,
-        (actor->y + modal->height) - 64,
-        11.0f,
-        "OK",
-        modal_button_press
-    );
-    
-    dynamic_list_append(state->actors, modal->button);
-    //dynamic_list_append(modal->focus_manager->focusables, modal->button);
 
     return modal;
 }
 
 void modal_tick(actor_T* self)
-{ 
+{
     modal_T* modal = (modal_T*) self;
-    focus_manager_tick(modal->focus_manager);
+    ((scene_T*)modal->component_pane)->tick((scene_T*)modal->component_pane);
+    state_T* modal_state = (state_T*)((scene_T*)modal->component_pane);
+    state_tick(modal_state);
 }
 
 void modal_draw(actor_T* self)
 {
     modal_T* modal = (modal_T*) self;
+    state_T* modal_state = (state_T*)((scene_T*)modal->component_pane);
+
+    glEnable(GL_SCISSOR_TEST);
+    glScissor((int)modal->component_pane->x, (int)(WINDOW_HEIGHT - modal->component_pane->y - modal->component_pane->height), (int)modal->component_pane->width, (int)modal->component_pane->height); 
+    
+    ((scene_T*)modal->component_pane)->draw((scene_T*)modal->component_pane);
+    state_draw(modal_state);
+
+    glDisable(GL_SCISSOR_TEST);
+    state_draw(modal_state);
 
     scene_T* scene = get_current_scene();
     state_T* state = (state_T*) scene;
@@ -69,7 +80,7 @@ void modal_draw(actor_T* self)
     draw_positioned_2D_mesh(
         self->x + 4,
         self->y + 4,
-        0.0f,
+        self->z,
         modal->width,
         modal->height,
         0,
@@ -82,7 +93,7 @@ void modal_draw(actor_T* self)
     draw_positioned_2D_mesh(
         self->x,
         self->y,
-        self->z,
+        self->z + 0.1f,
         modal->width,
         modal->height,
         COLOR_GRAY[0],
@@ -95,7 +106,7 @@ void modal_draw(actor_T* self)
     draw_positioned_2D_mesh(
         self->x,
         self->y,
-        self->z,
+        self->z + 0.2f,
         modal->width,
         bar_height,
         COLOR_BG_DARK_BRIGHT[0],
@@ -109,7 +120,7 @@ void modal_draw(actor_T* self)
         modal->title,
         (self->x + (modal->width / 2)) - ((strlen(modal->title) * (6 + 6)) / 2),
         self->y + (bar_height / 2),
-        0.0f,
+        self->z + 0.4f,
         255,
         255,
         255,
@@ -124,7 +135,7 @@ void modal_draw(actor_T* self)
         modal->text,
         (self->x + (modal->width / 2)) - ((strlen(modal->text) * (6 + 6)) / 2),
         (self->y + ((modal->height + bar_height) / 2)) - 32,
-        0.0f,
+        self->z + 0.4f,
         255,
         255,
         255,
@@ -138,11 +149,6 @@ void modal_draw(actor_T* self)
 
 void modal_free(modal_T* modal)
 {
-    //free(modal->title);
-    //free(modal->text);
-    button_free(modal->button);
-    focus_manager_free(modal->focus_manager);
-
     actor_T* actor = (actor_T*) modal;
 
     actor_free(actor);
