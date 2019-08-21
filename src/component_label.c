@@ -60,7 +60,7 @@ void component_label_draw(actor_T* self)
         component_label->text,
         self->x + ((component_label->font_size + component_label->font_spacing) / 2),
         self->y + (self->height / 2),
-        0.0f,
+        self->z,
         component_label->r,
         component_label->g,
         component_label->b,

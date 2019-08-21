@@ -131,7 +131,7 @@ void component_grid_draw(actor_T* self)
                     SPRITE_CHECKBOARD,
                     cell_x,
                     cell_y,
-                    0.0f,
+                    self->z + 0.1f,
                     component_grid->cell_size,
                     component_grid->cell_size,
                     state
@@ -143,7 +143,7 @@ void component_grid_draw(actor_T* self)
                     cell->sprite,
                     cell_x,
                     cell_y,
-                    0.0f,
+                    self->z + 0.1f,
                     component_grid->cell_size,
                     component_grid->cell_size,
                     state
@@ -159,7 +159,7 @@ void component_grid_draw(actor_T* self)
                     draw_positioned_2D_mesh(
                         cell_x,
                         cell_y,
-                        0.0f,
+                        self->z + 0.1f,
                         onion->cell_size,
                         onion->cell_size,
                         onion->cells[x][y]->r,
@@ -175,7 +175,7 @@ void component_grid_draw(actor_T* self)
                 draw_positioned_2D_mesh(
                     cell_x,
                     cell_y,
-                    0.0f,
+                    self->z + 0.2f,
                     component_grid->cell_size,
                     component_grid->cell_size,
                     cell->selected == 0 ? 0 : component_grid->cells[x][y]->r,
@@ -196,10 +196,10 @@ void component_grid_draw(actor_T* self)
         draw_line(
             cell_x,
             self->y,
-            0.0f,
+            self->z + 0.4f,
             cell_x,
             self->y + (component_grid->height * component_grid->cell_size),
-            0.0f,
+            self->z + 0.4f,
             component_grid->r + x == 0 || x == component_grid->width ? (actor_component->focused || actor_component->hovered) * 255 : 0,
             component_grid->g,
             component_grid->b,
@@ -227,10 +227,10 @@ void component_grid_draw(actor_T* self)
                 draw_line(
                     self->x,
                     cell_y,
-                    0.0f,
+                    self->z + 0.4f,
                     self->x + (component_grid->width * component_grid->cell_size),
                     cell_y,
-                    0.0f,
+                    self->z + 0.4f,
                     component_grid->r + y == 0 || y == component_grid->height ? (actor_component->focused || actor_component->hovered) * 255 : 0,
                     component_grid->g,
                     component_grid->b,
@@ -249,7 +249,7 @@ void component_grid_draw(actor_T* self)
                         draw_positioned_2D_mesh(
                             cell_x,
                             cell_y,
-                            0.0f,
+                            self->z + 0.3f,
                             component_grid->cell_size,
                             component_grid->cell_size,
                             255 - cell_r,

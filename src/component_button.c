@@ -77,7 +77,7 @@ void component_button_draw(actor_T* self)
     draw_positioned_2D_mesh(
         self->x,
         self->y,
-        0.0f,
+        self->z,
         self->width,
         self->height,
         disabled ? COLOR_RED[0] : ((focused || hovered) ? COLOR_BG_DARK_BRIGHT[0] : component_button->bg_r),
@@ -91,7 +91,7 @@ void component_button_draw(actor_T* self)
     draw_positioned_2D_mesh(
         self->x,
         self->y,
-        0.0f,
+        self->z + 0.1f,
         self->width,
         4,
         255,
@@ -105,7 +105,7 @@ void component_button_draw(actor_T* self)
     draw_positioned_2D_mesh(
         self->x,
         self->y,
-        0.0f,
+        self->z + 0.1f,
         4,
         self->height,
         255,
@@ -119,7 +119,7 @@ void component_button_draw(actor_T* self)
     draw_positioned_2D_mesh(
         self->x,
         self->y + self->height - 4,
-        0.0f,
+        self->z + 0.1f,
         self->width,
         4,
         0,
@@ -133,7 +133,7 @@ void component_button_draw(actor_T* self)
     draw_positioned_2D_mesh(
         self->x + self->width - 4,
         self->y,
-        0.0f,
+        self->z + 0.1f,
         4,
         self->height,
         0,
@@ -147,7 +147,7 @@ void component_button_draw(actor_T* self)
         component_button->text,
         self->x + (self->width / 2) - ((strlen(component_button->text) * (component_button->font_size + component_button->font_spacing)) / 2),
         self->y + self->height / 2,
-        0,
+        self->z + 0.1f,
         focused || hovered ? 255 : component_button->fg_r,
         focused || hovered ? 255 : component_button->fg_g,
         focused || hovered ? 255 : component_button->fg_b,

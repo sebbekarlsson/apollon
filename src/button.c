@@ -82,7 +82,7 @@ void button_draw(actor_T* self)
     draw_positioned_2D_mesh(
         self->x,
         self->y,
-        0.0f,
+        10.0f,
         button->width,
         button->height,
         disabled ? COLOR_RED[0] : ((focused || hover) ? COLOR_BG_DARK_BRIGHT[0] : button->bg_r),

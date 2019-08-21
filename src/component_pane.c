@@ -13,6 +13,7 @@ component_pane_T* init_component_pane(state_T* state, focus_manager_T* focus_man
     component_pane->component_index = 0;
     component_pane->x = x;
     component_pane->y = y;
+    component_pane->z = 0.0f;
     component_pane->width = width;
     component_pane->height = height;
     component_pane->state = state;
@@ -56,7 +57,7 @@ void component_pane_draw(scene_T* self)
     draw_positioned_2D_mesh(
         component_pane->x,
         component_pane->y,
-        0.0f,
+        component_pane->z,
         component_pane->width,
         component_pane->height,
         0.0f,
@@ -72,7 +73,7 @@ void component_pane_draw(scene_T* self)
     draw_positioned_2D_mesh(
         component_pane->x + padding,
         component_pane->y + padding,
-        0.0f,
+        component_pane->z + 0.1f,
         component_pane->width - (padding*2),
         component_pane->height - (padding*2),
         255.0f,
@@ -169,6 +170,7 @@ void component_pane_adjust(component_pane_T* component_pane)
                 i > 0 ? i-1 : 0
             ];
             actor_T* ap = (actor_T*) acp;
+            a->z = component_pane->z + 0.2f;
 
             int extra_height = 0;
 
@@ -214,6 +216,7 @@ void component_pane_adjust(component_pane_T* component_pane)
             ];
             actor_T* a = (actor_T*) ac;
             actor_T* ap = (actor_T*) acp;
+            a->z = component_pane->z + 0.2f;
 
             heights_size += 1;
             if (heights == (void*)0)
@@ -259,6 +262,7 @@ void component_pane_adjust(component_pane_T* component_pane)
     for (int i = 0; i < component_pane->cols->size; i++)
     {
         component_pane_T* child_pane = (component_pane_T*) component_pane->cols->items[i];
+        child_pane->z = component_pane->z + 0.2f;
 
         actor_component_T* acp =
             (actor_component_T*) component_pane->cols->items[
@@ -286,6 +290,7 @@ void component_pane_adjust(component_pane_T* component_pane)
     for (int i = 0; i < component_pane->rows->size; i++)
     {
         component_pane_T* child_pane = (component_pane_T*) component_pane->rows->items[i];
+        child_pane->z = component_pane->z + 0.2f;
 
         actor_component_T* acp =
             (actor_component_T*) component_pane->rows->items[
