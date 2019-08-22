@@ -708,16 +708,21 @@ void scene_sprite_editor_tick(scene_T* self)
             s_sprite_editor->b = component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->b;
         }
     }
-    /*else if (strcmp(component_grid_actor->type_name, "component_grid_tool_selector") == 0)
+    else if (((actor_component_T*)s_sprite_editor->component_grid_tool_selector)->hovered)
     {
-        if (KEYBOARD_STATE->keys[GLFW_KEY_SPACE])
+        component_grid_T* component_grid = s_sprite_editor->component_grid_tool_selector;
+
+        component_grid->cursor_x = (int)((int)((MOUSE_STATE->x - ((actor_T*)component_grid)->x) / component_grid->cell_size) % (int)component_grid->width);
+        component_grid->cursor_y = (int)((int)((MOUSE_STATE->y - ((actor_T*)component_grid)->y) / component_grid->cell_size) % (int)component_grid->height);
+
+        if (MOUSE_STATE->button_left)
         {
             s_sprite_editor->tool_index = component_grid->cursor_y;
             scene_sprite_editor_set_tool(s_sprite_editor, s_sprite_editor->tool_index);
         }
     }
 
-    if (strcmp(component_grid_actor->type_name, "component_grid_color_mixer") == 0)
+    /*if (strcmp(component_grid_actor->type_name, "component_grid_color_mixer") == 0)
     {
         if (KEYBOARD_STATE->keys[GLFW_KEY_SPACE] && ! KEYBOARD_STATE->key_locks[GLFW_KEY_SPACE])
         {
