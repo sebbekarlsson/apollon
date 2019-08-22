@@ -684,9 +684,21 @@ void scene_sprite_editor_tick(scene_T* self)
             scene_sprite_editor_set_tool(s_sprite_editor, 1); // erasor
     }
     else // mixer & color selector
-    if (((actor_component_T*)s_sprite_editor->component_grid_color_selector)->hovered)
+    if (
+        ((actor_component_T*)s_sprite_editor->component_grid_color_selector)->hovered ||
+        ((actor_component_T*)s_sprite_editor->component_grid_color_mixer)->hovered
+    )
     {
-        component_grid_T* component_grid = s_sprite_editor->component_grid_color_selector;
+        component_grid_T* component_grid = (void*)0;
+
+        if (((actor_component_T*)s_sprite_editor->component_grid_color_selector)->hovered)
+        {
+            component_grid = s_sprite_editor->component_grid_color_selector;
+        }
+        else
+        {
+            component_grid = s_sprite_editor->component_grid_color_mixer;
+        }
 
         component_grid->cursor_x = (int)((int)((MOUSE_STATE->x - ((actor_T*)component_grid)->x) / component_grid->cell_size) % (int)component_grid->width);
         component_grid->cursor_y = (int)((int)((MOUSE_STATE->y - ((actor_T*)component_grid)->y) / component_grid->cell_size) % (int)component_grid->height);
