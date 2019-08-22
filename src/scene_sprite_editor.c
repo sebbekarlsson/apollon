@@ -734,9 +734,11 @@ void scene_sprite_editor_tick(scene_T* self)
         }
     }
 
-    /*if (strcmp(component_grid_actor->type_name, "component_grid_color_mixer") == 0)
+    if (((actor_component_T*)s_sprite_editor->component_grid_color_mixer)->hovered)
     {
-        if (KEYBOARD_STATE->keys[GLFW_KEY_SPACE] && ! KEYBOARD_STATE->key_locks[GLFW_KEY_SPACE])
+        component_grid_T* component_grid = s_sprite_editor->component_grid_color_mixer;
+
+        if (MOUSE_STATE->button_right)
         {
             if (
                component_grid->cursor_x < 0 ||
@@ -763,9 +765,8 @@ void scene_sprite_editor_tick(scene_T* self)
             component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->g = (s_sprite_editor->g + component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->g);
             component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->b = (s_sprite_editor->b + component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->b);
 
-            KEYBOARD_STATE->key_locks[GLFW_KEY_SPACE] = 1;
         }
-    }*/
+    }
 }
 
 void scene_sprite_editor_draw(scene_T* self)
