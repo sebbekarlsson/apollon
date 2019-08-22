@@ -344,8 +344,10 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     component_pane_T* left = init_component_pane(state, scene_base->focus_manager, 0.0f, 0.0f, 0.0f, 0.0f);
     left->centered = 1;
+    left->child_margin_top = 8;
     component_pane_T* right = init_component_pane(state, scene_base->focus_manager, 0.0f, 0.0f, 0.0f, 0.0f);
     right->centered = 0;
+    right->child_margin_top = 8;
     
     dynamic_list_append(scene_base->component_pane->cols, left);
     dynamic_list_append(scene_base->component_pane->cols, right);

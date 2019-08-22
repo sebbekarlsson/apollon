@@ -14,6 +14,7 @@ component_pane_T* init_component_pane(state_T* state, focus_manager_T* focus_man
     component_pane->x = x;
     component_pane->y = y;
     component_pane->z = 0.0f;
+    component_pane->child_margin_top = 0;
     component_pane->width = width;
     component_pane->height = height;
     component_pane->state = state;
@@ -174,7 +175,7 @@ void component_pane_adjust(component_pane_T* component_pane)
 
             int extra_height = 0;
 
-            final_height += a->height + ac->margin_y;
+            final_height += a->height + ac->margin_y + component_pane->child_margin_top;
         }
 
         for (int i = 0; i < component_pane->components->size; i++)
@@ -198,7 +199,7 @@ void component_pane_adjust(component_pane_T* component_pane)
             else
             {
                 a->y = ap->y;
-                a->y += ap->height + ac->margin_y;
+                a->y += ap->height + ac->margin_y + component_pane->child_margin_top;
             }
         }
     }
@@ -238,7 +239,7 @@ void component_pane_adjust(component_pane_T* component_pane)
 
                 if (x > component_pane->x + component_pane->width)
                 {
-                    y += highest + acp->margin_y;
+                    y += highest + acp->margin_y + component_pane->child_margin_top;
                     x = 0;
                 }
             }

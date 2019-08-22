@@ -20,6 +20,7 @@ typedef struct COMPONENT_PANE_STRUCT
     int height;
     int x;
     int y;
+    int child_margin_top;
     float z;
     unsigned int centered;
     state_T* state;
