@@ -14,6 +14,7 @@
 
 
 extern keyboard_state_T* KEYBOARD_STATE;
+extern mouse_state_T* MOUSE_STATE;
 extern database_T* DATABASE;
 extern main_state_T* MAIN_STATE;
 extern modal_manager_T* MODAL_MANAGER;
@@ -631,75 +632,15 @@ void scene_sprite_editor_tick(scene_T* self)
     ((actor_focusable_T*)s_sprite_editor->component_button_delete)->visible = s_sprite_editor->sprite_id != (void*) 0;
     scene_base_tick(scene_base); 
 
-    if (scene_base->focus_manager->focus_index == -1)
-        return;
 
-    /*actor_focusable_T* actor_focusable = (actor_focusable_T*) scene_base->focus_manager->focusables->items[scene_base->focus_manager->focus_index];
-    actor_T* component_grid_actor = (actor_T*) actor_focusable;
-    component_grid_T* component_grid = (component_grid_T*) component_grid_actor;
-    actor_focusable->focused = 1;
-
-    if (s_sprite_editor->component_grid_index > 0)
+    if (((actor_component_T*)s_sprite_editor->component_grid)->hovered)
     {
-        s_sprite_editor->component_grid->onion = (component_grid_T*) s_sprite_editor->component_grids->items[s_sprite_editor->component_grid_index-1];
-    }
+        component_grid_T* component_grid = s_sprite_editor->component_grid;
 
-    s_sprite_editor->component_grid_tool_selector->cells[0][s_sprite_editor->tool_index]->selected = 1;
+        component_grid->cursor_x = (int)((int)((MOUSE_STATE->x - ((actor_T*)component_grid)->x) / component_grid->cell_size) % (int)component_grid->width);
+        component_grid->cursor_y = (int)((int)((MOUSE_STATE->y - ((actor_T*)component_grid)->y) / component_grid->cell_size) % (int)component_grid->height);
 
-    if (KEYBOARD_STATE->keys[GLFW_KEY_UP] && !KEYBOARD_STATE->key_locks[GLFW_KEY_UP])
-    {
-        component_grid->cursor_y -= 1;
-        KEYBOARD_STATE->key_locks[GLFW_KEY_UP] = 1;
-    }
-
-    if (KEYBOARD_STATE->keys[GLFW_KEY_DOWN] && !KEYBOARD_STATE->key_locks[GLFW_KEY_DOWN])
-    {
-        component_grid->cursor_y += 1;
-        KEYBOARD_STATE->key_locks[GLFW_KEY_DOWN] = 1;
-    }
-
-    if (KEYBOARD_STATE->keys[GLFW_KEY_LEFT] && !KEYBOARD_STATE->key_locks[GLFW_KEY_LEFT])
-    {
-        component_grid->cursor_x -= 1;
-        KEYBOARD_STATE->key_locks[GLFW_KEY_LEFT] = 1;
-    }
-
-    if (KEYBOARD_STATE->keys[GLFW_KEY_RIGHT] && !KEYBOARD_STATE->key_locks[GLFW_KEY_RIGHT])
-    {
-        component_grid->cursor_x += 1;
-        KEYBOARD_STATE->key_locks[GLFW_KEY_RIGHT] = 1;
-    }
-
-    if (((actor_focusable_T*)s_sprite_editor->component_grid)->focused)
-    {
-        if (KEYBOARD_STATE->keys[GLFW_KEY_Z] && !KEYBOARD_STATE->key_locks[GLFW_KEY_Z])
-        {
-            scene_sprite_editor_goto_prev(s_sprite_editor);
-            KEYBOARD_STATE->key_locks[GLFW_KEY_Z] = 1;
-        }
-
-        if (KEYBOARD_STATE->keys[GLFW_KEY_X] && !KEYBOARD_STATE->key_locks[GLFW_KEY_X])
-        {
-            scene_sprite_editor_goto_next(s_sprite_editor);
-            KEYBOARD_STATE->key_locks[GLFW_KEY_X] = 1;
-        }
-
-        if (KEYBOARD_STATE->keys[GLFW_KEY_C] && !KEYBOARD_STATE->key_locks[GLFW_KEY_C])
-        {
-            scene_sprite_editor_delete_current_frame(s_sprite_editor);
-            KEYBOARD_STATE->key_locks[GLFW_KEY_C] = 1;
-        }
-
-        if (KEYBOARD_STATE->keys[GLFW_KEY_S] && !KEYBOARD_STATE->key_locks[GLFW_KEY_S])
-        {
-            component_grid_create_image(s_sprite_editor->component_grid, "sheet.png");
-            KEYBOARD_STATE->key_locks[GLFW_KEY_S] = 1;
-        }
-    }
-
-    if (strcmp(component_grid_actor->type_name, "component_grid_canvas") == 0)
-    {
-        if (KEYBOARD_STATE->keys[GLFW_KEY_SPACE])
+        if (MOUSE_STATE->button_left)
         {
             if (
                component_grid->cursor_x < 0 ||
@@ -742,7 +683,7 @@ void scene_sprite_editor_tick(scene_T* self)
         if (KEYBOARD_STATE->keys[GLFW_KEY_2])
             scene_sprite_editor_set_tool(s_sprite_editor, 1); // erasor
     }
-    else
+    /*else
     if (strcmp(component_grid_actor->type_name, "component_grid_color_selector") == 0 || strcmp(component_grid_actor->type_name, "component_grid_color_mixer") == 0)
     {
         if (KEYBOARD_STATE->keys[GLFW_KEY_G])
