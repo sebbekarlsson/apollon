@@ -683,10 +683,15 @@ void scene_sprite_editor_tick(scene_T* self)
         if (KEYBOARD_STATE->keys[GLFW_KEY_2])
             scene_sprite_editor_set_tool(s_sprite_editor, 1); // erasor
     }
-    /*else
-    if (strcmp(component_grid_actor->type_name, "component_grid_color_selector") == 0 || strcmp(component_grid_actor->type_name, "component_grid_color_mixer") == 0)
+    else // mixer & color selector
+    if (((actor_component_T*)s_sprite_editor->component_grid_color_selector)->hovered)
     {
-        if (KEYBOARD_STATE->keys[GLFW_KEY_G])
+        component_grid_T* component_grid = s_sprite_editor->component_grid_color_selector;
+
+        component_grid->cursor_x = (int)((int)((MOUSE_STATE->x - ((actor_T*)component_grid)->x) / component_grid->cell_size) % (int)component_grid->width);
+        component_grid->cursor_y = (int)((int)((MOUSE_STATE->y - ((actor_T*)component_grid)->y) / component_grid->cell_size) % (int)component_grid->height);
+
+        if (MOUSE_STATE->button_left)
         {
             if (
                component_grid->cursor_x < 0 ||
@@ -703,7 +708,7 @@ void scene_sprite_editor_tick(scene_T* self)
             s_sprite_editor->b = component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->b;
         }
     }
-    else if (strcmp(component_grid_actor->type_name, "component_grid_tool_selector") == 0)
+    /*else if (strcmp(component_grid_actor->type_name, "component_grid_tool_selector") == 0)
     {
         if (KEYBOARD_STATE->keys[GLFW_KEY_SPACE])
         {
