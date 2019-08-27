@@ -16,8 +16,6 @@ typedef struct ACTOR_TEXTABLE
     unsigned int supports_multiple_lines;
     int caret_x;
     int caret_y;
-    int width;
-    int height;
     int fg_r;
     int fg_g;
     int fg_b;

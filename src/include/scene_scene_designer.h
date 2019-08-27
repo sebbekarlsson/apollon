@@ -2,7 +2,8 @@
 #define APOLLON_SCENE_SCENE_DESIGNER_H
 #include <coelum/scene.h>
 #include <coelum/dynamic_list.h>
-#include "dropdown_list.h"
+//#include "dropdown_list.h"
+#include <athena/database.h>
 #include "grid.h"
 #include "actor_cursor.h"
 
@@ -10,7 +11,7 @@
 typedef struct SCENE_SCENE_DESIGNER_STRUCT
 {
     scene_T base;
-    dropdown_list_T* dropdown_list;
+    //dropdown_list_T* dropdown_list;
     int scene_index;
     unsigned int scene_count;
     actor_cursor_T* actor_cursor;

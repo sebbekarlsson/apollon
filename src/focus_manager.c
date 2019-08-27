@@ -59,8 +59,6 @@ void focus_manager_tick(focus_manager_T* focus_manager)
             {
                 actor_component->hovered = 1;
 
-                printf("wtf\n");
-
                 if (click)
                 {
                     if (actor_component->on_click)
