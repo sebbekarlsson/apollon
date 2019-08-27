@@ -51,41 +51,41 @@ void scene_scene_designer_refresh_state(scene_scene_designer_T* s_scene_designer
     if (MAIN_STATE->scene_id != (void*)0)
         scene_scene_designer_sync_database_actor_instances(s_scene_designer);
 
-    /*dropdown_list_sync_from_table(
-        s_scene_designer->dropdown_list,
+    component_dropdown_list_sync_from_table(
+        s_scene_designer->component_dropdown_list,
         DATABASE,
         "actor_definitions",
         1,
         5
     );
-    dropdown_list_reload_sprites(s_scene_designer->dropdown_list);*/
+    component_dropdown_list_reload_sprites(s_scene_designer->component_dropdown_list);
 }
 
-/*void scene_designer_dropdown_press(void* dropdown_list, void* option)
+void scene_designer_component_dropdown_press(void* component_dropdown_list, void* option)
 {
     scene_T* scene = get_current_scene();
     scene_scene_designer_T* s_scene_designer = (scene_scene_designer_T*) scene;
     actor_cursor_T* actor_cursor = (actor_cursor_T*) s_scene_designer->actor_cursor;
 
-    dropdown_list_T* dropdown = (dropdown_list_T*) dropdown_list;
-    actor_focusable_T* dropdown_list_focusable = (actor_focusable_T*) dropdown;
-    dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) option;
+    component_dropdown_list_T* component_dropdown = (component_dropdown_list_T*) component_dropdown_list;
+    actor_component_T* component_dropdown_list_component = (actor_component_T*) component_dropdown;
+    component_dropdown_list_option_T* component_dropdown_list_option = (component_dropdown_list_option_T*) option;
 
     database_insert_actor_instance(
         DATABASE,
-        (const char*) dropdown_list_option->value,
+        (const char*) component_dropdown_list_option->value,
         (const char*) MAIN_STATE->scene_id,
         (const float) ((actor_T*)actor_cursor)->x,
         (const float) ((actor_T*)actor_cursor)->y,
         (const float) ((actor_T*)actor_cursor)->z
     );
 
-    // close dropdown
-    dropdown_list_focusable->focused = 0;
-    ((actor_focusable_T*)s_scene_designer->dropdown_list)->visible = 0;
+    // close component_dropdown
+    component_dropdown_list_component->focused = 0;
+    ((actor_component_T*)s_scene_designer->component_dropdown_list)->visible = 0;
     
     scene_scene_designer_refresh_state(s_scene_designer);
-}*/
+}
 
 void scene_scene_designer_update_coords_text(scene_scene_designer_T* s_scene_designer)
 {
@@ -125,14 +125,18 @@ scene_scene_designer_T* init_scene_scene_designer()
     s_scene_designer->database_scene = (void*) 0;
     s_scene_designer->coords_text = calloc(1, sizeof(char));
     s_scene_designer->coords_text[0] = '\0';
+    s_scene_designer->focus_manager = init_focus_manager();
 
 
     // this one is starts as focused
-    //s_scene_designer->dropdown_list = init_dropdown_list(0.0f, 0.0f, 0.0f, scene_designer_dropdown_press);
-    //((actor_focusable_T*)s_scene_designer->dropdown_list)->visible = 0;
-    //((actor_T*)s_scene_designer->dropdown_list)->z = 1;
+    s_scene_designer->component_dropdown_list = init_component_dropdown_list(
+            s_scene_designer->focus_manager,
+            0.0f, 0.0f, 0.0f, scene_designer_component_dropdown_press);
+    ((actor_component_T*)s_scene_designer->component_dropdown_list)->visible = 0;
+    ((actor_T*)s_scene_designer->component_dropdown_list)->z = 1;
     
-    //dynamic_list_append(state->actors, s_scene_designer->dropdown_list);
+    dynamic_list_append(s_scene_designer->focus_manager->components, s_scene_designer->component_dropdown_list); 
+    dynamic_list_append(state->actors, s_scene_designer->component_dropdown_list);
 
     s_scene_designer->actor_cursor = init_actor_cursor(
         WINDOW_WIDTH / 2,
@@ -186,24 +190,24 @@ void scene_scene_designer_tick(scene_T* self)
 
     if (KEYBOARD_STATE->keys[GLFW_KEY_I] && !KEYBOARD_STATE->key_locks[GLFW_KEY_I])
     {
-        /*((actor_T*)s_scene_designer->dropdown_list)->x = ((actor_T*)actor_cursor)->x;
-        ((actor_T*)s_scene_designer->dropdown_list)->y = ((actor_T*)actor_cursor)->y;
-        actor_focusable_T* dropdown_list_focusable = (actor_focusable_T*) s_scene_designer->dropdown_list;
+        ((actor_T*)s_scene_designer->component_dropdown_list)->x = ((actor_T*)actor_cursor)->x;
+        ((actor_T*)s_scene_designer->component_dropdown_list)->y = ((actor_T*)actor_cursor)->y;
+        actor_component_T* component_dropdown_list_component = (actor_component_T*) s_scene_designer->component_dropdown_list;
 
-        if (!dropdown_list_focusable->focused)
+        if (!component_dropdown_list_component->focused)
         {
-            dropdown_list_focusable->focused = 1;
-            ((actor_focusable_T*)s_scene_designer->dropdown_list)->visible = 1;
-            printf("Please show dropdown\n");
+            component_dropdown_list_component->focused = 1;
+            ((actor_component_T*)s_scene_designer->component_dropdown_list)->visible = 1;
+            printf("Please show component_dropdown\n");
         }
         else
         {
-            dropdown_list_focusable->focused = 0;
-            ((actor_focusable_T*)s_scene_designer->dropdown_list)->visible = 0;
-            printf("Please dont show dropdown\n");
+            component_dropdown_list_component->focused = 0;
+            ((actor_component_T*)s_scene_designer->component_dropdown_list)->visible = 0;
+            printf("Please dont show component_dropdown\n");
         }
 
-        KEYBOARD_STATE->key_locks[GLFW_KEY_I] = 1;*/
+        KEYBOARD_STATE->key_locks[GLFW_KEY_I] = 1;
     }
 
     if (KEYBOARD_STATE->keys[GLFW_KEY_DELETE] && !KEYBOARD_STATE->key_locks[GLFW_KEY_DELETE])
