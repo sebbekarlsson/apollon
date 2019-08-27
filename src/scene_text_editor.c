@@ -17,7 +17,7 @@ static void scene_text_editor_load(void* s)
     if (MAIN_STATE->script_id != (void*)0 && MAIN_STATE->text_editor_value != (void*)0)
     {
         
-        ((actor_textable_T*)s_text_editor->textarea)->value = MAIN_STATE->text_editor_value;
+        ((component_textable_T*)s_text_editor->component_textarea)->value = MAIN_STATE->text_editor_value;
     }
 }
 
@@ -33,9 +33,9 @@ scene_text_editor_T* init_scene_text_editor()
 
     s_text_editor->focus_manager = init_focus_manager();
 
-    s_text_editor->textarea = init_textarea(0.0f, 0.0f, WINDOW_WIDTH, WINDOW_HEIGHT);
-    //dynamic_list_append(s_text_editor->focus_manager->focusables, s_text_editor->textarea);
-    dynamic_list_append(state->actors, s_text_editor->textarea);
+    s_text_editor->component_textarea = init_component_textarea(s_text_editor->focus_manager, 0.0f, 0.0f, WINDOW_WIDTH, WINDOW_HEIGHT);
+    dynamic_list_append(state->actors, s_text_editor->component_textarea);
+    dynamic_list_append(s_text_editor->focus_manager->components, (actor_component_T*) s_text_editor->component_textarea);
 
     s_text_editor->line_bar_width = 24;
 
@@ -49,19 +49,19 @@ void scene_text_editor_tick(scene_T* self)
 
     go_back_on_escape();
 
-    actor_textable_T* actor_textable = (actor_textable_T*) s_text_editor->textarea;
-    actor_textable->width = WINDOW_WIDTH - s_text_editor->line_bar_width;
-    ((actor_T*)actor_textable)->x = s_text_editor->line_bar_width;
+    component_textable_T* component_textable = (component_textable_T*) s_text_editor->component_textarea;
+    component_textable->width = WINDOW_WIDTH - s_text_editor->line_bar_width;
+    ((actor_T*)component_textable)->x = s_text_editor->line_bar_width;
 
-    if (actor_textable->caret_y >= state->camera->y + WINDOW_HEIGHT)
+    if (component_textable->caret_y >= state->camera->y + WINDOW_HEIGHT)
         state->camera->y += 16; // font_size + font_spacing
 
-    if (actor_textable->caret_y < state->camera->y)
+    if (component_textable->caret_y < state->camera->y)
         state->camera->y -= 16;
 
     focus_manager_tick(s_text_editor->focus_manager);
 
-    MAIN_STATE->text_editor_value = ((actor_textable_T*)s_text_editor->textarea)->value;
+    MAIN_STATE->text_editor_value = ((component_textable_T*)s_text_editor->component_textarea)->value;
 }
 
 void scene_text_editor_draw(scene_T* self)
@@ -84,7 +84,7 @@ void scene_text_editor_draw(scene_T* self)
     
     char* text = calloc(256, sizeof(char));
 
-    for (int i = 0; i < actor_textable_get_number_of_lines((actor_textable_T*) s_text_editor->textarea)+1; i++)
+    for (int i = 0; i < component_textable_get_number_of_lines((component_textable_T*) s_text_editor->component_textarea)+1; i++)
     {
         sprintf(text, "%d", i);
         s_text_editor->line_bar_width = strlen(text) * (8 + 8);

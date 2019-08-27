@@ -51,14 +51,6 @@ void focus_manager_tick(focus_manager_T* focus_manager)
         actor_component_T* actor_component = (actor_component_T*) focus_manager->components->items[i];
         actor_T* actor = (actor_T*) actor_component;
 
-        //printf("i: %d, prio: %d\n", i, actor_component->prio);
-    }
-
-    for (int i = 0; i < focus_manager->components->size; i++)
-    {
-        actor_component_T* actor_component = (actor_component_T*) focus_manager->components->items[i];
-        actor_T* actor = (actor_T*) actor_component;
-
         actor_component->hovered = 0;
 
         if (MOUSE_STATE->x >= actor->x && MOUSE_STATE->x <= actor->x + actor->width)
@@ -67,9 +59,10 @@ void focus_manager_tick(focus_manager_T* focus_manager)
             {
                 actor_component->hovered = 1;
 
+                printf("wtf\n");
+
                 if (click)
                 {
-                    printf("click_prio:%d\n", actor_component->prio);
                     if (actor_component->on_click)
                     {
                         actor_component->on_click(actor);
