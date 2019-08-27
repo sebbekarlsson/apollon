@@ -9,6 +9,7 @@ typedef struct ACTOR_COMPONENT_STRUCT
     unsigned int hovered;
     unsigned int focused;
     unsigned int visible;
+    unsigned int prio;
     int margin_y;
     int margin_x;
     void (*on_click)(actor_T* self);

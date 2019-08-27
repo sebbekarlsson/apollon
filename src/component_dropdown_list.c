@@ -15,13 +15,24 @@ extern float COLOR_BG_DARK[3];
 extern float COLOR_BG_DARK_BRIGHT[3];
 extern float COLOR_FG[3];
 
+static void dropdown_click(actor_T* self)
+{
+    component_dropdown_list_T* component_dropdown_list = (component_dropdown_list_T*) self;
+    component_dropdown_list->selected_index = component_dropdown_list->option_index;
+    
+    if (component_dropdown_list->press && component_dropdown_list->options->size > 0 && component_dropdown_list->option_index > 0)
+    {
+        component_dropdown_list->press(component_dropdown_list, component_dropdown_list->options->items[component_dropdown_list->option_index]);
+    }
+}
+
 component_dropdown_list_T* init_component_dropdown_list(focus_manager_T* focus_manager, float x, float y, float z, void (*press)(void* component_dropdown_list, void* option))
 {
     component_dropdown_list_T* component_dropdown_list = calloc(1, sizeof(struct COMPONENT_DROPDOWN_LIST_STRUCT));
     actor_T* actor = (actor_T*) component_dropdown_list;
     actor_constructor(actor, x, y, z, component_dropdown_list_tick, component_dropdown_list_draw, "component_dropdown_list");
     actor_component_T* actor_component = (actor_component_T*) actor;
-    actor_component_constructor(actor_component, focus_manager, (void*)0);
+    actor_component_constructor(actor_component, focus_manager, dropdown_click);
     
     component_dropdown_list->options = init_dynamic_list(sizeof(struct COMPONENT_DROPDOWN_LIST_OPTION_STRUCT*));
     dynamic_list_append(
@@ -44,41 +55,36 @@ void component_dropdown_list_tick(actor_T* self)
     component_dropdown_list_T* component_dropdown_list = (component_dropdown_list_T*) self;
     actor_component_T* actor_component = (actor_component_T*) component_dropdown_list;
 
+    actor_component->prio = component_dropdown_list->expanded;
+
     actor_component_tick(actor_component);
 
     if (!actor_component->focused)
     {
         component_dropdown_list->expanded = 0;
+        self->height = component_dropdown_list->expanded ? component_dropdown_list->options->size * 28 : 28;
         return;
     }
     else
     {
         component_dropdown_list->expanded = 1;
+        self->height = component_dropdown_list->expanded ? component_dropdown_list->options->size * 28 : 28;
     }
+
 
     for (int i = 0; i < component_dropdown_list->options->size; i++)
     {
         component_dropdown_list_option_T* option = (component_dropdown_list_option_T*) component_dropdown_list->options->items[i];
 
         int x = self->x;
-        int y = self->y + (i * self->height);
+        int y = self->y + (i * 28);
 
         if (MOUSE_STATE->x >= x && MOUSE_STATE->x <= x + self->width)
         {
-            if (MOUSE_STATE->y >= y && MOUSE_STATE->y <= y + self->height)
+            if (MOUSE_STATE->y >= y && MOUSE_STATE->y <= y + 28)
             {
                 component_dropdown_list->option_index = i;
             }
-        }
-    }
-
-    if (MOUSE_STATE->button_left)
-    {
-        component_dropdown_list->selected_index = component_dropdown_list->option_index;
-        
-        if (component_dropdown_list->press && component_dropdown_list->options->size > 0 && component_dropdown_list->option_index > 0)
-        {
-            component_dropdown_list->press(component_dropdown_list, component_dropdown_list->options->items[component_dropdown_list->option_index]);
         }
     }
 }
@@ -88,7 +94,7 @@ void component_dropdown_list_option_draw(int i, component_dropdown_list_option_T
     actor_component_T* actor_component = (actor_component_T*) component_dropdown_list;
     actor_T* self = (actor_T*) actor_component;
 
-    int h = self->height;
+    int h = 28;
 
     float base_z = self->z;
 
