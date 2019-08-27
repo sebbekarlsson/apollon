@@ -161,7 +161,7 @@ void component_textable_draw_caret(component_textable_T* self)
                 draw_positioned_2D_mesh(
                     self->caret_x - scroll,
                     actor->y + (y * (self->font_size + self->font_spacing)),
-                    actor->z,
+                    actor->z + 0.1f,
                     4,
                     (self->font_size * 2),
                     self->fg_r,

@@ -92,7 +92,7 @@ void component_input_field_draw(actor_T* self)
         draw_positioned_2D_mesh(
             self->x + ((input_field->font_size + input_field->font_spacing) * (float) input_field->caret_position - ((input_field->font_size + input_field->font_spacing) / 2)) + ((input_field->font_size + input_field->font_spacing) / 2) - scroll,
             self->y - (input_field->font_size) + (self->height / 2),
-            self->z,
+            self->z + 0.1f,
             4,
             (input_field->font_size * 2),
             COLOR_FG[0],
