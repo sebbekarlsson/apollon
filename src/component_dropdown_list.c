@@ -127,7 +127,7 @@ void component_dropdown_list_option_draw(int i, component_dropdown_list_option_T
                 option->database_sprite->sprite,
                 self->x + 4,
                 self->y + (i * h) + ((h/2) - 8),
-                base_z + 0.1f,
+                base_z + 0.9f,
                 16,
                 16,
                 state
