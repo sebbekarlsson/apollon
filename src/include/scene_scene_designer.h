@@ -20,6 +20,8 @@ typedef struct SCENE_SCENE_DESIGNER_STRUCT
     database_scene_T* database_scene;
     focus_manager_T* focus_manager;
     char* coords_text;
+    int clicked_x;
+    int clicked_y;
 } scene_scene_designer_T;
 
 scene_scene_designer_T* init_scene_scene_designer();

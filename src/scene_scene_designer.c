@@ -12,10 +12,12 @@
 
 
 extern keyboard_state_T* KEYBOARD_STATE;
+extern mouse_state_T* MOUSE_STATE;
 extern database_T* DATABASE;
 extern main_state_T* MAIN_STATE;
 extern const float COLOR_FG[3];
 extern sprite_T* SPRITE_BROKEN;
+extern GLFWwindow* window;
 
 
 void _free_database_actor_instance(void* item)
@@ -63,6 +65,7 @@ void scene_scene_designer_refresh_state(scene_scene_designer_T* s_scene_designer
 
 void scene_designer_component_dropdown_press(void* component_dropdown_list, void* option)
 {
+    printf("press\n");
     scene_T* scene = get_current_scene();
     scene_scene_designer_T* s_scene_designer = (scene_scene_designer_T*) scene;
     actor_cursor_T* actor_cursor = (actor_cursor_T*) s_scene_designer->actor_cursor;
@@ -75,8 +78,8 @@ void scene_designer_component_dropdown_press(void* component_dropdown_list, void
         DATABASE,
         (const char*) component_dropdown_list_option->value,
         (const char*) MAIN_STATE->scene_id,
-        (const float) ((actor_T*)actor_cursor)->x,
-        (const float) ((actor_T*)actor_cursor)->y,
+        (const float) s_scene_designer->clicked_x,
+        (const float) s_scene_designer->clicked_y,
         (const float) ((actor_T*)actor_cursor)->z
     );
 
@@ -126,6 +129,8 @@ scene_scene_designer_T* init_scene_scene_designer()
     s_scene_designer->coords_text = calloc(1, sizeof(char));
     s_scene_designer->coords_text[0] = '\0';
     s_scene_designer->focus_manager = init_focus_manager();
+    s_scene_designer->clicked_x = 0;
+    s_scene_designer->clicked_y = 0;
 
 
     // this one is starts as focused
@@ -160,36 +165,24 @@ void scene_scene_designer_tick(scene_T* self)
     scene_scene_designer_T* s_scene_designer = (scene_scene_designer_T*) self;
     actor_cursor_T* actor_cursor = (actor_cursor_T*) s_scene_designer->actor_cursor;
 
-    if (KEYBOARD_STATE->keys[GLFW_KEY_UP] && !KEYBOARD_STATE->key_locks[GLFW_KEY_UP])
-    {
-        ((actor_T*)actor_cursor)->y -= 16;
-        scene_scene_designer_update_coords_text(s_scene_designer);
-        KEYBOARD_STATE->key_locks[GLFW_KEY_UP] = 1;
-    }
+    focus_manager_tick(s_scene_designer->focus_manager);
 
-    if (KEYBOARD_STATE->keys[GLFW_KEY_DOWN] && !KEYBOARD_STATE->key_locks[GLFW_KEY_DOWN])
-    {
-        ((actor_T*)actor_cursor)->y += 16;
-        scene_scene_designer_update_coords_text(s_scene_designer);
-        KEYBOARD_STATE->key_locks[GLFW_KEY_DOWN] = 1;
-    }
+    ((actor_T*)actor_cursor)->x = ((int)MOUSE_STATE->x / 16) * 16;
+    ((actor_T*)actor_cursor)->y = ((int)MOUSE_STATE->y / 16) * 16;
 
-    if (KEYBOARD_STATE->keys[GLFW_KEY_LEFT] && !KEYBOARD_STATE->key_locks[GLFW_KEY_LEFT])
+    unsigned int click = 0;
+    static int oldState = GLFW_RELEASE;
+    int newState = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+    if (newState == GLFW_RELEASE && oldState == GLFW_PRESS)
     {
-        ((actor_T*)actor_cursor)->x -= 16;
-        scene_scene_designer_update_coords_text(s_scene_designer);
-        KEYBOARD_STATE->key_locks[GLFW_KEY_LEFT] = 1;
+       click = 1;
     }
+    oldState = newState;
 
-    if (KEYBOARD_STATE->keys[GLFW_KEY_RIGHT] && !KEYBOARD_STATE->key_locks[GLFW_KEY_RIGHT])
+    if (click)
     {
-        ((actor_T*)actor_cursor)->x += 16;
-        scene_scene_designer_update_coords_text(s_scene_designer);
-        KEYBOARD_STATE->key_locks[GLFW_KEY_RIGHT] = 1;
-    }
-
-    if (KEYBOARD_STATE->keys[GLFW_KEY_I] && !KEYBOARD_STATE->key_locks[GLFW_KEY_I])
-    {
+        s_scene_designer->clicked_x = ((actor_T*)actor_cursor)->x;
+        s_scene_designer->clicked_y = ((actor_T*)actor_cursor)->y;
         ((actor_T*)s_scene_designer->component_dropdown_list)->x = ((actor_T*)actor_cursor)->x;
         ((actor_T*)s_scene_designer->component_dropdown_list)->y = ((actor_T*)actor_cursor)->y;
         actor_component_T* component_dropdown_list_component = (actor_component_T*) s_scene_designer->component_dropdown_list;
@@ -206,8 +199,6 @@ void scene_scene_designer_tick(scene_T* self)
             ((actor_component_T*)s_scene_designer->component_dropdown_list)->visible = 0;
             printf("Please dont show component_dropdown\n");
         }
-
-        KEYBOARD_STATE->key_locks[GLFW_KEY_I] = 1;
     }
 
     if (KEYBOARD_STATE->keys[GLFW_KEY_DELETE] && !KEYBOARD_STATE->key_locks[GLFW_KEY_DELETE])
