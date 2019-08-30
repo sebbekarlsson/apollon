@@ -343,6 +343,9 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     float iy = 24.0f;
 
+    s_sprite_editor->frame_index = calloc(1, sizeof(char));
+    s_sprite_editor->frame_index[0] = '\0';
+
     component_pane_T* left = init_component_pane(state, scene_base->focus_manager, 0.0f, 0.0f, 0.0f, 0.0f);
     left->centered = 1;
     left->child_margin_top = 8;
@@ -489,6 +492,16 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     component_pane_add_component(
         right,
         (actor_component_T*) s_sprite_editor->component_grid_color_mixer
+    );
+
+    s_sprite_editor->component_label_frame_index = init_component_label(
+        scene_base->focus_manager,
+        0.0f, 0.0f, 0.0f,
+        "0 / 0"        
+    );
+    component_pane_add_component(
+        right,
+        (actor_component_T*) s_sprite_editor->component_label_frame_index
     );
 
     scene_base->focus_manager->focus_index = 0;
@@ -682,6 +695,30 @@ void scene_sprite_editor_tick(scene_T* self)
             scene_sprite_editor_set_tool(s_sprite_editor, 0); // pencil
         if (KEYBOARD_STATE->keys[GLFW_KEY_2])
             scene_sprite_editor_set_tool(s_sprite_editor, 1); // erasor
+
+        if (KEYBOARD_STATE->keys[GLFW_KEY_Z] && !KEYBOARD_STATE->key_locks[GLFW_KEY_Z])
+        {
+            scene_sprite_editor_goto_prev(s_sprite_editor);
+            KEYBOARD_STATE->key_locks[GLFW_KEY_Z] = 1;
+        }
+
+        if (KEYBOARD_STATE->keys[GLFW_KEY_X] && !KEYBOARD_STATE->key_locks[GLFW_KEY_X])
+        {
+            scene_sprite_editor_goto_next(s_sprite_editor);
+            KEYBOARD_STATE->key_locks[GLFW_KEY_X] = 1;
+        }
+
+        if (KEYBOARD_STATE->keys[GLFW_KEY_C] && !KEYBOARD_STATE->key_locks[GLFW_KEY_C])
+        {
+            scene_sprite_editor_delete_current_frame(s_sprite_editor);
+            KEYBOARD_STATE->key_locks[GLFW_KEY_C] = 1;
+        }
+
+        /*if (KEYBOARD_STATE->keys[GLFW_KEY_S] && !KEYBOARD_STATE->key_locks[GLFW_KEY_S])
+        {
+            grid_create_image(s_sprite_editor->grid, "sheet.png");
+            KEYBOARD_STATE->key_locks[GLFW_KEY_S] = 1;
+        }*/
     }
     else // mixer & color selector
     if (
@@ -781,23 +818,10 @@ void scene_sprite_editor_draw(scene_T* self)
         s_sprite_editor->component_grids->size > 0 ? s_sprite_editor->component_grids->size - 1 : 0
     );
 
-    char component_grid_index_str[16];
-    sprintf(component_grid_index_str, "%d / %d", (int)s_sprite_editor->component_grid_index, number_of_frames);
-
-    draw_text(
-        component_grid_index_str,
-        ((actor_T*)s_sprite_editor->component_grid)->x + (16 / 2),
-        ((actor_T*)s_sprite_editor->component_grid)->y - (16 / 2),
-        0,
-        0, // r
-        0, // g
-        0, // b
-        1.0f, // a
-        6,
-        6,
-        0,
-        state
-    );
+    const char* frame_index_template = "%d / %d";
+    s_sprite_editor->frame_index = realloc(s_sprite_editor->frame_index, (strlen(frame_index_template) + 256) * sizeof(char));
+    sprintf(s_sprite_editor->frame_index, frame_index_template, (int)s_sprite_editor->component_grid_index, number_of_frames);
+    s_sprite_editor->component_label_frame_index->text = s_sprite_editor->frame_index;
 
     if (s_sprite_editor->sprite_id != (void*)0)
     {

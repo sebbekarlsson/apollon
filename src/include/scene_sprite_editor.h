@@ -27,9 +27,11 @@ typedef struct SCENE_SPRITE_EDITOR_STRUCT
     component_button_T* component_button_save;
     component_button_T* component_button_new;
     component_button_T* component_button_delete;
+    component_label_T* component_label_frame_index;
     unsigned int component_grid_index;
     unsigned int tool_index;
     char* sprite_id; // the sprite currently being modified
+    char* frame_index;
     database_sprite_T* current_database_sprite; // a copy of the current sprite being edited. Only for reading.
     float r;
     float g;
