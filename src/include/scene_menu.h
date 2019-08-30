@@ -6,13 +6,6 @@
 
 typedef struct SCENE_MENU_STRUCT {
     scene_base_T base;
-    button_T* button_scene_editor;
-    button_T* button_actor_editor;
-    button_T* button_sprite_editor;
-    button_T* button_text_editor;
-    button_T* button_run;
-    button_T* button_build;
-    button_T* button_quit;
 } scene_menu_T;
 
 scene_menu_T* init_scene_menu();

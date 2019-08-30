@@ -34,9 +34,9 @@ static void scene_script_selector_reset_state(scene_script_selector_T* s_script_
     scene_script_selector_reset_script_id(s_script_selector);
 
     memset(
-        s_script_selector->input_field_name->value,
+        s_script_selector->component_input_field_name->value,
         0,
-        sizeof(char) * strlen(s_script_selector->input_field_name->value)
+        sizeof(char) * strlen(s_script_selector->component_input_field_name->value)
     );
     
     REFRESH_STATE(s_script_selector);
@@ -64,17 +64,17 @@ static void scene_script_selector_set_current_script(
     REFRESH_STATE(s_script_selector);
 }
 
-static void dropdown_list_script_press(void* dropdown_list, void* option)
+static void component_dropdown_list_script_press(void* component_dropdown_list, void* option)
 {
     scene_T* scene = get_current_scene();
     scene_script_selector_T* s_script_selector = (scene_script_selector_T*) scene;
 
-    dropdown_list_option_T* dropdown_list_option = (dropdown_list_option_T*) option;
+    component_dropdown_list_option_T* component_dropdown_list_option = (component_dropdown_list_option_T*) option;
 
-    scene_script_selector_set_current_script(s_script_selector, (char*) dropdown_list_option->value);
+    scene_script_selector_set_current_script(s_script_selector, (char*) component_dropdown_list_option->value);
 }
 
-static void button_save_press()
+static void component_button_save_press()
 {
     scene_T* scene = get_current_scene();
     scene_script_selector_T* s_script_selector = (scene_script_selector_T*) scene;
@@ -83,7 +83,7 @@ static void button_save_press()
     char* text_editor_value = MAIN_STATE->text_editor_value;
 
     // name
-    char* name = s_script_selector->input_field_name->value;
+    char* name = s_script_selector->component_input_field_name->value;
 
     if (!strlen(name))
     {
@@ -133,16 +133,16 @@ static void button_save_press()
     }
 }
 
-static void button_edit_press()
+static void component_button_edit_press()
 {
     scene_manager_goto(THEATRE->scene_manager, "text_editor");
 }
 
-static void button_delete_press()
+static void component_button_delete_press()
 {
 }
 
-static void button_new_press()
+static void component_button_new_press()
 {
     scene_T* scene = get_current_scene();
     scene_script_selector_T* s_script_selector = (scene_script_selector_T*) scene;
@@ -177,31 +177,42 @@ scene_script_selector_T* init_scene_script_selector()
 
     s_script_selector->script_id = (void*) 0;
 
+    scene_base->component_pane->centered = 1;
+    scene_base->component_pane->child_margin_top = 8;
+
     float margin = 64;
-    float label_margin = 16; 
+    float component_label_margin = 16; 
 
     /* ==== LEFT ==== */
 
     float ix = margin;
     float iy = margin;
 
-    s_script_selector->label_script = init_label(
+    s_script_selector->component_label_script = init_component_label(
+        scene_base->focus_manager,
         ix,
         iy,
         0.0f,
         "Script"
     );
-    dynamic_list_append(state->actors, s_script_selector->label_script);
+    component_pane_add_component(
+        scene_base->component_pane,
+        (actor_component_T*) s_script_selector->component_label_script 
+    );
 
-    iy += label_margin;
+    iy += component_label_margin;
 
-    s_script_selector->dropdown_list_script = init_dropdown_list(
+    s_script_selector->component_dropdown_list_script = init_component_dropdown_list(
+        scene_base->focus_manager,
         ix,
         iy,
         0.0f,
-        dropdown_list_script_press
+        component_dropdown_list_script_press
     );
-    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_script_selector->dropdown_list_script);
+    component_pane_add_component(
+        scene_base->component_pane,
+        (actor_component_T*) s_script_selector->component_dropdown_list_script 
+    );
 
     /* ==== END OF LEFT ==== */
 
@@ -210,66 +221,90 @@ scene_script_selector_T* init_scene_script_selector()
     float jx = 640 / 2;
     float jy = margin;
 
-    s_script_selector->label_name = init_label(
+    s_script_selector->component_label_name = init_component_label(
+        scene_base->focus_manager,
         jx,
         jy,
         0.0f,
         "Name"
     );
-    dynamic_list_append(state->actors, s_script_selector->label_name);
+    component_pane_add_component(
+        scene_base->component_pane,
+        (actor_component_T*) s_script_selector->component_label_name 
+    );
 
-    jy += label_margin;
+    jy += component_label_margin;
 
-    s_script_selector->input_field_name = init_input_field(
+    s_script_selector->component_input_field_name = init_component_input_field(
+        scene_base->focus_manager,
         jx,
         jy,
         0.0f        
     );
-    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_script_selector->input_field_name);
+    component_pane_add_component(
+        scene_base->component_pane,
+        (actor_component_T*) s_script_selector->component_input_field_name 
+    );
 
     jy += margin;
 
-    s_script_selector->button_save = init_button(
+    s_script_selector->component_button_save = init_component_button(
+        scene_base->focus_manager,
         jx,
         jy,
         0.0f,
         "Save",
-        button_save_press        
+        component_button_save_press        
     );
-    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_script_selector->button_save);
+    component_pane_add_component(
+        scene_base->component_pane,
+        (actor_component_T*) s_script_selector->component_button_save 
+    );
 
     jy += margin;
 
-    s_script_selector->button_edit = init_button(
+    s_script_selector->component_button_edit = init_component_button(
+        scene_base->focus_manager,
         jx,
         jy,
         0.0f,
         "Edit",
-        button_edit_press        
+        component_button_edit_press        
     );
-    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_script_selector->button_edit);
+    component_pane_add_component(
+        scene_base->component_pane,
+        (actor_component_T*) s_script_selector->component_button_edit
+    );
 
     jy += margin;
 
-    s_script_selector->button_delete = init_button(
+    s_script_selector->component_button_delete = init_component_button(
+        scene_base->focus_manager,
         jx,
         jy,
         0.0f,
         "Delete",
-        button_delete_press        
+        component_button_delete_press        
     );
-    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_script_selector->button_delete);
+    component_pane_add_component(
+        scene_base->component_pane,
+        (actor_component_T*) s_script_selector->component_button_delete
+    );
 
     jy += margin;
 
-    s_script_selector->button_new = init_button(
+    s_script_selector->component_button_new = init_component_button(
+        scene_base->focus_manager,
         jx,
         jy,
         0.0f,
         "New",
-        button_new_press        
+        component_button_new_press        
     );
-    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_script_selector->button_new);
+    component_pane_add_component(
+        scene_base->component_pane,
+        (actor_component_T*) s_script_selector->component_button_new
+    );
 
     return s_script_selector;
 }
@@ -291,28 +326,28 @@ void scene_script_selector_refresh_state(scene_base_T* scene_base)
     
     if (s_script_selector->script_id == (void*)0)
     {
-        s_script_selector->button_edit->disabled = 1;
+        s_script_selector->component_button_edit->disabled = 1;
         MAIN_STATE->script_id = (void*)0;
     }
     else
     {
         MAIN_STATE->script_id = s_script_selector->script_id;
-        s_script_selector->button_edit->disabled = 0;
+        s_script_selector->component_button_edit->disabled = 0;
     }
     
     if (s_script_selector->current_database_script != (void*) 0)
     {
         database_script_T* database_script = s_script_selector->current_database_script;
 
-        s_script_selector->input_field_name->value = realloc(
-            s_script_selector->input_field_name->value,
+        s_script_selector->component_input_field_name->value = realloc(
+            s_script_selector->component_input_field_name->value,
             (strlen(database_script->name) + 1) * sizeof(char)
         );
-        strcpy(s_script_selector->input_field_name->value, database_script->name);
+        strcpy(s_script_selector->component_input_field_name->value, database_script->name);
     }
 
-    dropdown_list_sync_from_table(
-        s_script_selector->dropdown_list_script,
+    component_dropdown_list_sync_from_table(
+        s_script_selector->component_dropdown_list_script,
         DATABASE,
         "scripts",
         1,

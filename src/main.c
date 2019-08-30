@@ -6,6 +6,7 @@
 #include "include/scene_sprite_editor.h"
 #include "include/scene_script_selector.h"
 #include "include/scene_text_editor.h"
+#include "include/scene_test.h"
 #include "include/colors.h"
 #include "include/image_utils.h"
 #include "include/modal_manager.h"
@@ -74,11 +75,14 @@ int main(int argc, char* argv[])
     MODAL_MANAGER = init_modal_manager();
 
 
+    //scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_test());
+
+    
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_menu());
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_scene_editor());
-    scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_scene_designer());
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_actor_editor());
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_sprite_editor());
+    scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_scene_designer());
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_script_selector());
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_text_editor());
 

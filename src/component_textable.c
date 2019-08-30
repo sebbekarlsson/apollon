@@ -1,4 +1,4 @@
-#include "include/actor_textable.h"
+#include "include/component_textable.h"
 #include "include/string_helpers.h"
 #include <string.h>
 #include <coelum/draw_utils.h>
@@ -10,9 +10,13 @@
 
 extern keyboard_state_T* KEYBOARD_STATE;
 
+static void component_textable_click(actor_T* self)
+{
+}
 
-actor_textable_T* actor_textable_constructor(
-    actor_textable_T* actor_textable,
+component_textable_T* component_textable_constructor(
+    focus_manager_T* focus_manager,
+    component_textable_T* component_textable,
     float x,
     float y,
     int width,
@@ -20,67 +24,69 @@ actor_textable_T* actor_textable_constructor(
     unsigned int supports_multiple_lines
 )
 {
-    actor_focusable_T* actor_focusable = actor_focusable_constructor(
-        (actor_focusable_T*) actor_textable
+    actor_component_T* actor_component = actor_component_constructor(
+        (actor_component_T*) component_textable,
+        focus_manager,
+        component_textable_click
     );
 
-    actor_constructor(
-        (actor_T*) actor_focusable,
+    actor_T* actor = actor_constructor(
+        (actor_T*) actor_component,
         x,
         y,
         0.0f,
-        actor_textable_tick,
-        actor_textable_draw,
-        "actor_textable"
+        component_textable_tick,
+        component_textable_draw,
+        "component_textable"
     );
 
-    actor_textable->width = width;
-    actor_textable->height = height;
-    actor_textable->supports_multiple_lines = supports_multiple_lines;
-    actor_textable->fg_r = 0;
-    actor_textable->fg_g = 0;
-    actor_textable->fg_b = 0;
-    actor_textable->caret_position = 0;
-    actor_textable->draw_caret = 1;
-    actor_textable->font_size = 8;
-    actor_textable->font_spacing = 8;
-    actor_textable->value = calloc(1, sizeof(char));
-    actor_textable->value[0] = '\0';
-    actor_textable->caret_x = 0;
-    actor_textable->caret_y = 0;
+    actor->width = (float)width;
+    actor->height = (float)height;
+    component_textable->supports_multiple_lines = supports_multiple_lines;
+    component_textable->fg_r = 0;
+    component_textable->fg_g = 0;
+    component_textable->fg_b = 0;
+    component_textable->caret_position = 0;
+    component_textable->draw_caret = 1;
+    component_textable->font_size = 8;
+    component_textable->font_spacing = 8;
+    component_textable->value = calloc(1, sizeof(char));
+    component_textable->value[0] = '\0';
+    component_textable->caret_x = 0;
+    component_textable->caret_y = 0;
 
-    gettimeofday(&actor_textable->timer, 0);
+    gettimeofday(&component_textable->timer, 0);
 
-    return actor_textable;
+    return component_textable;
 }
 
-void actor_textable_tick(actor_T* self)
+void component_textable_tick(actor_T* self)
 {
-    actor_textable_T* actor_textable = (actor_textable_T*) self;
-    actor_focusable_T* actor_focusable = (actor_focusable_T*) actor_textable;
+    component_textable_T* component_textable = (component_textable_T*) self;
+    actor_component_T* actor_component = (actor_component_T*) component_textable;
 
-    if (!actor_focusable->focused)
+    if (!actor_component->focused)
         return;
 
-    while(actor_textable->value[actor_textable->caret_position] == '\n')
-        actor_textable->caret_position -= 1;
+    while(component_textable->value[component_textable->caret_position] == '\n')
+        component_textable->caret_position -= 1;
 
-    actor_textable_caret_blink(actor_textable);
-    actor_textable_handle_keyboard_input(actor_textable);
+    component_textable_caret_blink(component_textable);
+    component_textable_handle_keyboard_input(component_textable);
 }
 
-void actor_textable_draw(actor_T* self)
+void component_textable_draw(actor_T* self)
 {
-    actor_textable_T* actor_textable = (actor_textable_T*) self;
+    component_textable_T* component_textable = (component_textable_T*) self;
 
-    actor_textable_draw_text_value(actor_textable);
-    actor_textable_draw_caret(actor_textable);
+    component_textable_draw_text_value(component_textable);
+    component_textable_draw_caret(component_textable);
 }
 
-void actor_textable_draw_text_value(actor_textable_T* self)
+void component_textable_draw_text_value(component_textable_T* self)
 {
-    actor_focusable_T* actor_focusable = (actor_focusable_T*) self;
-    actor_T* actor = (actor_T*) actor_focusable;
+    actor_component_T* actor_component = (actor_component_T*) self;
+    actor_T* actor = (actor_T*) actor_component;
 
     if (self->value == (void*) 0)
         return;
@@ -90,10 +96,10 @@ void actor_textable_draw_text_value(actor_textable_T* self)
 
     state_T* state = get_current_state();
 
-    int scroll = actor_textable_calculate_scroll(self);
+    int scroll = component_textable_calculate_scroll(self);
 
     glEnable(GL_SCISSOR_TEST);
-    glScissor((int)actor->x, (int)(WINDOW_HEIGHT - actor->y - self->height), (int)self->width, (int)self->height);
+    glScissor((int)actor->x, (int)(WINDOW_HEIGHT - actor->y - actor->height), (int)actor->width, (int)actor->height);
 
     int line = 0;
     char val[1024];
@@ -127,17 +133,17 @@ void actor_textable_draw_text_value(actor_textable_T* self)
     glDisable(GL_SCISSOR_TEST);
 }
 
-void actor_textable_draw_caret(actor_textable_T* self)
+void component_textable_draw_caret(component_textable_T* self)
 {
-    actor_focusable_T* actor_focusable = (actor_focusable_T*) self;
-    actor_T* actor = (actor_T*) actor_focusable;
+    actor_component_T* actor_component = (actor_component_T*) self;
+    actor_T* actor = (actor_T*) actor_component;
 
     state_T* state = get_current_state();
 
-    if (!actor_focusable->focused)
+    if (!actor_component->focused)
         return;
 
-    int scroll = actor_textable_calculate_scroll(self);
+    int scroll = component_textable_calculate_scroll(self);
     int y = 0;
     int x = 1;
 
@@ -155,7 +161,7 @@ void actor_textable_draw_caret(actor_textable_T* self)
                 draw_positioned_2D_mesh(
                     self->caret_x - scroll,
                     actor->y + (y * (self->font_size + self->font_spacing)),
-                    actor->z,
+                    actor->z + 0.1f,
                     4,
                     (self->font_size * 2),
                     self->fg_r,
@@ -184,7 +190,7 @@ void actor_textable_draw_caret(actor_textable_T* self)
 /**
  * Logic that makes sure that the cursor is blinking.
  */
-void actor_textable_caret_blink(actor_textable_T* self)
+void component_textable_caret_blink(component_textable_T* self)
 {
     struct timeval end;
     gettimeofday(&end, 0);
@@ -207,12 +213,12 @@ void actor_textable_caret_blink(actor_textable_T* self)
  * This one looks for keyboard inputs every frame and performs action
  * upon them.
  */
-void actor_textable_handle_keyboard_input(actor_textable_T* self)
+void component_textable_handle_keyboard_input(component_textable_T* self)
 {
     // first check for character input, and do nothing else here
     // if the user is trying to type something, that is why we return.
     if (KEYBOARD_STATE->character)
-        return actor_textable_handle_character_input(self);
+        return component_textable_handle_character_input(self);
 
     if (KEYBOARD_STATE->keys[GLFW_KEY_BACKSPACE] && !KEYBOARD_STATE->key_locks[GLFW_KEY_BACKSPACE])
     {
@@ -295,11 +301,13 @@ void actor_textable_handle_keyboard_input(actor_textable_T* self)
     }
 }
 
-void actor_textable_handle_character_input(actor_textable_T* self)
+void component_textable_handle_character_input(component_textable_T* self)
 {
     char c = KEYBOARD_STATE->character;
 
-    char* char_str = hermes_char_to_string(c);
+    char* char_str = calloc(2, sizeof(char));
+    char_str[0] = c;
+    char_str[1] = '\0';
 
     self->value = realloc(self->value, (strlen(self->value) + strlen(char_str) + 1) * sizeof(char));
     insert_substring(self->value, char_str, self->caret_position + 1);
@@ -311,25 +319,25 @@ void actor_textable_handle_character_input(actor_textable_T* self)
 /**
  * Calculate the number of pixels the caret is off the width
  */
-int actor_textable_calculate_scroll(actor_textable_T* actor_textable)
+int component_textable_calculate_scroll(component_textable_T* component_textable)
 {
     int scroll = 0;
 
-    if (actor_textable->value != (void*) 0)
+    if (component_textable->value != (void*) 0)
     {
-        if (strlen(actor_textable->value))
+        if (strlen(component_textable->value))
         {
-            int available_space = actor_textable->width / (actor_textable->font_size + actor_textable->font_spacing);
+            int available_space = component_textable->width / (component_textable->font_size + component_textable->font_spacing);
             int chars_off = (
-                actor_textable->caret_x / (actor_textable->font_size + actor_textable->font_spacing)
+                component_textable->caret_x / (component_textable->font_size + component_textable->font_spacing)
             ) - available_space;
 
-            scroll = chars_off > 0 ? chars_off * (actor_textable->font_size + actor_textable->font_spacing) : 0;
+            scroll = chars_off > 0 ? chars_off * (component_textable->font_size + component_textable->font_spacing) : 0;
         }
     }
 
     if (scroll > 0)
-        scroll += ((int)actor_textable->font_size + (int)actor_textable->font_spacing);
+        scroll += ((int)component_textable->font_size + (int)component_textable->font_spacing);
 
     return scroll;
 }
@@ -337,13 +345,13 @@ int actor_textable_calculate_scroll(actor_textable_T* actor_textable)
 /**
  * Returns the line number of the caret.
  */
-int actor_textable_get_caret_line_number(actor_textable_T* actor_textable)
+int component_textable_get_caret_line_number(component_textable_T* component_textable)
 {
     int line = 0;
 
-    for (int i = 0; i < actor_textable->caret_position; i++)
+    for (int i = 0; i < component_textable->caret_position; i++)
     {
-        char c = actor_textable->value[i];
+        char c = component_textable->value[i];
 
         if (c == '\r')
             line += 1;
@@ -352,13 +360,13 @@ int actor_textable_get_caret_line_number(actor_textable_T* actor_textable)
     return line;
 }
 
-int actor_textable_get_number_of_lines(actor_textable_T* actor_textable)
+int component_textable_get_number_of_lines(component_textable_T* component_textable)
 {
     int line = 0;
     
-    for (int i = 0; i < strlen(actor_textable->value); i++)
+    for (int i = 0; i < strlen(component_textable->value); i++)
     {
-        char c = actor_textable->value[i];
+        char c = component_textable->value[i];
 
         if (c == '\n')
             line += 1;

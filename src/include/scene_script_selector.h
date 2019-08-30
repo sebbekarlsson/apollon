@@ -1,11 +1,10 @@
 #ifndef APOLLON_SCENE_SCRIPT_SELECTOR_H
 #define APOLLON_SCENE_SCRIPT_SELECTOR_H
 #include "scene_base.h"
-#include "focus_manager.h"
-#include "dropdown_list.h"
-#include "input_field.h"
-#include "button.h"
-#include "label.h"
+#include "component_dropdown_list.h"
+#include "component_input_field.h"
+#include "component_button.h"
+#include "component_label.h"
 
 
 typedef struct SCENE_SCRIPT_SELECTOR_STRUCT
@@ -15,16 +14,16 @@ typedef struct SCENE_SCRIPT_SELECTOR_STRUCT
     database_script_T* current_database_script;
 
     /** LEFT **/
-    label_T* label_script;
-    dropdown_list_T* dropdown_list_script;
+    component_label_T* component_label_script;
+    component_dropdown_list_T* component_dropdown_list_script;
 
     /** RIGHT **/
-    label_T* label_name;
-    input_field_T* input_field_name;
-    button_T* button_save;
-    button_T* button_edit;
-    button_T* button_delete;
-    button_T* button_new;
+    component_label_T* component_label_name;
+    component_input_field_T* component_input_field_name;
+    component_button_T* component_button_save;
+    component_button_T* component_button_edit;
+    component_button_T* component_button_delete;
+    component_button_T* component_button_new;
 } scene_script_selector_T;
 
 

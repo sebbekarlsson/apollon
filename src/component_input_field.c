@@ -1,4 +1,4 @@
-#include "include/input_field.h"
+#include "include/component_input_field.h"
 #include <coelum/draw_utils.h>
 #include <coelum/current.h>
 #include <coelum/input.h>
@@ -12,22 +12,20 @@ extern const float COLOR_BG_BRIGHT[3];
 extern const float COLOR_BG_DARK_BRIGHT[3];
 extern const float COLOR_FG[3];
 
-input_field_T* init_input_field(float x, float y, float z)
+component_input_field_T* init_component_input_field(focus_manager_T* focus_manager, float x, float y, float z)
 {
-    input_field_T* input_field = calloc(1, sizeof(struct INPUT_FIELD_STRUCT));
+    component_input_field_T* input_field = calloc(1, sizeof(struct COMPONENT_INPUT_FIELD_STRUCT));
     actor_T* actor = (actor_T*) input_field;
-    actor_constructor(actor, x, y, z, input_field_tick, input_field_draw, "input_field");
-    actor_focusable_T* actor_focusable = (actor_focusable_T*) input_field;
-    actor_focusable_constructor(actor_focusable);
+    actor_constructor(actor, x, y, z, component_input_field_tick, component_input_field_draw, "input_field");
+    actor_component_T* actor_component = (actor_component_T*) input_field;
+    actor_component_constructor(actor_component, focus_manager, (void*)0);
 
     input_field->value = calloc(1, sizeof(char));
     input_field->value[0] = '\0';
     input_field->font_size = 6;
     input_field->font_spacing = input_field->font_size + 4;
-    input_field->width = 256;
-    actor->width = input_field->width;
-    input_field->height = 24;
-    actor->height = input_field->height;
+    actor->width = 256;
+    actor->height = 24;
 
     input_field->caret_position = 0;
     input_field->draw_caret = 1;
@@ -37,19 +35,19 @@ input_field_T* init_input_field(float x, float y, float z)
     return input_field;
 }
 
-void input_field_draw(actor_T* self)
+void component_input_field_draw(actor_T* self)
 {
-    input_field_T* input_field = (input_field_T*) self;
-    actor_focusable_T* actor_focusable = (actor_focusable_T*) input_field;
-    unsigned int hover = actor_focusable->hover;
+    component_input_field_T* input_field = (component_input_field_T*) self;
+    actor_component_T* actor_component = (actor_component_T*) input_field;
+    unsigned int hover = actor_component->hovered;
     state_T* state = (state_T*) get_current_scene();
 
     draw_positioned_2D_mesh(
         self->x,
         self->y,
         self->z,
-        input_field->width,
-        input_field->height,
+        self->width,
+        self->height,
         hover ? COLOR_BG_DARK_BRIGHT[0] : COLOR_BG_BRIGHT[0],
         hover ? COLOR_BG_DARK_BRIGHT[1] : COLOR_BG_BRIGHT[1],
         hover ? COLOR_BG_DARK_BRIGHT[2] : COLOR_BG_BRIGHT[2],
@@ -63,18 +61,18 @@ void input_field_draw(actor_T* self)
     {
         if (strlen(input_field->value))
         {
-            int available_space = input_field->width / (input_field->font_size + input_field->font_spacing);
+            int available_space = self->width / (input_field->font_size + input_field->font_spacing);
             int chars_off = strlen(input_field->value) - available_space;
 
             scroll = chars_off > 0 ? chars_off * (input_field->font_size + input_field->font_spacing) : 0;
 
             glEnable(GL_SCISSOR_TEST);
-            glScissor((int)self->x, (int)(WINDOW_HEIGHT - self->y - input_field->height), (int)input_field->width, (int)input_field->height); 
+            glScissor((int)self->x, (int)(WINDOW_HEIGHT - self->y - self->height), (int)self->width, (int)self->height); 
             
             draw_text(
                 input_field->value,
                 self->x + (((input_field->font_size + input_field->font_spacing) / 2) - scroll),
-                self->y + (input_field->height / 2),
+                self->y + (self->height / 2),
                 self->z,
                 COLOR_FG[0],
                 COLOR_FG[1],
@@ -89,12 +87,12 @@ void input_field_draw(actor_T* self)
         }
     }
 
-    if (input_field->draw_caret && actor_focusable->focused)
+    if (input_field->draw_caret && actor_component->focused)
     {
         draw_positioned_2D_mesh(
             self->x + ((input_field->font_size + input_field->font_spacing) * (float) input_field->caret_position - ((input_field->font_size + input_field->font_spacing) / 2)) + ((input_field->font_size + input_field->font_spacing) / 2) - scroll,
-            self->y - (input_field->font_size) + (input_field->height / 2),
-            self->z,
+            self->y - (input_field->font_size) + (self->height / 2),
+            self->z + 0.1f,
             4,
             (input_field->font_size * 2),
             COLOR_FG[0],
@@ -107,9 +105,9 @@ void input_field_draw(actor_T* self)
 
     draw_positioned_2D_mesh(
         self->x,
-        self->y + input_field->height,
+        self->y + self->height,
         self->z,
-        input_field->width,
+        self->width,
         4,
         COLOR_FG[0],
         COLOR_FG[1],
@@ -119,14 +117,14 @@ void input_field_draw(actor_T* self)
     );
 }
 
-void input_field_tick(actor_T* self)
+void component_input_field_tick(actor_T* self)
 {
-    input_field_T* input_field = (input_field_T*) self;
-    actor_focusable_T* actor_focusable = (actor_focusable_T*) input_field;
+    component_input_field_T* input_field = (component_input_field_T*) self;
+    actor_component_T* actor_component = (actor_component_T*) input_field;
 
-    actor_focusable_tick(actor_focusable);
+    actor_component_tick(actor_component);
 
-    if (!actor_focusable->focused)
+    if (!actor_component->focused)
     {
         return;
     }

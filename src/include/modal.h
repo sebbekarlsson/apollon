@@ -2,7 +2,8 @@
 #define APOLLON_MODAL_H
 #include <coelum/actor.h>
 #include "button.h"
-#include "focus_manager.h"
+#include "component_pane.h"
+#include "component_button.h"
 
 
 typedef struct MODAL_STRUCT
@@ -12,11 +13,11 @@ typedef struct MODAL_STRUCT
     unsigned int height;
     char* title;
     char* text;
-    button_T* button;
-    focus_manager_T* focus_manager;
+    component_pane_T* component_pane;
+    component_button_T* component_button;
 } modal_T;
 
-modal_T* init_modal(float x, float y, char* title, char* text, state_T* state);
+modal_T* init_modal(float x, float y, char* title, char* text, state_T* state, focus_manager_T* focus_manager);
 
 void modal_tick(actor_T* self);
 

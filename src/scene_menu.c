@@ -1,12 +1,13 @@
 #include "include/scene_menu.h"
 #include "include/bin_utils.h"
+#include "include/component_button.h"
 #include <coelum/main.h>
 #include <coelum/constants.h>
 #include <coelum/actor_text.h>
 #include <coelum/theatre.h>
 #include <coelum/scene_manager.h>
 #include <coelum/draw_utils.h>
-#include <hermes/lexer.h>
+#include <hermes/hermes_lexer.h>
 #include <hermes/hermes_parser.h>
 #include <hermes/hermes_runtime.h>
 #include <hermes/io.h>
@@ -46,8 +47,8 @@ void press_run()
     char* leto_bin_path = 0;
 
     // TODO: move config parsing to separate file / function.
-    lexer_T* lexer = init_lexer(read_file("config.he"));
-    hermes_parser_T* parser = init_hermes_parser(lexer);
+    hermes_lexer_T* hermes_lexer = init_hermes_lexer(read_file("config.he"));
+    hermes_parser_T* parser = init_hermes_parser(hermes_lexer);
     AST_T* scenes_node = hermes_parser_parse(parser, (void*) 0);
     runtime_T* runtime = init_runtime();
     runtime_visit(runtime, scenes_node);
@@ -103,29 +104,97 @@ scene_menu_T* init_scene_menu()
     scene_constructor(s, scene_menu_tick, scene_menu_draw, 2);
     scene_base_constructor(scene_base, scene_menu_refresh_state, "Menu");
 
+    scene_base->component_pane->centered = 1;
+    scene_base->component_pane->child_margin_top = 8;
+
     s->type_name = "menu";
     s->bg_r = 255;
     s->bg_g = 255;
     s->bg_b = 255;
 
-    float button_width = 200;
-    float ix = (WINDOW_WIDTH / 2) - (button_width / 2);
-    float iy = 96.0f;
-    float margin = 42;
+    component_button_T* button_scene_editor = init_component_button(
+        scene_base->focus_manager,
+        0.0f, 0.0f, 0.0f,
+        "Scene Editor",
+        press_scene_editor
+    );
 
-    s_menu->button_scene_editor = (button_T*) scene_base_register_focusable(scene_base, (actor_focusable_T*) init_button(ix, iy, 0.0f, "Scene Editor", press_scene_editor));
-    iy += margin;
-    s_menu->button_actor_editor = (button_T*) scene_base_register_focusable(scene_base, (actor_focusable_T*) init_button(ix, iy, 0.0f, "Actor Editor", press_actor_editor));
-    iy += margin;
-    s_menu->button_sprite_editor = (button_T*) scene_base_register_focusable(scene_base, (actor_focusable_T*) init_button(ix, iy, 0.0f, "Sprite Editor", press_sprite_editor));
-    iy += margin;
-    s_menu->button_text_editor = (button_T*) scene_base_register_focusable(scene_base, (actor_focusable_T*) init_button(ix, iy, 0.0f, "Text Editor", press_text_editor));
-    iy += margin;
-    s_menu->button_run = (button_T*) scene_base_register_focusable(scene_base, (actor_focusable_T*) init_button(ix, iy, 0.0f, "Run", press_run));
-    iy += margin;
-    s_menu->button_build = (button_T*) scene_base_register_focusable(scene_base, (actor_focusable_T*) init_button(ix, iy, 0.0f, "Build", press_build));
-    iy += margin;
-    s_menu->button_quit = (button_T*) scene_base_register_focusable(scene_base, (actor_focusable_T*) init_button(ix, iy, 0.0f, "Quit", press_quit));
+    component_pane_add_component(
+        scene_base->component_pane,
+        (actor_component_T*) button_scene_editor        
+    );
+
+    component_button_T* button_actor_editor = init_component_button(
+        scene_base->focus_manager,
+        0.0f, 0.0f, 0.0f,
+        "Actor Editor",
+        press_actor_editor 
+    );
+
+    component_pane_add_component(
+        scene_base->component_pane,
+        (actor_component_T*) button_actor_editor        
+    );
+
+    component_button_T* button_sprite_editor = init_component_button(
+        scene_base->focus_manager,
+        0.0f, 0.0f, 0.0f,
+        "Sprite Editor",
+        press_sprite_editor 
+    );
+
+    component_pane_add_component(
+        scene_base->component_pane,
+        (actor_component_T*) button_sprite_editor        
+    );
+
+    component_button_T* button_text_editor = init_component_button(
+        scene_base->focus_manager,
+        0.0f, 0.0f, 0.0f,
+        "Text Editor",
+        press_text_editor
+    );
+
+    component_pane_add_component(
+        scene_base->component_pane,
+        (actor_component_T*) button_text_editor        
+    );
+
+    component_button_T* button_run = init_component_button(
+        scene_base->focus_manager,
+        0.0f, 0.0f, 0.0f,
+        "Run",
+        press_run 
+    );
+
+    component_pane_add_component(
+        scene_base->component_pane,
+        (actor_component_T*) button_run        
+    );
+
+    component_button_T* button_build = init_component_button(
+        scene_base->focus_manager,
+        0.0f, 0.0f, 0.0f,
+        "Build",
+        press_build 
+    );
+
+    component_pane_add_component(
+        scene_base->component_pane,
+        (actor_component_T*) button_build        
+    );
+
+    component_button_T* button_quit = init_component_button(
+        scene_base->focus_manager,
+        0.0f, 0.0f, 0.0f,
+        "Quit",
+        press_quit 
+    );
+
+    component_pane_add_component(
+        scene_base->component_pane,
+        (actor_component_T*) button_quit  
+    );
 
     return s_menu;
 }
