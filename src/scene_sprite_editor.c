@@ -643,7 +643,12 @@ void scene_sprite_editor_tick(scene_T* self)
     scene_base_T* scene_base = (scene_base_T*) s_sprite_editor;
 
     ((actor_focusable_T*)s_sprite_editor->component_button_delete)->visible = s_sprite_editor->sprite_id != (void*) 0;
-    scene_base_tick(scene_base); 
+    scene_base_tick(scene_base);
+
+    if (s_sprite_editor->component_grid_index > 0)
+    {
+        s_sprite_editor->component_grid->onion = (component_grid_T*) s_sprite_editor->component_grids->items[s_sprite_editor->component_grid_index-1];
+    }
 
 
     if (((actor_component_T*)s_sprite_editor->component_grid)->hovered)
