@@ -9,6 +9,7 @@
 
 
 extern keyboard_state_T* KEYBOARD_STATE;
+extern const float COLOR_CONTRAST[3];
 
 static void component_textable_click(actor_T* self)
 {
@@ -43,9 +44,12 @@ component_textable_T* component_textable_constructor(
     actor->width = (float)width;
     actor->height = (float)height;
     component_textable->supports_multiple_lines = supports_multiple_lines;
-    component_textable->fg_r = 0;
-    component_textable->fg_g = 0;
-    component_textable->fg_b = 0;
+    component_textable->fg_r = COLOR_CONTRAST[0];
+    component_textable->fg_g = COLOR_CONTRAST[1];
+    component_textable->fg_b = COLOR_CONTRAST[2];
+    component_textable->bg_r = 0;
+    component_textable->bg_g = 0;
+    component_textable->bg_b = 0;
     component_textable->caret_position = 0;
     component_textable->draw_caret = 1;
     component_textable->font_size = 8;
@@ -78,6 +82,21 @@ void component_textable_tick(actor_T* self)
 void component_textable_draw(actor_T* self)
 {
     component_textable_T* component_textable = (component_textable_T*) self;
+
+    state_T* state = get_current_state();
+
+    draw_positioned_2D_mesh(
+        self->x,
+        self->y,
+        self->z,
+        self->width,
+        self->height,
+        component_textable->bg_r,
+        component_textable->bg_g,
+        component_textable->bg_b,
+        1.0f,
+        state       
+    );
 
     component_textable_draw_text_value(component_textable);
     component_textable_draw_caret(component_textable);
@@ -116,7 +135,7 @@ void component_textable_draw_text_value(component_textable_T* self)
             ptr,
             4 + (float)(-scroll + ((actor->x) + (int)self->font_size)),
             actor->y + self->font_size + (line * (self->font_size + self->font_spacing)),
-            actor->z,
+            actor->z + 0.1f,
             self->fg_r, self->fg_g, self->fg_b, // rgb
             1.0f, // a
             self->font_size,
@@ -161,7 +180,7 @@ void component_textable_draw_caret(component_textable_T* self)
                 draw_positioned_2D_mesh(
                     self->caret_x - scroll,
                     actor->y + (y * (self->font_size + self->font_spacing)),
-                    actor->z + 0.1f,
+                    actor->z + 0.3f,
                     4,
                     (self->font_size * 2),
                     self->fg_r,

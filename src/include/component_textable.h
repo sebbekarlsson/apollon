@@ -22,6 +22,9 @@ typedef struct ACTOR_TEXTABLE
     int fg_r;
     int fg_g;
     int fg_b;
+    int bg_r;
+    int bg_g;
+    int bg_b;
     struct timeval timer;
 } component_textable_T;
 

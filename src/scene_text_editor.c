@@ -7,6 +7,7 @@
 
 
 extern main_state_T* MAIN_STATE;
+extern const float COLOR_FG[3];
 
 
 static void scene_text_editor_load(void* s)
@@ -61,6 +62,8 @@ void scene_text_editor_tick(scene_T* self)
 
     focus_manager_tick(s_text_editor->focus_manager);
 
+    ((actor_T*)component_textable)->height = WINDOW_HEIGHT + state->camera->y;
+
     MAIN_STATE->text_editor_value = ((component_textable_T*)s_text_editor->component_textarea)->value;
 }
 
@@ -93,10 +96,10 @@ void scene_text_editor_draw(scene_T* self)
             text,
             8,
             12 + (i * (8 + 8)),
-            0,
-            255,
-            255,
-            255,
+            ((actor_T*)s_text_editor->component_textarea)->z + 0.1f,
+            COLOR_FG[0],
+            COLOR_FG[1],
+            COLOR_FG[2],
             1.0f, // a
             8,
             8,
