@@ -145,7 +145,7 @@ void component_dropdown_list_option_draw(int i, component_dropdown_list_option_T
                 option->key,
                 self->x + (h / 2) + text_padding,
                 (self->y + (i * h)) + (h / 2),
-                base_z + 0.1f,
+                base_z + 0.2f,
                 COLOR_FG[0], // r
                 COLOR_FG[1], // g
                 COLOR_FG[2], // b
