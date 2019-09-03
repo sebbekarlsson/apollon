@@ -19,6 +19,7 @@ extern float COLOR_BG_DARK_BRIGHT[3];
 extern float COLOR_RED[3];
 
 extern theatre_T* THEATRE;
+extern volatile unsigned int RUNNING;
 
 
 void press_scene_editor()
@@ -91,7 +92,7 @@ void press_build()
 
 void press_quit()
 {
-    coelum_terminate();
+    RUNNING = 0;
 }
 
 scene_menu_T* init_scene_menu()
