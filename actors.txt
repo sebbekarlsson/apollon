@@ -1,5 +1,0 @@
-object tomato = {
-    int width = 16;
-    int height = 16;
-    string texture = "res/img/tomato.png";
-};
