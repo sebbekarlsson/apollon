@@ -352,9 +352,17 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     component_pane_T* right = init_component_pane(state, scene_base->focus_manager, 0.0f, 0.0f, 0.0f, 0.0f);
     right->centered = 0;
     right->child_margin_top = 8;
+    component_pane_T* right_top = init_component_pane(state, scene_base->focus_manager, 0.0f, 0.0f, 0.0f, 0.0f);
+    right_top->centered = 1;
+    right_top->min_height = WINDOW_HEIGHT - 160;
+    right_top->child_margin_top = 8;
+    component_pane_T* right_bottom = init_component_pane(state, scene_base->focus_manager, 0.0f, 0.0f, 0.0f, 0.0f);
+    right_bottom->centered = 0;
     
     dynamic_list_append(scene_base->component_pane->cols, left);
     dynamic_list_append(scene_base->component_pane->cols, right);
+    dynamic_list_append(right->rows, right_top);
+    dynamic_list_append(right->rows, right_bottom);
 
     s_sprite_editor->component_grid = init_component_grid(
         scene_base->focus_manager,
@@ -370,7 +378,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         "component_grid_canvas"
     );
     component_pane_add_component(
-        right,
+        right_top,
         (actor_component_T*) s_sprite_editor->component_grid        
     );
 
@@ -390,32 +398,9 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         "component_grid_color_selector"
     );
     component_pane_add_component(
-        right,
+        right_bottom,
         (actor_component_T*) s_sprite_editor->component_grid_color_selector 
-    );
-
-    s_sprite_editor->tool_index = 0;
-
-    s_sprite_editor->component_grid_tool_selector = init_component_grid(
-        scene_base->focus_manager,
-        ((WINDOW_WIDTH / 2) - ((16 * 16) / 2)) + ((16 * 16) + 16) + (4 * 16) + 16,
-        iy + ((WINDOW_HEIGHT / 2) - ((16 * 16) / 2)),
-        0.0f,
-        1,
-        2,
-        16,
-        0,
-        0,
-        0,
-        "component_grid_tool_selector"
-    );
-    s_sprite_editor->component_grid_tool_selector->cells[0][0]->sprite = SPRITE_PENCIL;
-    s_sprite_editor->component_grid_tool_selector->cells[0][1]->sprite = SPRITE_ERASOR;
-    component_grid_unselect_all_cells(s_sprite_editor->component_grid_tool_selector);
-    component_pane_add_component(
-        right,
-        (actor_component_T*) s_sprite_editor->component_grid_tool_selector
-    );
+    ); 
 
     // state representation of first component_grid in frame list.
     dynamic_list_append(
@@ -490,8 +475,31 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         "component_grid_color_mixer"
     );
     component_pane_add_component(
-        right,
+        right_bottom,
         (actor_component_T*) s_sprite_editor->component_grid_color_mixer
+    );
+
+    s_sprite_editor->tool_index = 0;
+
+    s_sprite_editor->component_grid_tool_selector = init_component_grid(
+        scene_base->focus_manager,
+        ((WINDOW_WIDTH / 2) - ((16 * 16) / 2)) + ((16 * 16) + 16) + (4 * 16) + 16,
+        iy + ((WINDOW_HEIGHT / 2) - ((16 * 16) / 2)),
+        0.0f,
+        1,
+        2,
+        16,
+        0,
+        0,
+        0,
+        "component_grid_tool_selector"
+    );
+    s_sprite_editor->component_grid_tool_selector->cells[0][0]->sprite = SPRITE_PENCIL;
+    s_sprite_editor->component_grid_tool_selector->cells[0][1]->sprite = SPRITE_ERASOR;
+    component_grid_unselect_all_cells(s_sprite_editor->component_grid_tool_selector);
+    component_pane_add_component(
+        right_bottom,
+        (actor_component_T*) s_sprite_editor->component_grid_tool_selector
     );
 
     s_sprite_editor->component_label_frame_index = init_component_label(
@@ -500,7 +508,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         "0 / 0"        
     );
     component_pane_add_component(
-        right,
+        right_top,
         (actor_component_T*) s_sprite_editor->component_label_frame_index
     );
 

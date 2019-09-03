@@ -18,6 +18,7 @@ component_pane_T* init_component_pane(state_T* state, focus_manager_T* focus_man
     component_pane->width = width;
     component_pane->height = height;
     component_pane->state = state;
+    component_pane->min_height = 0;
     component_pane->focus_manager = focus_manager;
     component_pane->components = init_dynamic_list(sizeof(struct COMPONENT_STRUCT*));
     component_pane->rows = init_dynamic_list(sizeof(struct COMPONENT_PANE_STRUCT*));
@@ -160,7 +161,7 @@ void component_pane_adjust(component_pane_T* component_pane)
 
     if (component_pane->centered)
     {
-        int final_height = 0;
+        int final_height = component_pane->y;
 
         for (int i = 0; i < component_pane->components->size; i++)
         {
@@ -288,6 +289,8 @@ void component_pane_adjust(component_pane_T* component_pane)
     x = 0;
     y = 0;
 
+    row_height = WINDOW_HEIGHT;
+
     for (int i = 0; i < component_pane->rows->size; i++)
     {
         component_pane_T* child_pane = (component_pane_T*) component_pane->rows->items[i];
@@ -300,14 +303,14 @@ void component_pane_adjust(component_pane_T* component_pane)
 
         actor_T* ap = (actor_T*) acp;
 
-        child_pane->height = row_height;
+        child_pane->height = child_pane->min_height != 0 ? child_pane->min_height : row_height;
         child_pane->height = child_pane->height > component_pane->height ? component_pane->height : child_pane->height;
-        child_pane->width = component_pane->width;
+        child_pane->width = component_pane->width; 
 
-        if (ap->y + ap->height*2 < component_pane->height && i != 0)
-            y += row_height;
-
-        child_pane->y = component_pane->y;
+        child_pane->y = (component_pane->y + y);
         child_pane->x = component_pane->x;
+
+        row_height -= child_pane->height;
+        y += child_pane->height;
     }
 }
