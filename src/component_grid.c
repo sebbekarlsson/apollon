@@ -175,7 +175,7 @@ void component_grid_draw(actor_T* self)
                 draw_positioned_2D_mesh(
                     cell_x,
                     cell_y,
-                    self->z + 0.2f,
+                    self->z + 0.25f,
                     component_grid->cell_size,
                     component_grid->cell_size,
                     cell->selected == 0 ? 0 : component_grid->cells[x][y]->r,
