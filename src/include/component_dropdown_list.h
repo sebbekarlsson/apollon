@@ -13,6 +13,7 @@ typedef struct COMPONENT_DROPDOWN_LIST_STRUCT
     unsigned int option_index;
     unsigned int expanded;
     unsigned int selected_index;
+    unsigned int deexpand_on_press;
     void (*press)(void* component_dropdown_list, void* option);
 } component_dropdown_list_T;
 

@@ -24,6 +24,12 @@ static void dropdown_click(actor_T* self)
     {
         component_dropdown_list->press(component_dropdown_list, component_dropdown_list->options->items[component_dropdown_list->option_index]);
     }
+
+    if (component_dropdown_list->deexpand_on_press)
+    {
+        component_dropdown_list->expanded = 0;
+        component_dropdown_list->focused = 0;
+    }
 }
 
 component_dropdown_list_T* init_component_dropdown_list(focus_manager_T* focus_manager, float x, float y, float z, void (*press)(void* component_dropdown_list, void* option))
@@ -43,6 +49,7 @@ component_dropdown_list_T* init_component_dropdown_list(focus_manager_T* focus_m
     component_dropdown_list->option_index = 0;
     component_dropdown_list->expanded = 0;
     component_dropdown_list->selected_index = 0;
+    component_dropdown_list->deexpand_on_press = 1;
     actor->width = 200;
     actor->height = 28;
     component_dropdown_list->press = press;

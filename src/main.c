@@ -1,4 +1,5 @@
 #include "include/main.h"
+#include "include/startup.h"
 #include "include/scene_menu.h"
 #include "include/scene_scene_editor.h"
 #include "include/scene_scene_designer.h"
@@ -66,6 +67,8 @@ main_state_T* init_main_state()
 
 int main(int argc, char* argv[])
 {
+    startup();
+
     coelum_init();
 
     load_textures();
@@ -74,10 +77,6 @@ int main(int argc, char* argv[])
     DATABASE = init_database();
     MODAL_MANAGER = init_modal_manager();
 
-
-    //scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_test());
-
-    
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_menu());
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_scene_editor());
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_actor_editor());
@@ -86,11 +85,8 @@ int main(int argc, char* argv[])
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_script_selector());
     scene_manager_register_scene(THEATRE->scene_manager, (scene_T*) init_scene_text_editor());
 
-
     if (coelum_main(argc, argv))
-    {
         printf("Coelum crashed.");
-    }
 
     return 0;
 }

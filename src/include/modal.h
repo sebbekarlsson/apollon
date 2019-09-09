@@ -1,7 +1,6 @@
 #ifndef APOLLON_MODAL_H
 #define APOLLON_MODAL_H
 #include <coelum/actor.h>
-#include "button.h"
 #include "component_pane.h"
 #include "component_button.h"
 

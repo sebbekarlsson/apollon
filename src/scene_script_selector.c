@@ -117,7 +117,7 @@ static void component_button_save_press()
             fclose (fp);
         }
 
-        REFRESH_STATE(s_script_selector);
+        REFRESH_STATE(s_script_selector); 
     }
     else
     {
@@ -163,7 +163,6 @@ scene_script_selector_T* init_scene_script_selector()
     scene_script_selector_T* s_script_selector = calloc(1, sizeof(struct SCENE_SCRIPT_SELECTOR_STRUCT));
     scene_base_T* scene_base = (scene_base_T*) s_script_selector;
     scene_T* s = (scene_T*) scene_base;
-    state_T* state = (state_T*) s; 
 
     scene_constructor(s, scene_script_selector_tick, scene_script_selector_draw, 2);
     scene_base_constructor(scene_base, scene_script_selector_refresh_state, "Script Selector");
@@ -323,6 +322,14 @@ void scene_script_selector_draw(scene_T* self)
 void scene_script_selector_refresh_state(scene_base_T* scene_base)
 {
     scene_script_selector_T* s_script_selector = (scene_script_selector_T*) scene_base;
+
+    component_dropdown_list_sync_from_table(
+        s_script_selector->component_dropdown_list_script,
+        DATABASE,
+        "scripts",
+        1,
+        -1
+    );
     
     if (s_script_selector->script_id == (void*)0)
     {
@@ -333,6 +340,11 @@ void scene_script_selector_refresh_state(scene_base_T* scene_base)
     {
         MAIN_STATE->script_id = s_script_selector->script_id;
         s_script_selector->component_button_edit->disabled = 0;
+
+        component_dropdown_list_set_selected_option_by_string_value(
+            s_script_selector->component_dropdown_list_script,
+            (const char*) s_script_selector->script_id
+        );
     }
     
     if (s_script_selector->current_database_script != (void*) 0)
@@ -344,13 +356,5 @@ void scene_script_selector_refresh_state(scene_base_T* scene_base)
             (strlen(database_script->name) + 1) * sizeof(char)
         );
         strcpy(s_script_selector->component_input_field_name->value, database_script->name);
-    }
-
-    component_dropdown_list_sync_from_table(
-        s_script_selector->component_dropdown_list_script,
-        DATABASE,
-        "scripts",
-        1,
-        -1
-    );
+    } 
 }

@@ -1,7 +1,6 @@
 #ifndef APOLLON_SCENE_MENU_H
 #define APOLLON_SCENE_MENU_H
 #include "scene_base.h"
-#include "button.h"
 
 
 typedef struct SCENE_MENU_STRUCT {
