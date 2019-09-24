@@ -310,6 +310,11 @@ void component_dropdown_list_set_selected_option_by_string_value(component_dropd
     }
 }
 
+void component_dropdown_list_reset(component_dropdown_list_T* component_dropdown_list)
+{
+    component_dropdown_list->selected_index = 0;
+}
+
 unsigned int component_dropdown_list_has_option_with_string_value(component_dropdown_list_T* component_dropdown_list, const char* value)
 {
     for (int i = 0; i < component_dropdown_list->options->size; i++)

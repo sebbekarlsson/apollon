@@ -91,6 +91,26 @@ void scene_actor_editor_refresh_state(scene_base_T* scene_base)
     else
     {
         scene_actor_editor_clear_component_input_fields(s_actor_editor);
+
+        component_dropdown_list_reset(
+            s_actor_editor->component_dropdown_list_actor
+        );
+        
+        component_dropdown_list_reset(
+            s_actor_editor->component_dropdown_list_sprite
+        );
+
+        component_dropdown_list_reset(
+            s_actor_editor->component_dropdown_list_init_script
+        );
+
+        component_dropdown_list_reset(
+            s_actor_editor->component_dropdown_list_tick_script
+        );
+
+        component_dropdown_list_reset(
+            s_actor_editor->component_dropdown_list_draw_script
+        );
     }
 }
 
@@ -113,6 +133,8 @@ void component_button_new_actor_press()
     scene_actor_editor_reset_actor_definition_id(s_actor_editor);
 
     scene_actor_editor_clear_component_input_fields(s_actor_editor);
+
+    REFRESH_STATE(s_actor_editor);
 }
 
 void component_button_save_press()

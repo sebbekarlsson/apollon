@@ -29,6 +29,8 @@ void component_dropdown_list_reload_sprites(component_dropdown_list_T* component
 
 void component_dropdown_list_set_selected_option_by_string_value(component_dropdown_list_T* component_dropdown_list, const char* value);
 
+void component_dropdown_list_reset(component_dropdown_list_T* component_dropdown_list);
+
 unsigned int component_dropdown_list_has_option_with_string_value(component_dropdown_list_T* component_dropdown_list, const char* value);
 
 void component_dropdown_list_update_option_sprite_by_string_value(
