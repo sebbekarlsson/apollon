@@ -254,7 +254,13 @@ void component_pane_adjust(component_pane_T* component_pane)
             a->x = x;
             a->y = y;
         }
-    }
+
+        if (heights && heights_size)
+        {
+            free(heights);
+            heights_size = 0;
+        }
+    } 
     
     /** ==== adjust position of child columns === **/
 
