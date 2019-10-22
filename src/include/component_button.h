@@ -18,7 +18,8 @@ typedef struct COMPONENT_BUTTON_STRUCT
     unsigned int font_size;
     unsigned int font_spacing;
     unsigned int disabled;
-    void (*press)();
+    void (*press)(struct COMPONENT_BUTTON_STRUCT* self);
+    void* press_ref;  // custom parameter for press callback
 } component_button_T;
 
 component_button_T* init_component_button(focus_manager_T* focus_manager, float x, float y, float z, char* text, void (*press)());

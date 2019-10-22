@@ -13,8 +13,10 @@ extern const float COLOR_BG_DARK_BRIGHT[3];
 extern modal_manager_T* MODAL_MANAGER;
 
 
-static void modal_click(actor_T* a)
+static void modal_click(component_button_T* self)
 {
+    modal_T* modal = (modal_T*)self->press_ref;
+    modal_manager_close_modal(MODAL_MANAGER, modal);
 }
 
 modal_T* init_modal(float x, float y, char* title, char* text, state_T* state, focus_manager_T* focus_manager)
@@ -35,6 +37,7 @@ modal_T* init_modal(float x, float y, char* title, char* text, state_T* state, f
     modal->component_button = init_component_button(
         focus_manager, x, y, actor->z + 0.7f, "OK", modal_click        
     );
+    modal->component_button->press_ref = modal;
     component_pane_add_component(modal->component_pane, (actor_component_T*) init_component_label(focus_manager, 0.0f, 0.0f, 0.0f, modal->title));
     component_pane_add_component(modal->component_pane, (actor_component_T*) init_component_label(focus_manager, 0.0f, 0.0f, 0.0f, modal->text));
     component_pane_add_component(modal->component_pane, (actor_component_T*) modal->component_button);

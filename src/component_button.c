@@ -34,6 +34,7 @@ component_button_T* init_component_button(focus_manager_T* focus_manager, float 
     actor->width = 200;
     actor->height = 32;
     component_button->press = press;
+    component_button->press_ref = (void*)0;
     component_button->disabled = 0;
 
     return component_button;
@@ -51,7 +52,7 @@ void component_button_tick(actor_T* self)
     {
         if (KEYBOARD_STATE->keys[GLFW_KEY_ENTER] && !KEYBOARD_STATE->key_locks[GLFW_KEY_ENTER])
         {
-            component_button->press();
+            component_button->press(component_button);
             KEYBOARD_STATE->key_locks[GLFW_KEY_ENTER] = 1;
         }
     }
