@@ -12,6 +12,8 @@ extern const float COLOR_BG_DARK_BRIGHT[3];
 
 extern modal_manager_T* MODAL_MANAGER;
 
+#define MODAL_BAR_HEIGHT 32
+
 
 static void modal_click(component_button_T* self)
 {
@@ -30,8 +32,9 @@ modal_T* init_modal(float x, float y, char* title, char* text, state_T* state, f
     modal->width = 400;
     modal->height = 256;
     modal->component_pane = init_component_pane(
-        state, focus_manager, x - modal->width/2, y - modal->height/2, modal->width, modal->height        
+        state, focus_manager, x - modal->width/2, (y - modal->height / 2) + MODAL_BAR_HEIGHT, modal->width, modal->height - MODAL_BAR_HEIGHT
     );
+    modal->component_pane->bg_visible = 0;
     modal->component_pane->z = actor->z + 0.6f;
     modal->component_pane->centered = 1;
     modal->component_button = init_component_button(
@@ -73,8 +76,6 @@ void modal_draw(actor_T* self)
     scene_T* scene = get_current_scene();
     state_T* state = (state_T*) scene;
 
-    unsigned int bar_height = 32; 
-
     // shadow
     draw_positioned_2D_mesh(
         self->x + 4,
@@ -107,41 +108,11 @@ void modal_draw(actor_T* self)
         self->y,
         self->z + 0.2f,
         modal->width,
-        bar_height,
+        MODAL_BAR_HEIGHT,
         COLOR_BG_DARK_BRIGHT[0],
         COLOR_BG_DARK_BRIGHT[1],
         COLOR_BG_DARK_BRIGHT[2],
         1,
-        state
-    );
-
-    draw_text(
-        modal->title,
-        (self->x + (modal->width / 2)) - ((strlen(modal->title) * (6 + 6)) / 2),
-        self->y + (bar_height / 2),
-        self->z + 0.4f,
-        255,
-        255,
-        255,
-        1.0f, // a
-        6,
-        6,
-        0,
-        state
-    );
-
-    draw_text(
-        modal->text,
-        (self->x + (modal->width / 2)) - ((strlen(modal->text) * (6 + 6)) / 2),
-        (self->y + ((modal->height + bar_height) / 2)) - 32,
-        self->z + 0.4f,
-        255,
-        255,
-        255,
-        1.0f, // a
-        6,
-        6,
-        0,
         state
     );
 }

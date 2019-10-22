@@ -23,6 +23,7 @@ component_pane_T* init_component_pane(state_T* state, focus_manager_T* focus_man
     component_pane->components = init_dynamic_list(sizeof(struct COMPONENT_STRUCT*));
     component_pane->rows = init_dynamic_list(sizeof(struct COMPONENT_PANE_STRUCT*));
     component_pane->cols = init_dynamic_list(sizeof(struct COMPONENT_PANE_STRUCT*));
+    component_pane->bg_visible = 1;
 
     return component_pane;
 }
@@ -55,35 +56,39 @@ void component_pane_draw(scene_T* self)
     state_T* state = (state_T*) self;
     component_pane_T* component_pane = (component_pane_T*) self;
 
-    // black
-    draw_positioned_2D_mesh(
-        component_pane->x,
-        component_pane->y,
-        component_pane->z,
-        component_pane->width,
-        component_pane->height,
-        0.0f,
-        0.0f,
-        0.0f,
-        1.0f,
-        state
-    );
+    if (component_pane->bg_visible)
+    {
+        int padding = 4;
 
-    int padding = 4;
+        // black
+        draw_positioned_2D_mesh(
+            component_pane->x,
+            component_pane->y,
+            component_pane->z,
+            component_pane->width,
+            component_pane->height,
+            0.0f,
+            0.0f,
+            0.0f,
+            1.0f,
+            state
+        );
 
-    // white
-    draw_positioned_2D_mesh(
-        component_pane->x + padding,
-        component_pane->y + padding,
-        component_pane->z + 0.1f,
-        component_pane->width - (padding*2),
-        component_pane->height - (padding*2),
-        255.0f,
-        255.0f,
-        255.0f,
-        1.0f,
-        state
-    );
+
+        // white
+        draw_positioned_2D_mesh(
+            component_pane->x + padding,
+            component_pane->y + padding,
+            component_pane->z + 0.1f,
+            component_pane->width - (padding*2),
+            component_pane->height - (padding*2),
+            255.0f,
+            255.0f,
+            255.0f,
+            1.0f,
+            state
+        );
+    }
 
     for (int i = 0; i < component_pane->rows->size; i++)
     {
@@ -161,8 +166,9 @@ void component_pane_adjust(component_pane_T* component_pane)
 
     if (component_pane->centered)
     {
-        int final_height = component_pane->y;
+        int final_height = 0;
 
+        // calculating the final height
         for (int i = 0; i < component_pane->components->size; i++)
         {
             actor_component_T* ac = (actor_component_T*) component_pane->components->items[i];
@@ -174,11 +180,10 @@ void component_pane_adjust(component_pane_T* component_pane)
             actor_T* ap = (actor_T*) acp;
             a->z = component_pane->z + 0.2f;
 
-            int extra_height = 0;
-
             final_height += a->height + ac->margin_y + component_pane->child_margin_top;
         }
 
+        // using the calculated final height to center vertically
         for (int i = 0; i < component_pane->components->size; i++)
         {
             actor_component_T* ac = (actor_component_T*) component_pane->components->items[i];
@@ -189,10 +194,8 @@ void component_pane_adjust(component_pane_T* component_pane)
             actor_T* a = (actor_T*) ac;
             actor_T* ap = (actor_T*) acp;
 
-            int extra_height = 0;
-
             a->x = component_pane->x + (component_pane->width / 2) - a->width / 2;
-            //a->y += extra_height;
+
             if (i == 0)
             {
                 a->y = component_pane->y + ((component_pane->height / 2) + (i * (a->height + ac->margin_y))) - final_height / 2;

@@ -24,6 +24,7 @@ typedef struct COMPONENT_PANE_STRUCT
     int min_height;
     float z;
     unsigned int centered;
+    unsigned int bg_visible;
     state_T* state;
 } component_pane_T;
 
