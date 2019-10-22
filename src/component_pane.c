@@ -144,13 +144,13 @@ actor_component_T* component_pane_add_component(component_pane_T* component_pane
     return actor_component;
 }
 
-static int compare( const void* a, const void* b)
+static int compare(const void* a, const void* b)
 {
-     int int_a = * ( (int*) a );
-     int int_b = * ( (int*) b );
+     int int_a = *((int*) a);
+     int int_b = *((int*) b);
 
-     if ( int_a == int_b ) return 0;
-     else if ( int_a < int_b ) return -1;
+     if (int_a == int_b) return 0;
+     else if (int_a < int_b) return -1;
      else return 1;
 }
 
