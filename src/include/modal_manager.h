@@ -7,6 +7,7 @@
 typedef struct MODAL_MANAGER_STRUCT
 {
     dynamic_list_T* modals;
+    float z;
 } modal_manager_T;
 
 modal_manager_T* init_modal_manager();

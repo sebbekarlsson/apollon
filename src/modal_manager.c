@@ -14,6 +14,7 @@ modal_manager_T* init_modal_manager()
 {
     modal_manager_T* modal_manager = calloc(1, sizeof(struct MODAL_MANAGER_STRUCT));
     modal_manager->modals = init_dynamic_list(sizeof(struct MODAL_STRUCT*));
+    modal_manager->z = 1.5f;
 
     return modal_manager;
 }
@@ -29,13 +30,13 @@ void modal_manager_draw(modal_manager_T* modal_manager)
         draw_positioned_2D_mesh(
             0.0f,
             0.0f,
-            1.0f,
+            1.5f,
             WINDOW_WIDTH,
             WINDOW_HEIGHT,
             255,
             255,
             255,
-            0.1f,
+            0.6f,
             state
         );
     }

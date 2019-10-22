@@ -1,11 +1,13 @@
-#include "include/scene_base.h"
 #include "include/main.h"
+#include "include/scene_base.h"
+#include "include/modal_manager.h"
 #include <string.h>
 #include <coelum/constants.h>
 #include <coelum/draw_utils.h>
 
 
 extern main_state_T* MAIN_STATE;
+extern modal_manager_T* MODAL_MANAGER;
 
 
 scene_base_T* scene_base_constructor(scene_base_T* scene_base, void (*refresh_state)(struct SCENE_BASE_STRUCT* self), const char* title)
@@ -56,6 +58,8 @@ void scene_base_draw(scene_base_T* scene_base)
     glDisable(GL_SCISSOR_TEST);
 
     scene_base_draw_title_bar(scene_base);
+
+    modal_manager_draw(MODAL_MANAGER);
 }
 
 void scene_base_draw_title_bar(scene_base_T* scene_base)

@@ -23,7 +23,7 @@ modal_T* init_modal(float x, float y, char* title, char* text, state_T* state, f
 {
     modal_T* modal = calloc(1, sizeof(struct MODAL_STRUCT));
     actor_T* actor = (actor_T*) modal;
-    actor_constructor(actor, x, y, 1.1f, modal_tick, modal_draw, "modal");
+    actor_constructor(actor, x, y, MODAL_MANAGER->z, modal_tick, modal_draw, "modal");
 
     modal->title = title;
     modal->text = text;
@@ -74,10 +74,6 @@ void modal_draw(actor_T* self)
     state_T* state = (state_T*) scene;
 
     unsigned int bar_height = 32; 
-   
-    // TODO: fix the z-buffer when doing 2D, so that the modal_manager
-    // can draw this on its own. 
-    modal_manager_draw(MODAL_MANAGER);
 
     // shadow
     draw_positioned_2D_mesh(
