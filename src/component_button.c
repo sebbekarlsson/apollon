@@ -42,21 +42,10 @@ component_button_T* init_component_button(focus_manager_T* focus_manager, float 
 
 void component_button_tick(actor_T* self)
 {
+    // Not doing anything at the moment.
+    //actor_component_tick(actor_component); 
+
     component_button_T* component_button = (component_button_T*) self;
-    actor_component_T* actor_component = (actor_component_T*) component_button;
-    unsigned int focused = actor_component->focused;
-
-    actor_component_tick(actor_component); 
-
-    if ((focused || actor_component->hovered) && !component_button->disabled)
-    {
-        if (KEYBOARD_STATE->keys[GLFW_KEY_ENTER] && !KEYBOARD_STATE->key_locks[GLFW_KEY_ENTER])
-        {
-            component_button->press(component_button);
-            KEYBOARD_STATE->key_locks[GLFW_KEY_ENTER] = 1;
-        }
-    }
-
     component_button->alpha = component_button->disabled ? 0.6f : 1.0f;
 }
 

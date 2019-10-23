@@ -44,13 +44,18 @@ void modal_manager_draw(modal_manager_T* modal_manager)
 
 void modal_manager_register_modal(modal_manager_T* modal_manager, modal_T* modal)
 {
+    state_T* state = get_current_state();
+
     dynamic_list_append(modal_manager->modals, modal);
+    dynamic_list_append(state->actors, modal);
+
+    state_resort_actors(state);
 }
 
 modal_T* modal_manager_show_modal(modal_manager_T* modal_manager, char* title, char* text)
 {
     scene_T* scene = get_current_scene();
-    state_T* state = (state_T*) scene;
+    state_T* state = get_current_state();
 
     // TODO: copy and allocate memory for title & text
     // so that we can free it in the free method.
@@ -65,8 +70,6 @@ modal_T* modal_manager_show_modal(modal_manager_T* modal_manager, char* title, c
     );
 
     modal_manager_register_modal(modal_manager, modal);
-    dynamic_list_append(state->actors, modal);
-    state_resort_actors(state);
 
     MAIN_STATE->modal_is_active = 1;
 
@@ -81,8 +84,7 @@ void modal_manager_close_modal(modal_manager_T* modal_manager, modal_T* modal)
     dynamic_list_remove(modal_manager->modals, modal, (void*) 0);
     dynamic_list_remove(state->actors, modal, (void*) 0);
 
-
-    modal_free(modal);
+    //modal_free(modal);
 }
 
 void modal_manager_close_all_modals(modal_manager_T* modal_manager)
