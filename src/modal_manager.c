@@ -52,19 +52,16 @@ void modal_manager_register_modal(modal_manager_T* modal_manager, modal_T* modal
     state_resort_actors(state);
 }
 
-modal_T* modal_manager_show_modal(modal_manager_T* modal_manager, char* title, char* text)
+modal_T* modal_manager_show_modal(modal_manager_T* modal_manager, const char* title, const char* text)
 {
     scene_T* scene = get_current_scene();
     state_T* state = get_current_state();
 
-    // TODO: copy and allocate memory for title & text
-    // so that we can free it in the free method.
-
     modal_T* modal = init_modal(
         WINDOW_WIDTH / 2,
         WINDOW_HEIGHT / 2,
-        title,
-        text,
+        (char*) title,
+        (char*) text,
         state,
         ((scene_base_T*)scene)->focus_manager
     );
@@ -82,9 +79,11 @@ void modal_manager_close_modal(modal_manager_T* modal_manager, modal_T* modal)
     state_T* state = (state_T*) scene;
 
     dynamic_list_remove(modal_manager->modals, modal, (void*) 0);
-    dynamic_list_remove(state->actors, modal, (void*) 0);
+    dynamic_list_remove(state->actors, modal, (void*)0);
 
-    //modal_free(modal);
+    modal_free(modal);
+    
+    modal_manager_update(modal_manager);
 }
 
 void modal_manager_close_all_modals(modal_manager_T* modal_manager)
@@ -96,4 +95,9 @@ void modal_manager_close_all_modals(modal_manager_T* modal_manager)
     }
 
     MAIN_STATE->modal_is_active = 0;
+}
+
+void modal_manager_update(modal_manager_T* modal_manager)
+{
+    MAIN_STATE->modal_is_active = modal_manager->modals->size > 0;
 }

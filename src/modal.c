@@ -1,6 +1,8 @@
 #include "include/modal.h"
+#include "include/main.h"
 #include "include/modal_manager.h"
 #include "include/component_label.h"
+#include "include/string_utils.h"
 #include <coelum/current.h>
 #include <coelum/draw_utils.h>
 #include <coelum/constants.h>
@@ -17,8 +19,7 @@ extern modal_manager_T* MODAL_MANAGER;
 
 static void modal_click(component_button_T* self)
 {
-    modal_T* modal = (modal_T*)self->press_ref;
-    modal_manager_close_modal(MODAL_MANAGER, modal);
+    modal_manager_close_all_modals(MODAL_MANAGER);
 }
 
 modal_T* init_modal(float x, float y, char* title, char* text, state_T* state, focus_manager_T* focus_manager)
@@ -27,8 +28,8 @@ modal_T* init_modal(float x, float y, char* title, char* text, state_T* state, f
     actor_T* actor = (actor_T*) modal;
     actor_constructor(actor, x, y, MODAL_MANAGER->z + 0.1f, modal_tick, modal_draw, "modal");
 
-    modal->title = title;
-    modal->text = text;
+    modal->title = string_copy(title);
+    modal->text = string_copy(text);
     modal->width = 400;
     modal->height = 256;
     modal->component_pane = init_component_pane(
@@ -41,9 +42,8 @@ modal_T* init_modal(float x, float y, char* title, char* text, state_T* state, f
     modal->component_button = init_component_button(
         focus_manager, x, y, actor->z + 0.7f, "OK", modal_click        
     );
-    modal->component_button->press_ref = modal;
-    component_pane_add_component(modal->component_pane, (actor_component_T*) init_component_label(focus_manager, 0.0f, 0.0f, 0.0f, modal->title, 255, 255, 255));
-    component_pane_add_component(modal->component_pane, (actor_component_T*) init_component_label(focus_manager, 0.0f, 0.0f, 0.0f, modal->text, 255, 255, 255));
+    component_pane_add_component(modal->component_pane, (actor_component_T*) init_component_label(focus_manager, 0.0f, 0.0f, 0.0f, title, 255, 255, 255));
+    component_pane_add_component(modal->component_pane, (actor_component_T*) init_component_label(focus_manager, 0.0f, 0.0f, 0.0f, text, 255, 255, 255));
     component_pane_add_component(modal->component_pane, (actor_component_T*) modal->component_button);
 
     actor->x -= (modal->width / 2);
@@ -120,9 +120,14 @@ void modal_draw(actor_T* self)
 
 void modal_free(modal_T* modal)
 {
-    actor_T* actor = (actor_T*) modal;
+    //actor_T* actor = (actor_T*) modal;
 
-    actor_free(actor);
+    //actor_free(actor);
 
-    free(modal);
+    printf("title: %p\n", modal->title);
+    printf("text: %p\n", modal->text);
+    free(modal->title);
+    free(modal->text);
+
+    //free(modal);
 }

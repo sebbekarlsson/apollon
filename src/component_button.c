@@ -34,7 +34,6 @@ component_button_T* init_component_button(focus_manager_T* focus_manager, float 
     actor->width = 200;
     actor->height = 32;
     component_button->press = press;
-    component_button->press_ref = (void*)0;
     component_button->disabled = 0;
 
     return component_button;

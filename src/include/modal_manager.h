@@ -16,9 +16,11 @@ void modal_manager_draw(modal_manager_T* modal_manager);
 
 void modal_manager_register_modal(modal_manager_T* modal_manager, modal_T* modal);
 
-modal_T* modal_manager_show_modal(modal_manager_T* modal_manager, char* title, char* text);
+modal_T* modal_manager_show_modal(modal_manager_T* modal_manager, const char* title, const char* text);
 
 void modal_manager_close_modal(modal_manager_T* modal_manager, modal_T* modal);
 
 void modal_manager_close_all_modals(modal_manager_T* modal_manager);
+
+void modal_manager_update(modal_manager_T* modal_manager);
 #endif
