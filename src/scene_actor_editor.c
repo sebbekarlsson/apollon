@@ -12,6 +12,7 @@ extern keyboard_state_T* KEYBOARD_STATE;
 extern database_T* DATABASE;
 extern modal_manager_T* MODAL_MANAGER;
 extern main_state_T* MAIN_STATE;
+extern const float COLOR_FG[3];
 
 
 static void _free_actor_dropdown_option(void* item)
@@ -346,7 +347,9 @@ scene_actor_editor_T* init_scene_actor_editor()
     /* ==== LEFT ==== */
 
     /* ==== actor ==== */
-    s_actor_editor->component_label_actor = init_component_label(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Actor");
+    s_actor_editor->component_label_actor = init_component_label(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Actor", COLOR_FG[0],
+        COLOR_FG[1],
+        COLOR_FG[2]);
     s_actor_editor->component_dropdown_list_actor = init_component_dropdown_list(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, actor_editor_actor_press);
     s_actor_editor->component_dropdown_list_actor->expanded = 0;
     ((actor_T*)s_actor_editor->component_dropdown_list_actor)->z = 1;
@@ -361,7 +364,9 @@ scene_actor_editor_T* init_scene_actor_editor()
     );
 
     /* ==== init_script ====*/
-    s_actor_editor->component_label_init_script = init_component_label(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Init Script");
+    s_actor_editor->component_label_init_script = init_component_label(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Init Script", COLOR_FG[0],
+        COLOR_FG[1],
+        COLOR_FG[2]);
     s_actor_editor->component_dropdown_list_init_script = init_component_dropdown_list(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, (void*)0);
     component_pane_add_component(
         left,
@@ -373,7 +378,9 @@ scene_actor_editor_T* init_scene_actor_editor()
     );
 
     /* ==== tick_script ====*/
-    s_actor_editor->component_label_tick_script = init_component_label(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Tick Script");
+    s_actor_editor->component_label_tick_script = init_component_label(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Tick Script", COLOR_FG[0],
+        COLOR_FG[1],
+        COLOR_FG[2]);
     s_actor_editor->component_dropdown_list_tick_script = init_component_dropdown_list(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, (void*)0);
     component_pane_add_component(
         left,
@@ -385,7 +392,9 @@ scene_actor_editor_T* init_scene_actor_editor()
     );
 
     /* ==== draw_script ====*/
-    s_actor_editor->component_label_draw_script = init_component_label(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Draw Script");
+    s_actor_editor->component_label_draw_script = init_component_label(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Draw Script", COLOR_FG[0],
+        COLOR_FG[1],
+        COLOR_FG[2]);
     s_actor_editor->component_dropdown_list_draw_script = init_component_dropdown_list(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, (void*)0);
     component_pane_add_component(
         left,
@@ -406,7 +415,9 @@ scene_actor_editor_T* init_scene_actor_editor()
     /* ==== RIGHT ==== */
     
     /* ==== type_name ====*/
-    s_actor_editor->component_label_type_name = init_component_label(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Name");
+    s_actor_editor->component_label_type_name = init_component_label(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Name", COLOR_FG[0],
+        COLOR_FG[1],
+        COLOR_FG[2]);
     s_actor_editor->component_input_field_type_name = init_component_input_field(scene_base->focus_manager, 0.0f, 0.0f, 0.0f);
     dynamic_list_append(state->actors, s_actor_editor->component_label_type_name);
     scene_base_register_focusable(scene_base, (actor_focusable_T*) s_actor_editor->component_input_field_type_name);
@@ -420,7 +431,9 @@ scene_actor_editor_T* init_scene_actor_editor()
     );
     
     /* ==== sprite ==== */
-    s_actor_editor->component_label_sprite = init_component_label(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Sprite");
+    s_actor_editor->component_label_sprite = init_component_label(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Sprite", COLOR_FG[0],
+        COLOR_FG[1],
+        COLOR_FG[2]);
     s_actor_editor->component_dropdown_list_sprite = init_component_dropdown_list(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, actor_editor_sprite_press);
     s_actor_editor->component_dropdown_list_sprite->expanded = 0;
     ((actor_T*)s_actor_editor->component_dropdown_list_sprite)->z = 1;

@@ -37,12 +37,13 @@ modal_T* init_modal(float x, float y, char* title, char* text, state_T* state, f
     modal->component_pane->bg_visible = 0;
     modal->component_pane->z = actor->z + 0.6f;
     modal->component_pane->centered = 1;
+    modal->component_pane->child_margin_top = 16;
     modal->component_button = init_component_button(
         focus_manager, x, y, actor->z + 0.7f, "OK", modal_click        
     );
     modal->component_button->press_ref = modal;
-    component_pane_add_component(modal->component_pane, (actor_component_T*) init_component_label(focus_manager, 0.0f, 0.0f, 0.0f, modal->title));
-    component_pane_add_component(modal->component_pane, (actor_component_T*) init_component_label(focus_manager, 0.0f, 0.0f, 0.0f, modal->text));
+    component_pane_add_component(modal->component_pane, (actor_component_T*) init_component_label(focus_manager, 0.0f, 0.0f, 0.0f, modal->title, 255, 255, 255));
+    component_pane_add_component(modal->component_pane, (actor_component_T*) init_component_label(focus_manager, 0.0f, 0.0f, 0.0f, modal->text, 255, 255, 255));
     component_pane_add_component(modal->component_pane, (actor_component_T*) modal->component_button);
 
     actor->x -= (modal->width / 2);

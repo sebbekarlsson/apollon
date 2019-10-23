@@ -16,7 +16,7 @@ typedef struct COMPONENT_LABEL_STRUCT
     unsigned int b;
 } component_label_T;
 
-component_label_T* init_component_label(focus_manager_T* focus_manager, float x, float y, float z, char* text);
+component_label_T* init_component_label(focus_manager_T* focus_manager, float x, float y, float z, char* text, unsigned int r, unsigned int g, unsigned int b);
 
 void component_label_tick(actor_T* self);
 

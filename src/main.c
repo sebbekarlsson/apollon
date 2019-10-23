@@ -7,7 +7,6 @@
 #include "include/scene_sprite_editor.h"
 #include "include/scene_script_selector.h"
 #include "include/scene_text_editor.h"
-#include "include/scene_test.h"
 #include "include/colors.h"
 #include "include/image_utils.h"
 #include "include/modal_manager.h"

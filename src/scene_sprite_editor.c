@@ -20,6 +20,7 @@ extern main_state_T* MAIN_STATE;
 extern modal_manager_T* MODAL_MANAGER;
 extern sprite_T* SPRITE_PENCIL;
 extern sprite_T* SPRITE_ERASOR;
+extern const float COLOR_FG[3];
 
 
 static void scene_sprite_editor_clear_component_input_fields(scene_sprite_editor_T* s_sprite_editor)
@@ -505,7 +506,10 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     s_sprite_editor->component_label_frame_index = init_component_label(
         scene_base->focus_manager,
         0.0f, 0.0f, 0.0f,
-        "0 / 0"        
+        "0 / 0",
+        COLOR_FG[0],
+        COLOR_FG[1],
+        COLOR_FG[2]
     );
     component_pane_add_component(
         right_top,
@@ -519,7 +523,10 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
         iy + (WINDOW_HEIGHT / 2) - ((16 * 16) / 2) - 80,
         0.0f,
-        "Name"
+        "Name",
+        COLOR_FG[0],
+        COLOR_FG[1],
+        COLOR_FG[2]
     );
     component_pane_add_component(
         left,
@@ -584,7 +591,10 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         ((WINDOW_WIDTH / 2) - ((16 * 16) / 2)) - (component_dropdown_list_sprite_width + 16),
         iy + (WINDOW_HEIGHT / 2) - ((16 * 16) / 2) - (8 + 8),
         0.0f,
-        "Sprite"
+        "Sprite",
+        COLOR_FG[0],
+        COLOR_FG[1],
+        COLOR_FG[2]
     );
     component_pane_add_component(
         left,
@@ -610,7 +620,10 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         (((WINDOW_WIDTH / 2) - ((16 * 16) / 2))) - (component_dropdown_list_sprite_width + 16),
         iy + (WINDOW_HEIGHT / 2) - ((16 * 16) / 2) + 64,
         0.0f,
-        "Delay"
+        "Delay",
+        COLOR_FG[0],
+        COLOR_FG[1],
+        COLOR_FG[2]
     );
     component_pane_add_component(
         left,

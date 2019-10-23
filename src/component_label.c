@@ -4,10 +4,7 @@
 #include <string.h>
 
 
-extern const float COLOR_FG[3];
-
-
-component_label_T* init_component_label(focus_manager_T* focus_manager, float x, float y, float z, char* text)
+component_label_T* init_component_label(focus_manager_T* focus_manager, float x, float y, float z, char* text, unsigned int r, unsigned int g, unsigned int b)
 {
     component_label_T* component_label = calloc(1, sizeof(struct COMPONENT_LABEL_STRUCT));
     actor_T* actor = (actor_T*) component_label;
@@ -18,9 +15,9 @@ component_label_T* init_component_label(focus_manager_T* focus_manager, float x,
     component_label->text = text;
     component_label->font_size = 6;
     component_label->font_spacing = component_label->font_size;
-    component_label->r = COLOR_FG[0];
-    component_label->g = COLOR_FG[1];
-    component_label->b = COLOR_FG[2];
+    component_label->r = r;
+    component_label->g = g;
+    component_label->b = b;
     actor->height = component_label->font_size + component_label->font_spacing;
 
     return component_label;

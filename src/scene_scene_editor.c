@@ -13,6 +13,7 @@ extern database_T* DATABASE;
 extern theatre_T* THEATRE;
 extern main_state_T* MAIN_STATE;
 extern modal_manager_T* MODAL_MANAGER;
+extern const float COLOR_FG[3];
 
 
 static void _free_scene_component_dropdown_option(void* item)
@@ -237,7 +238,9 @@ scene_scene_editor_T* init_scene_scene_editor()
     /* ==== LEFT ==== */
 
     /* ==== actor ==== */
-    s_scene_editor->component_label_scene = init_component_label(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Scene");
+    s_scene_editor->component_label_scene = init_component_label(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Scene", COLOR_FG[0],
+        COLOR_FG[1],
+        COLOR_FG[2]);
     ((actor_component_T*)s_scene_editor->component_label_scene)->margin_y = 4;
     s_scene_editor->component_dropdown_list_scene = init_component_dropdown_list(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, scene_editor_scene_press);
     ((actor_component_T*)s_scene_editor->component_dropdown_list_scene)->margin_y = 4;
@@ -267,7 +270,9 @@ scene_scene_editor_T* init_scene_scene_editor()
     /* ==== RIGHT ==== */
     
     /* ==== type_name ====*/
-    s_scene_editor->component_label_name = init_component_label(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Name");
+    s_scene_editor->component_label_name = init_component_label(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Name", COLOR_FG[0],
+        COLOR_FG[1],
+        COLOR_FG[2]);
     ((actor_component_T*)s_scene_editor->component_label_name)->margin_y = 4;
     s_scene_editor->component_input_field_name = init_component_input_field(scene_base->focus_manager, 0.0f, 0.0f, 0.0f);
     ((actor_component_T*)s_scene_editor->component_input_field_name)->margin_y = 4;
@@ -281,7 +286,9 @@ scene_scene_editor_T* init_scene_scene_editor()
     );
 
     /* ==== checkbox_main_scene ====*/
-    s_scene_editor->component_label_main_scene = init_component_label(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Main");
+    s_scene_editor->component_label_main_scene = init_component_label(scene_base->focus_manager, 0.0f, 0.0f, 0.0f, "Main", COLOR_FG[0],
+        COLOR_FG[1],
+        COLOR_FG[2]);
     s_scene_editor->component_checkbox_main_scene = init_component_checkbox(scene_base->focus_manager, 0.0f, 0.0f, 0.0f);
     ((actor_component_T*)s_scene_editor->component_label_main_scene)->margin_y = 4;
     ((actor_component_T*)s_scene_editor->component_checkbox_main_scene)->margin_y = 4;

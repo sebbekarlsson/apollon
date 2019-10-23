@@ -12,6 +12,7 @@ extern database_T* DATABASE;
 extern main_state_T* MAIN_STATE;
 extern theatre_T* THEATRE;
 extern modal_manager_T* MODAL_MANAGER;
+extern const float COLOR_FG[3];
 
 
 static void scene_script_selector_reset_script_id(scene_script_selector_T* s_script_selector)
@@ -192,7 +193,10 @@ scene_script_selector_T* init_scene_script_selector()
         ix,
         iy,
         0.0f,
-        "Script"
+        "Script",
+        COLOR_FG[0],
+        COLOR_FG[1],
+        COLOR_FG[2]
     );
     component_pane_add_component(
         scene_base->component_pane,
@@ -225,7 +229,10 @@ scene_script_selector_T* init_scene_script_selector()
         jx,
         jy,
         0.0f,
-        "Name"
+        "Name",
+        COLOR_FG[0],
+        COLOR_FG[1],
+        COLOR_FG[2]
     );
     component_pane_add_component(
         scene_base->component_pane,
