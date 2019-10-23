@@ -140,6 +140,8 @@ actor_component_T* component_pane_add_component(component_pane_T* component_pane
     dynamic_list_append(state->actors, (actor_T*) actor_component);
     dynamic_list_append(component_pane->components, actor_component);
     dynamic_list_append(component_pane->focus_manager->components, actor_component);
+    
+    state_resort_actors(state);
 
     return actor_component;
 }
@@ -156,6 +158,8 @@ static int compare(const void* a, const void* b)
 
 void component_pane_adjust(component_pane_T* component_pane)
 {
+    state_T* state = (state_T*)((scene_T*) component_pane);
+
     int padding = 4;
     int x = 0;
     int y = 0;

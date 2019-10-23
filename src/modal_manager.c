@@ -30,7 +30,7 @@ void modal_manager_draw(modal_manager_T* modal_manager)
         draw_positioned_2D_mesh(
             0.0f,
             0.0f,
-            1.5f,
+            modal_manager->z,
             WINDOW_WIDTH,
             WINDOW_HEIGHT,
             255,
