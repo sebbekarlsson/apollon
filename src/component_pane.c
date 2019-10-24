@@ -74,7 +74,6 @@ void component_pane_draw(scene_T* self)
             state
         );
 
-
         // white
         draw_positioned_2D_mesh(
             component_pane->x + padding,
@@ -90,6 +89,7 @@ void component_pane_draw(scene_T* self)
         );
     }
 
+    // -> draw
     for (int i = 0; i < component_pane->rows->size; i++)
     {
         component_pane_T* child_pane = (component_pane_T*) component_pane->rows->items[i];
@@ -100,7 +100,7 @@ void component_pane_draw(scene_T* self)
         glDisable(GL_SCISSOR_TEST);
     }
 
-    
+    // -> draw
     for (int i = 0; i < component_pane->cols->size; i++)
     {
         component_pane_T* child_pane = (component_pane_T*) component_pane->cols->items[i];
@@ -111,6 +111,7 @@ void component_pane_draw(scene_T* self)
         glDisable(GL_SCISSOR_TEST);
     }
 
+    // state_draw
     for (int i = 0; i < component_pane->rows->size; i++)
     {
         component_pane_T* child_pane = (component_pane_T*) component_pane->rows->items[i];
@@ -121,7 +122,7 @@ void component_pane_draw(scene_T* self)
         glDisable(GL_SCISSOR_TEST);
     }
 
-    
+    // state_draw
     for (int i = 0; i < component_pane->cols->size; i++)
     {
         component_pane_T* child_pane = (component_pane_T*) component_pane->cols->items[i];

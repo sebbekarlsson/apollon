@@ -33,29 +33,21 @@ int save_png_to_file(bitmap_t *bitmap, const char *path)
     fp = fopen(path, "wb");
 
     if (!fp)
-    {
         goto fopen_failed;
-    }
 
     png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 
     if (png_ptr == NULL)
-    {
         goto png_create_write_struct_failed;
-    }
     
     info_ptr = png_create_info_struct(png_ptr);
 
     if (info_ptr == NULL)
-    {
         goto png_create_info_struct_failed;
-    }
     
     /* Set up error handling. */
     if (setjmp(png_jmpbuf(png_ptr)))
-    {
         goto png_failure;
-    }
     
     /* Set image attributes. */
     png_set_IHDR(png_ptr,
@@ -96,9 +88,7 @@ int save_png_to_file(bitmap_t *bitmap, const char *path)
     status = 0;
     
     for (y = 0; y < bitmap->height; y++)
-    {
         png_free(png_ptr, row_pointers[y]);
-    }
 
     png_free(png_ptr, row_pointers);
     

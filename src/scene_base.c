@@ -16,7 +16,9 @@ scene_base_T* scene_base_constructor(scene_base_T* scene_base, void (*refresh_st
     scene_base->refresh_state = refresh_state;
     scene_base->title = calloc(strlen(title) + 1, sizeof(char));
     strcpy(scene_base->title, title);
+
     state_T* state = (state_T*)((scene_T*) scene_base);
+
     scene_base->component_pane = init_component_pane(
       state,
       scene_base->focus_manager,
@@ -122,12 +124,4 @@ void scene_base_draw_title_bar(scene_base_T* scene_base)
             state
         );
     }
-}
-
-actor_focusable_T* scene_base_register_focusable(scene_base_T* scene_base, actor_focusable_T* focusable)
-{
-    //dynamic_list_append(scene_base->focus_manager->focusables, focusable);
-    //dynamic_list_append(((state_T*)((scene_T*)scene_base))->actors, (actor_T*)focusable);
-
-    return focusable;
 }

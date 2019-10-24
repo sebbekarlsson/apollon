@@ -21,9 +21,7 @@ static void dropdown_click(actor_T* self)
     component_dropdown_list->selected_index = component_dropdown_list->option_index;
     
     if (component_dropdown_list->press && component_dropdown_list->options->size > 0 && component_dropdown_list->option_index > 0)
-    {
         component_dropdown_list->press(component_dropdown_list, component_dropdown_list->options->items[component_dropdown_list->option_index]);
-    }
 
     if (component_dropdown_list->deexpand_on_press)
     {
@@ -46,12 +44,13 @@ component_dropdown_list_T* init_component_dropdown_list(focus_manager_T* focus_m
         init_component_dropdown_list_option((void*)0, "No Option", (void*)0, 0)
     );
 
+    actor->width = 200;
+    actor->height = 28;
+
     component_dropdown_list->option_index = 0;
     component_dropdown_list->expanded = 0;
     component_dropdown_list->selected_index = 0;
-    component_dropdown_list->deexpand_on_press = 1;
-    actor->width = 200;
-    actor->height = 28;
+    component_dropdown_list->deexpand_on_press = 1; 
     component_dropdown_list->press = press;
 
     return component_dropdown_list;
@@ -102,6 +101,7 @@ void component_dropdown_list_option_draw(int i, component_dropdown_list_option_T
     actor_T* self = (actor_T*) actor_component;
 
     int h = 28;
+    int text_padding = 0;
 
     float base_z = self->z;
 
@@ -124,8 +124,6 @@ void component_dropdown_list_option_draw(int i, component_dropdown_list_option_T
         );
     }
 
-    int text_padding = 0;
-    
     if (option->database_sprite != (void*) 0)
     {
         if (option->database_sprite->sprite != (void*) 0)
@@ -170,6 +168,7 @@ void component_dropdown_list_draw(actor_T* self)
 {
     component_dropdown_list_T* component_dropdown_list = (component_dropdown_list_T*) self;
     actor_component_T* component_dropdown_list_component = (actor_component_T*) component_dropdown_list;
+
     unsigned int focused = component_dropdown_list_component->focused;
 
     if (!component_dropdown_list_component->visible)

@@ -16,10 +16,7 @@ static void scene_text_editor_load(void* s)
     scene_text_editor_T* s_text_editor = (scene_text_editor_T*) self;
 
     if (MAIN_STATE->script_id != (void*)0 && MAIN_STATE->text_editor_value != (void*)0)
-    {
-        
         ((component_textable_T*)s_text_editor->component_textarea)->value = MAIN_STATE->text_editor_value;
-    }
 }
 
 scene_text_editor_T* init_scene_text_editor()
@@ -107,6 +104,7 @@ void scene_text_editor_draw(scene_T* self)
             state
         );
     }
+
     free(text);
 
     camera_unbind(state->camera);

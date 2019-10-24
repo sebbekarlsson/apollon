@@ -22,7 +22,6 @@ database_T* DATABASE;
 
 modal_manager_T* MODAL_MANAGER;
 
-
 texture_T* TEXTURE_CHECKBOX_SHEET;
 texture_T* TEXTURE_CHECKBOARD;
 

@@ -13,6 +13,7 @@ extern const float COLOR_RED[3];
 extern keyboard_state_T* KEYBOARD_STATE;
 extern mouse_state_T* MOUSE_STATE;
 
+
 component_button_T* init_component_button(focus_manager_T* focus_manager, float x, float y, float z, char* text, void (*press)())
 {
     component_button_T* component_button = calloc(1, sizeof(struct COMPONENT_BUTTON_STRUCT));
@@ -20,6 +21,9 @@ component_button_T* init_component_button(focus_manager_T* focus_manager, float 
     actor_component_constructor(component, focus_manager, press);
     actor_T* actor = (actor_T*) component_button;
     actor_constructor(actor, x, y, z, component_button_tick, component_button_draw, "component_button");
+
+    actor->width = 200;
+    actor->height = 32;
 
     component_button->text = text;
     component_button->fg_r = COLOR_FG[0];
@@ -30,9 +34,7 @@ component_button_T* init_component_button(focus_manager_T* focus_manager, float 
     component_button->bg_b = COLOR_BG_DARK[2];
     component_button->alpha = 1.0f;
     component_button->font_size = 6;
-    component_button->font_spacing = 6;
-    actor->width = 200;
-    actor->height = 32;
+    component_button->font_spacing = 6; 
     component_button->press = press;
     component_button->disabled = 0;
 
@@ -52,6 +54,7 @@ void component_button_draw(actor_T* self)
 {
     component_button_T* component_button = (component_button_T*) self;
     actor_component_T* actor_component = (actor_component_T*) component_button;
+
     unsigned int focused = actor_component->focused;
     unsigned int hovered = actor_component->hovered;
     unsigned int visible = actor_component->visible;
@@ -150,7 +153,7 @@ void component_button_draw(actor_T* self)
 
 void component_button_free(component_button_T* component_button)
 {
-//    free(component_button->text);
+    // free(component_button->text);
 
     actor_T* actor = (actor_T*) component_button;
 

@@ -17,9 +17,7 @@ actor_cursor_T* init_actor_cursor(float x, float y, float z)
     return actor_cursor;
 }
 
-void actor_cursor_tick(actor_T* self)
-{
-}
+void actor_cursor_tick(actor_T* self) {}
 
 void actor_cursor_draw(actor_T* self)
 {

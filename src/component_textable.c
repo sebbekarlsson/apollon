@@ -11,9 +11,6 @@
 extern keyboard_state_T* KEYBOARD_STATE;
 extern const float COLOR_CONTRAST[3];
 
-static void component_textable_click(actor_T* self)
-{
-}
 
 component_textable_T* component_textable_constructor(
     focus_manager_T* focus_manager,
@@ -28,7 +25,7 @@ component_textable_T* component_textable_constructor(
     actor_component_T* actor_component = actor_component_constructor(
         (actor_component_T*) component_textable,
         focus_manager,
-        component_textable_click
+        (void*)0
     );
 
     actor_T* actor = actor_constructor(
@@ -43,6 +40,7 @@ component_textable_T* component_textable_constructor(
 
     actor->width = (float)width;
     actor->height = (float)height;
+
     component_textable->supports_multiple_lines = supports_multiple_lines;
     component_textable->fg_r = COLOR_CONTRAST[0];
     component_textable->fg_g = COLOR_CONTRAST[1];

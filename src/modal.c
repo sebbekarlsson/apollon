@@ -57,6 +57,7 @@ void modal_tick(actor_T* self)
     modal_T* modal = (modal_T*) self;
     ((scene_T*)modal->component_pane)->tick((scene_T*)modal->component_pane);
     state_T* modal_state = (state_T*)((scene_T*)modal->component_pane);
+
     state_tick(modal_state);
 }
 
@@ -115,7 +116,6 @@ void modal_draw(actor_T* self)
     state_draw(modal_state);
 
     glDisable(GL_SCISSOR_TEST);
-    state_draw(modal_state); 
 }
 
 void modal_free(modal_T* modal)
@@ -124,8 +124,6 @@ void modal_free(modal_T* modal)
 
     //actor_free(actor);
 
-    printf("title: %p\n", modal->title);
-    printf("text: %p\n", modal->text);
     free(modal->title);
     free(modal->text);
 

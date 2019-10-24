@@ -11,8 +11,8 @@
 
 extern float COLOR_BG_DARK_BRIGHT[3];
 extern float COLOR_FG[3];
-
 extern keyboard_state_T* KEYBOARD_STATE;
+
 
 select_list_T* init_select_list(state_T* state)
 {
@@ -88,13 +88,9 @@ void select_list_tick(select_list_T* select_list)
     if (KEYBOARD_STATE->keys[GLFW_KEY_DOWN] && !KEYBOARD_STATE->key_locks[GLFW_KEY_DOWN])
     {
         if (select_list->option_index < select_list->options->size - 1)
-        {
             select_list->option_index += 1;
-        }
         else
-        {
             select_list->option_index = 0;
-        }
 
         KEYBOARD_STATE->key_locks[GLFW_KEY_DOWN] = 1;
     }
@@ -102,13 +98,9 @@ void select_list_tick(select_list_T* select_list)
     if (KEYBOARD_STATE->keys[GLFW_KEY_UP] && !KEYBOARD_STATE->key_locks[GLFW_KEY_UP])
     {
         if (select_list->option_index > 0)
-        {
             select_list->option_index -= 1;
-        }
         else
-        {
             select_list->option_index = select_list->options->size - 1;
-        }
 
         KEYBOARD_STATE->key_locks[GLFW_KEY_UP] = 1;
     }
@@ -116,9 +108,7 @@ void select_list_tick(select_list_T* select_list)
     select_list_option_T* current_option = (select_list_option_T*) select_list->options->items[select_list->option_index];
 
     if (KEYBOARD_STATE->keys[GLFW_KEY_ENTER] && current_option->callback)
-    {
         current_option->callback();
-    }
 
     for (int i = 0; i < state->actors->size; i++)
     {

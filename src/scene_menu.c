@@ -100,10 +100,9 @@ scene_menu_T* init_scene_menu()
     scene_menu_T* s_menu = calloc(1, sizeof(struct SCENE_MENU_STRUCT));
     scene_base_T* scene_base = (scene_base_T*) s_menu;
     scene_T* s = (scene_T*) scene_base;
-    //state_T* state = (state_T*) s; 
 
     scene_constructor(s, scene_menu_tick, scene_menu_draw, 2);
-    scene_base_constructor(scene_base, scene_menu_refresh_state, "Menu");
+    scene_base_constructor(scene_base, (void*)0, "Menu");
 
     scene_base->component_pane->centered = 1;
     scene_base->component_pane->child_margin_top = 8;
@@ -203,15 +202,9 @@ scene_menu_T* init_scene_menu()
 void scene_menu_tick(scene_T* self)
 {
     scene_base_tick((scene_base_T*) self);
-    //scene_menu_T* scene_menu = (scene_menu_T*) self;
 }
 
 void scene_menu_draw(scene_T* self)
 {
     scene_base_draw((scene_base_T*) self);
-    //state_T* state = (state_T*) self;
-}
-
-void scene_menu_refresh_state(scene_base_T* scene_base)
-{
 }

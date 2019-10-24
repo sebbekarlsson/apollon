@@ -671,7 +671,6 @@ void scene_sprite_editor_tick(scene_T* self)
         s_sprite_editor->component_grid->onion = (component_grid_T*) s_sprite_editor->component_grids->items[s_sprite_editor->component_grid_index-1];
     }
 
-
     if (((actor_component_T*)s_sprite_editor->component_grid)->hovered)
     {
         component_grid_T* component_grid = s_sprite_editor->component_grid;
@@ -687,9 +686,7 @@ void scene_sprite_editor_tick(scene_T* self)
                component_grid->cursor_y < 0 ||
                component_grid->cursor_y > component_grid->height - 1
             )
-            {
                 return;
-            }
 
             switch (s_sprite_editor->tool_index)
             {
@@ -739,12 +736,6 @@ void scene_sprite_editor_tick(scene_T* self)
             scene_sprite_editor_delete_current_frame(s_sprite_editor);
             KEYBOARD_STATE->key_locks[GLFW_KEY_C] = 1;
         }
-
-        /*if (KEYBOARD_STATE->keys[GLFW_KEY_S] && !KEYBOARD_STATE->key_locks[GLFW_KEY_S])
-        {
-            grid_create_image(s_sprite_editor->grid, "sheet.png");
-            KEYBOARD_STATE->key_locks[GLFW_KEY_S] = 1;
-        }*/
     }
     else // mixer & color selector
     if (
@@ -755,13 +746,9 @@ void scene_sprite_editor_tick(scene_T* self)
         component_grid_T* component_grid = (void*)0;
 
         if (((actor_component_T*)s_sprite_editor->component_grid_color_selector)->hovered)
-        {
             component_grid = s_sprite_editor->component_grid_color_selector;
-        }
         else
-        {
             component_grid = s_sprite_editor->component_grid_color_mixer;
-        }
 
         component_grid->cursor_x = (int)((int)((MOUSE_STATE->x - ((actor_T*)component_grid)->x) / component_grid->cell_size) % (int)component_grid->width);
         component_grid->cursor_y = (int)((int)((MOUSE_STATE->y - ((actor_T*)component_grid)->y) / component_grid->cell_size) % (int)component_grid->height);
@@ -774,9 +761,7 @@ void scene_sprite_editor_tick(scene_T* self)
                component_grid->cursor_y < 0 ||
                component_grid->cursor_y > component_grid->height - 1
             )
-            {
                 return;
-            }
 
             s_sprite_editor->r = component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->r;
             s_sprite_editor->g = component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->g;
@@ -809,9 +794,7 @@ void scene_sprite_editor_tick(scene_T* self)
                component_grid->cursor_y < 0 ||
                component_grid->cursor_y > component_grid->height - 1
             )
-            {
                 return;
-            }
 
             if (
                 component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->r == 255 &&
@@ -828,7 +811,6 @@ void scene_sprite_editor_tick(scene_T* self)
             component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->g = (s_sprite_editor->g + component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->g);
             component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->b = (s_sprite_editor->b + component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->b);
             component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->a = 255;
-
         }
     }
 }
@@ -965,7 +947,6 @@ void scene_sprite_editor_refresh_component_grid(scene_sprite_editor_T* self)
     
     component_grid_clean(self->component_grid);
 
-    printf("%d\n", (int)current_component_grid_state->width);
     component_grid_copy(current_component_grid_state, self->component_grid);
 }
 

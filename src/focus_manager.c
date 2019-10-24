@@ -63,9 +63,7 @@ void focus_manager_tick(focus_manager_T* focus_manager)
                 if (click && actor_component->visible)
                 {
                     if (actor_component->on_click)
-                    {
                         actor_component->on_click(actor);
-                    }
 
                     focus_manager_set_focused(actor_component->focus_manager, actor_component);
                     

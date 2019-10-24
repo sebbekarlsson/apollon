@@ -12,6 +12,8 @@ component_label_T* init_component_label(focus_manager_T* focus_manager, float x,
     actor_constructor(actor, x, y, z, component_label_tick, component_label_draw, "component_label");
     actor_component_T* actor_component = (actor_component_T*) component_label;
     actor_component_constructor(actor_component, focus_manager, (void*)0);
+    
+    actor->height = component_label->font_size + component_label->font_spacing;
 
     component_label->text = string_copy(text);
     component_label->font_size = 6;
@@ -19,7 +21,6 @@ component_label_T* init_component_label(focus_manager_T* focus_manager, float x,
     component_label->r = r;
     component_label->g = g;
     component_label->b = b;
-    actor->height = component_label->font_size + component_label->font_spacing;
 
     return component_label;
 }
@@ -38,8 +39,7 @@ void component_label_draw(actor_T* self)
     if (!actor_component->visible)
         return;
 
-    scene_T* scene = get_current_scene();
-    state_T* state = (state_T*) scene;
+    state_T* state = get_current_state();
 
     draw_text(
         component_label->text,

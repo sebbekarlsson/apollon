@@ -118,9 +118,7 @@ void scene_actor_editor_refresh_state(scene_base_T* scene_base)
 void scene_actor_editor_reset_actor_definition_id(scene_actor_editor_T* s_actor_editor)
 {
     if (s_actor_editor->actor_definition_id != (void*) 0)
-    {
         free(s_actor_editor->actor_definition_id);
-    }
 
     s_actor_editor->actor_definition_id = (void*) 0;
 }
@@ -180,7 +178,6 @@ void component_button_save_press()
     if (option_draw_script != (void*) 0)
         if (option_draw_script->value != (void*) 0)
             option_draw_script_value = (char*) option_draw_script->value;
-
 
     if (option_init_script_value == (void*)0)
         printf("init void\n");
@@ -311,6 +308,7 @@ void scene_actor_editor_load(void* self)
 {
     scene_T* scene = (scene_T*) self;
     scene_actor_editor_T* s_actor_editor = (scene_actor_editor_T*) scene;
+
     REFRESH_STATE(s_actor_editor);
 }
 
@@ -420,7 +418,6 @@ scene_actor_editor_T* init_scene_actor_editor()
         COLOR_FG[2]);
     s_actor_editor->component_input_field_type_name = init_component_input_field(scene_base->focus_manager, 0.0f, 0.0f, 0.0f);
     dynamic_list_append(state->actors, s_actor_editor->component_label_type_name);
-    scene_base_register_focusable(scene_base, (actor_focusable_T*) s_actor_editor->component_input_field_type_name);
     component_pane_add_component(
         right,
         (actor_component_T*) s_actor_editor->component_label_type_name

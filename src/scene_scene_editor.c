@@ -42,10 +42,6 @@ void scene_scene_editor_unload(void* self)
     ((scene_base_T*)s_scene_editor)->focus_manager->focus_index = -1;
 }
 
-void scene_scene_editor_reset_component_label_number_of_actors(scene_scene_editor_T* s_scene_editor)
-{
-}
-
 void scene_scene_editor_refresh_state(scene_base_T* scene_base)
 {
     scene_scene_editor_T* s_scene_editor = (scene_scene_editor_T*) scene_base;
@@ -65,7 +61,6 @@ void scene_scene_editor_refresh_state(scene_base_T* scene_base)
     else
     {
         scene_scene_editor_clear_component_input_fields(s_scene_editor);
-        scene_scene_editor_reset_component_label_number_of_actors(s_scene_editor);
         s_scene_editor->component_button_design->disabled = 1;
         s_scene_editor->component_checkbox_main_scene->checked = 0;
     }

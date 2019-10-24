@@ -141,6 +141,7 @@ static void component_button_edit_press()
 
 static void component_button_delete_press()
 {
+    // TODO: implement
 }
 
 static void component_button_new_press()

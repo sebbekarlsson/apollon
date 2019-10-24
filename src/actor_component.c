@@ -17,7 +17,4 @@ actor_component_T* actor_component_constructor(actor_component_T* actor_componen
     return actor_component;
 }
 
-void actor_component_tick(actor_component_T* actor_component)
-{
-    
-}
+void actor_component_tick(actor_component_T* actor_component) {}

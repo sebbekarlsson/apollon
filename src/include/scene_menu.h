@@ -12,6 +12,4 @@ scene_menu_T* init_scene_menu();
 void scene_menu_tick(scene_T* self);
 
 void scene_menu_draw(scene_T* self);
-
-void scene_menu_refresh_state(scene_base_T* scene_base);
 #endif

@@ -12,9 +12,11 @@ extern const float COLOR_FG[3];
 
 extern sprite_T* SPRITE_CHECKBOARD;
 
+
 component_grid_cell_T* init_component_grid_cell()
 {
     component_grid_cell_T* cell = calloc(1, sizeof(struct COMPONENT_GRID_CELL_STRUCT));
+
     cell->r = 255;
     cell->g = 255;
     cell->b = 255;
@@ -48,10 +50,11 @@ component_grid_T* init_component_grid(
 
     actor_component_constructor(actor_component, focus_manager, (void*)0);
 
+    actor->width = width * cell_size;
+    actor->height = height * cell_size;
+
     component_grid->width = width;
-    actor->width = component_grid->width * cell_size;
-    component_grid->height = height;
-    actor->height = component_grid->height * cell_size;
+    component_grid->height = height; 
     component_grid->cell_size = cell_size;
     component_grid->r = r;
     component_grid->g = g;
@@ -65,9 +68,7 @@ component_grid_T* init_component_grid(
         component_grid->cells[x] = calloc(component_grid->height, sizeof(struct COMPONENT_GRID_CELL_STRUCT**));
 
         for (int y = 0; y < component_grid->height; y++)
-        {
             component_grid->cells[x][y] = init_component_grid_cell();
-        }
     }
 
     component_grid->onion = (void*)0;
@@ -81,24 +82,16 @@ void component_grid_tick(actor_T* self)
     actor_component_tick((actor_component_T*) component_grid);
 
     if (component_grid->cursor_x > component_grid->width - 1)
-    {
         component_grid->cursor_x = 0;
-    }
     else
     if (component_grid->cursor_x < 0)
-    {
         component_grid->cursor_x = component_grid->width - 1;
-    }
 
     if (component_grid->cursor_y > component_grid->height - 1)
-    {
         component_grid->cursor_y = 0;
-    }
     else
     if (component_grid->cursor_y < 0)
-    {
         component_grid->cursor_y = component_grid->height - 1;
-    }
 }
 
 void component_grid_draw(actor_T* self)
@@ -263,6 +256,7 @@ void component_grid_draw(actor_T* self)
 int component_grid_create_image(component_grid_T* component_grid, const char* filename)
 {
     bitmap_t component_grid_img;
+
     int x;
     int y;
     int status;
@@ -305,6 +299,7 @@ texture_T* component_grid_create_texture(component_grid_T* component_grid)
 
     int x = 0;
     int y = 0;
+
     for (int i = 0; i < component_grid->width * component_grid->height; i+=1)
     {
         y = i / (int) component_grid->width;
@@ -336,12 +331,8 @@ void component_grid_copy(component_grid_T* source_component_grid, component_grid
 void component_grid_unselect_all_cells(component_grid_T* component_grid)
 {
     for (int x = 0; x < component_grid->width; x++)
-    {
         for (int y = 0; y < component_grid->height; y++)
-        {
             component_grid->cells[x][y]->selected = 0;
-        }
-    }
 }
 
 void component_grid_clean(component_grid_T* component_grid)
@@ -363,9 +354,7 @@ void component_grid_free(component_grid_T* component_grid)
     for (int x = 0; x < component_grid->width; x++)
     {
         for (int y = 0; y < component_grid->height; y++)
-        {
             free(component_grid->cells[x][y]);
-        }
 
         free(component_grid->cells[x]);
     }

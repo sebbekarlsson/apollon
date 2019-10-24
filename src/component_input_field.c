@@ -20,12 +20,13 @@ component_input_field_T* init_component_input_field(focus_manager_T* focus_manag
     actor_component_T* actor_component = (actor_component_T*) input_field;
     actor_component_constructor(actor_component, focus_manager, (void*)0);
 
+    actor->width = 256;
+    actor->height = 24;
+
     input_field->value = calloc(1, sizeof(char));
     input_field->value[0] = '\0';
     input_field->font_size = 6;
-    input_field->font_spacing = input_field->font_size + 4;
-    actor->width = 256;
-    actor->height = 24;
+    input_field->font_spacing = input_field->font_size + 4; 
 
     input_field->caret_position = 0;
     input_field->draw_caret = 1;
@@ -37,10 +38,12 @@ component_input_field_T* init_component_input_field(focus_manager_T* focus_manag
 
 void component_input_field_draw(actor_T* self)
 {
+    state_T* state = get_current_state();
+
     component_input_field_T* input_field = (component_input_field_T*) self;
     actor_component_T* actor_component = (actor_component_T*) input_field;
+
     unsigned int hover = actor_component->hovered;
-    state_T* state = (state_T*) get_current_scene();
 
     draw_positioned_2D_mesh(
         self->x,
@@ -83,6 +86,7 @@ void component_input_field_draw(actor_T* self)
                 0,
                 state
             );
+
             glDisable(GL_SCISSOR_TEST);
         }
     }
@@ -125,18 +129,12 @@ void component_input_field_tick(actor_T* self)
     actor_component_tick(actor_component);
 
     if (!actor_component->focused)
-    {
         return;
-    }
 
     if (input_field->value)
-    {
         input_field->caret_position = (int) strlen(input_field->value);
-    }
     else
-    {
         input_field->caret_position = 0;
-    }
 
     if (KEYBOARD_STATE->keys[GLFW_KEY_BACKSPACE] && !KEYBOARD_STATE->key_locks[GLFW_KEY_BACKSPACE])
     {
@@ -163,14 +161,7 @@ void component_input_field_tick(actor_T* self)
 
     if (time_spent >= 0.5f)
     {
-        if (input_field->draw_caret)
-        {
-            input_field->draw_caret = 0;
-        }
-        else
-        {
-            input_field->draw_caret = 1;
-        }
+        input_field->draw_caret = input_field->draw_caret ? 0 : 1;
 
         gettimeofday(&input_field->timer, 0);
     }

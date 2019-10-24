@@ -9,18 +9,15 @@ extern texture_T* TEXTURE_CHECKBOX_SHEET;
 extern const float COLOR_FG[3];
 extern const float COLOR_BG_DARK_BRIGHT[3];
 
+
 static void checkbox_click(actor_T* self)
 {
     component_checkbox_T* component_checkbox = (component_checkbox_T*) self;
 
     if (component_checkbox->checked)
-    {
         component_checkbox->checked = 0;
-    }
     else
-    {
         component_checkbox->checked = 1;
-    }
 }
 
 component_checkbox_T* init_component_checkbox(
@@ -38,10 +35,6 @@ component_checkbox_T* init_component_checkbox(
     actor_T* actor = (actor_T*) actor_component;
     actor_constructor(actor, x, y, z, component_checkbox_tick, component_checkbox_draw, "component_checkbox");
 
-    actor->width = 33;
-    actor->height = 33;
-    component_checkbox->checked = 0;
-
     texture_T* texture_unchecked = get_subtexture(TEXTURE_CHECKBOX_SHEET, 0, 0, 32, 32);
     texture_T* texture_checked = get_subtexture(TEXTURE_CHECKBOX_SHEET, 32, 0, 32, 32);
     dynamic_list_T* texture_list = init_dynamic_list(sizeof(struct TEXTURE_STRUCT));
@@ -49,6 +42,10 @@ component_checkbox_T* init_component_checkbox(
     dynamic_list_append(texture_list, texture_checked);
     actor->sprite = init_sprite(texture_list, 0.1f, 25, 25);
     actor->sprite->animate = 0; 
+    actor->width = 33;
+    actor->height = 33;
+
+    component_checkbox->checked = 0; 
 
     return component_checkbox;
 }
@@ -66,13 +63,9 @@ void component_checkbox_tick(actor_T* self)
         if (KEYBOARD_STATE->keys[GLFW_KEY_ENTER] && !KEYBOARD_STATE->key_locks[GLFW_KEY_ENTER])
         {
             if (component_checkbox->checked)
-            {
                 component_checkbox->checked = 0;
-            }
             else
-            {
                 component_checkbox->checked = 1;
-            }
             
             KEYBOARD_STATE->key_locks[GLFW_KEY_ENTER] = 1;
         }
@@ -94,6 +87,4 @@ void component_checkbox_tick(actor_T* self)
     }
 }
 
-void component_checkbox_draw(actor_T* self)
-{
-}
+void component_checkbox_draw(actor_T* self) {}
