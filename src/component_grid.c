@@ -12,11 +12,6 @@ extern const float COLOR_FG[3];
 
 extern sprite_T* SPRITE_CHECKBOARD;
 
-
-static void grid_on_click(actor_T* self)
-{
-}
-
 component_grid_cell_T* init_component_grid_cell()
 {
     component_grid_cell_T* cell = calloc(1, sizeof(struct COMPONENT_GRID_CELL_STRUCT));
@@ -51,7 +46,7 @@ component_grid_T* init_component_grid(
 
     actor_component_T* actor_component = (actor_component_T*) component_grid;
 
-    actor_component_constructor(actor_component, focus_manager, grid_on_click);
+    actor_component_constructor(actor_component, focus_manager, (void*)0);
 
     component_grid->width = width;
     actor->width = component_grid->width * cell_size;
