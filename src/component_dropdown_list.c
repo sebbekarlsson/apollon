@@ -19,15 +19,12 @@ static void dropdown_click(actor_T* self)
 {
     component_dropdown_list_T* component_dropdown_list = (component_dropdown_list_T*) self;
     component_dropdown_list->selected_index = component_dropdown_list->option_index;
+
+    component_dropdown_list->expanded = component_dropdown_list->expanded ? 0 : 1;
+    component_dropdown_list->focused = component_dropdown_list->expanded;
     
     if (component_dropdown_list->press && component_dropdown_list->options->size > 0 && component_dropdown_list->option_index > 0)
         component_dropdown_list->press(component_dropdown_list, component_dropdown_list->options->items[component_dropdown_list->option_index]);
-
-    if (component_dropdown_list->deexpand_on_press)
-    {
-        component_dropdown_list->expanded = 0;
-        component_dropdown_list->focused = 0;
-    }
 }
 
 component_dropdown_list_T* init_component_dropdown_list(focus_manager_T* focus_manager, float x, float y, float z, void (*press)(void* component_dropdown_list, void* option))
@@ -67,15 +64,14 @@ void component_dropdown_list_tick(actor_T* self)
 
     if (!actor_component->focused)
     {
-        component_dropdown_list->expanded = 0;
-        self->height = component_dropdown_list->expanded ? component_dropdown_list->options->size * 28 : 28;
-        return;
+    //    component_dropdown_list->expanded = 0;
     }
     else
     {
-        component_dropdown_list->expanded = 1;
-        self->height = component_dropdown_list->expanded ? component_dropdown_list->options->size * 28 : 28;
+    //    component_dropdown_list->expanded = 1;
     }
+    
+    self->height = component_dropdown_list->expanded ? component_dropdown_list->options->size * 28 : 28;
 
 
     for (int i = 0; i < component_dropdown_list->options->size; i++)

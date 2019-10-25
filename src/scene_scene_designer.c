@@ -83,10 +83,6 @@ void scene_designer_component_dropdown_press(void* component_dropdown_list, void
         (const float) ((actor_T*)actor_cursor)->z
     );
 
-    // close component_dropdown
-    component_dropdown_list_component->focused = 0;
-    ((actor_component_T*)s_scene_designer->component_dropdown_list)->visible = 0;
-    
     scene_scene_designer_refresh_state(s_scene_designer);
 }
 
@@ -180,25 +176,16 @@ void scene_scene_designer_tick(scene_T* self)
     oldState = newState;
 
     if (click)
-    {
+    { // expand dropdown and make it visible
         s_scene_designer->clicked_x = ((actor_T*)actor_cursor)->x;
         s_scene_designer->clicked_y = ((actor_T*)actor_cursor)->y;
         ((actor_T*)s_scene_designer->component_dropdown_list)->x = ((actor_T*)actor_cursor)->x;
         ((actor_T*)s_scene_designer->component_dropdown_list)->y = ((actor_T*)actor_cursor)->y;
         actor_component_T* component_dropdown_list_component = (actor_component_T*) s_scene_designer->component_dropdown_list;
 
-        if (!component_dropdown_list_component->focused)
-        {
-            component_dropdown_list_component->focused = 1;
-            ((actor_component_T*)s_scene_designer->component_dropdown_list)->visible = 1;
-            printf("Please show component_dropdown\n");
-        }
-        else
-        {
-            component_dropdown_list_component->focused = 0;
-            ((actor_component_T*)s_scene_designer->component_dropdown_list)->visible = 0;
-            printf("Please dont show component_dropdown\n");
-        }
+        component_dropdown_list_component->focused = 1;
+        s_scene_designer->component_dropdown_list->expanded = 1;
+        ((actor_component_T*)s_scene_designer->component_dropdown_list)->visible = 1;
     }
 
     if (KEYBOARD_STATE->keys[GLFW_KEY_DELETE] && !KEYBOARD_STATE->key_locks[GLFW_KEY_DELETE])
