@@ -14,7 +14,7 @@ extern keyboard_state_T* KEYBOARD_STATE;
 extern mouse_state_T* MOUSE_STATE;
 
 
-component_button_T* init_component_button(focus_manager_T* focus_manager, float x, float y, float z, char* text, void (*press)())
+component_button_T* init_component_button(focus_manager_T* focus_manager, float x, float y, float z, char* text, void (*press)(actor_T* self))
 {
     component_button_T* component_button = calloc(1, sizeof(struct COMPONENT_BUTTON_STRUCT));
     actor_component_T* component = (actor_component_T*) component_button;
@@ -37,6 +37,8 @@ component_button_T* init_component_button(focus_manager_T* focus_manager, float 
     component_button->font_spacing = 6; 
     component_button->press = press;
     component_button->disabled = 0;
+    component_button->only_sprite = 0;
+    component_button->sprite = (void*)0;
 
     return component_button;
 }
@@ -66,89 +68,108 @@ void component_button_draw(actor_T* self)
     scene_T* scene = get_current_scene();
     state_T* state = (state_T*) scene;
 
-    draw_positioned_2D_mesh(
-        self->x,
-        self->y,
-        self->z,
-        self->width,
-        self->height,
-        disabled ? COLOR_RED[0] : ((focused || hovered) ? COLOR_BG_DARK_BRIGHT[0] : component_button->bg_r),
-        disabled ? COLOR_RED[1] : ((focused || hovered) ? COLOR_BG_DARK_BRIGHT[1] : component_button->bg_g),
-        disabled ? COLOR_RED[2] : ((focused || hovered) ? COLOR_BG_DARK_BRIGHT[2] : component_button->bg_b),
-        component_button->alpha,
-        state
-    );
+    if (component_button->only_sprite && component_button->sprite != (void*)0)
+    {
+        draw_positioned_sprite(
+            component_button->sprite,
+            self->x,
+            self->y,
+            self->z,
+            component_button->sprite->width,
+            component_button->sprite->height,
+            state
+        );
+    }
+    else
+    {
+        // background
+        draw_positioned_2D_mesh(
+            self->x,
+            self->y,
+            self->z,
+            self->width,
+            self->height,
+            disabled ? COLOR_RED[0] : ((focused || hovered) ? COLOR_BG_DARK_BRIGHT[0] : component_button->bg_r),
+            disabled ? COLOR_RED[1] : ((focused || hovered) ? COLOR_BG_DARK_BRIGHT[1] : component_button->bg_g),
+            disabled ? COLOR_RED[2] : ((focused || hovered) ? COLOR_BG_DARK_BRIGHT[2] : component_button->bg_b),
+            component_button->alpha,
+            state
+        );
 
-    // top gloss
-    draw_positioned_2D_mesh(
-        self->x,
-        self->y,
-        self->z + 0.1f,
-        self->width,
-        4,
-        255,
-        255,
-        255,
-        0.4,
-        state
-    );
+        // top gloss
+        draw_positioned_2D_mesh(
+            self->x,
+            self->y,
+            self->z + 0.1f,
+            self->width,
+            4,
+            255,
+            255,
+            255,
+            0.4,
+            state
+        );
 
-    // left gloss
-    draw_positioned_2D_mesh(
-        self->x,
-        self->y,
-        self->z + 0.1f,
-        4,
-        self->height,
-        255,
-        255,
-        255,
-        0.6,
-        state
-    );
+        // left gloss
+        draw_positioned_2D_mesh(
+            self->x,
+            self->y,
+            self->z + 0.1f,
+            4,
+            self->height,
+            255,
+            255,
+            255,
+            0.6,
+            state
+        );
 
-    // bottom shadow 
-    draw_positioned_2D_mesh(
-        self->x,
-        self->y + self->height - 4,
-        self->z + 0.1f,
-        self->width,
-        4,
-        0,
-        0,
-        0,
-        component_button->alpha - 0.6f,
-        state
-    );
+        // bottom shadow 
+        draw_positioned_2D_mesh(
+            self->x,
+            self->y + self->height - 4,
+            self->z + 0.1f,
+            self->width,
+            4,
+            0,
+            0,
+            0,
+            component_button->alpha - 0.6f,
+            state
+        );
 
-    // right shadow 
-    draw_positioned_2D_mesh(
-        self->x + self->width - 4,
-        self->y,
-        self->z + 0.1f,
-        4,
-        self->height,
-        0,
-        0,
-        0,
-        component_button->alpha - 0.6f,
-        state
-    );
+        // right shadow 
+        draw_positioned_2D_mesh(
+            self->x + self->width - 4,
+            self->y,
+            self->z + 0.1f,
+            4,
+            self->height,
+            0,
+            0,
+            0,
+            component_button->alpha - 0.6f,
+            state
+        );
+    }
 
-    draw_text(
-        component_button->text,
-        self->x + (self->width / 2) - ((strlen(component_button->text) * (component_button->font_size + component_button->font_spacing)) / 2),
-        self->y + self->height / 2,
-        self->z + 0.1f,
-        focused || hovered ? 255 : component_button->fg_r,
-        focused || hovered ? 255 : component_button->fg_g,
-        focused || hovered ? 255 : component_button->fg_b,
-        1.0f, // a
-        component_button->font_size,
-        component_button->font_spacing,
-        0,
-        state
-    );
+    if (component_button->text != (void*)0)
+    {
+        draw_text(
+            component_button->text,
+            self->x + (self->width / 2) - ((strlen(component_button->text) * (component_button->font_size + component_button->font_spacing)) / 2),
+            self->y + self->height / 2,
+            self->z + 0.1f,
+            focused || hovered ? 255 : component_button->fg_r,
+            focused || hovered ? 255 : component_button->fg_g,
+            focused || hovered ? 255 : component_button->fg_b,
+            1.0f, // a
+            component_button->font_size,
+            component_button->font_spacing,
+            0,
+            state
+        );
+    }
 }
 
 void component_button_free(component_button_T* component_button)

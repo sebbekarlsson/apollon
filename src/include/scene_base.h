@@ -3,6 +3,7 @@
 #include "focus_manager.h"
 #include "actor_focusable.h"
 #include "component_pane.h"
+#include "component_button.h"
 #include <coelum/scene.h>
 #include <glad/glad.h>
 
@@ -14,6 +15,9 @@ typedef struct SCENE_BASE_STRUCT
     void (*refresh_state)(struct SCENE_BASE_STRUCT* self);
     char* title;
     component_pane_T* component_pane;
+    component_pane_T* component_pane_title_bar;
+
+    component_button_T* component_button_back;
 } scene_base_T;
 
 scene_base_T* scene_base_constructor(scene_base_T* scene_base, void (*refresh_state)(struct SCENE_BASE_STRUCT* self), const char* title);
