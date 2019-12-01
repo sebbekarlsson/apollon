@@ -2,13 +2,25 @@
 #include "include/scene_base.h"
 #include "include/modal_manager.h"
 #include <string.h>
+#include <coelum/theatre.h>
 #include <coelum/constants.h>
 #include <coelum/draw_utils.h>
 
 
+extern theatre_T* THEATRE;
 extern main_state_T* MAIN_STATE;
 extern modal_manager_T* MODAL_MANAGER;
 
+extern sprite_T* SPRITE_BACK;
+
+
+static void component_button_back_press(actor_T* self)
+{
+    if (THEATRE->scene_manager->scene_index <= 0)
+        return;
+  
+    scene_manager_go_back(THEATRE->scene_manager);
+}
 
 scene_base_T* scene_base_constructor(scene_base_T* scene_base, void (*refresh_state)(struct SCENE_BASE_STRUCT* self), const char* title)
 {
@@ -29,11 +41,37 @@ scene_base_T* scene_base_constructor(scene_base_T* scene_base, void (*refresh_st
     );
     scene_base->component_pane->y += 24;
 
+    scene_base->component_pane_title_bar = init_component_pane(
+      state,
+      scene_base->focus_manager,
+      0.0f,
+      0.0f,
+      WINDOW_WIDTH,
+      24
+    );
+    scene_base->component_pane_title_bar->z = 2.6f;
+    scene_base->component_pane_title_bar->bg_visible = 0;
+    scene_base->component_button_back = init_component_button(
+        scene_base->focus_manager, 0, 0, 0, (void*)0, component_button_back_press
+    );
+    scene_base->component_button_back->sprite = SPRITE_BACK;
+    scene_base->component_button_back->only_sprite = 1;
+    component_pane_add_component(
+        scene_base->component_pane_title_bar,
+        (actor_component_T*) scene_base->component_button_back
+    );
+
     return scene_base;
 }
 
 void scene_base_tick(scene_base_T* scene_base)
 {
+    ((actor_component_T*)scene_base->component_button_back)->visible = THEATRE->scene_manager->scene_index >= 1;
+    ((scene_T*)scene_base->component_pane_title_bar)->tick((scene_T*)scene_base->component_pane_title_bar);
+    state_T* title_bar_state = (state_T*)((scene_T*)scene_base->component_pane_title_bar);
+
+    state_tick(title_bar_state);
+
     ((scene_T*)scene_base->component_pane)->tick((scene_T*)scene_base->component_pane);
     state_T* state = (state_T*)((scene_T*)scene_base->component_pane);
 
@@ -50,6 +88,8 @@ void scene_base_draw(scene_base_T* scene_base)
     state_T* s = (state_T*) ((scene_T*)scene_base->component_pane);
     state_T* state = (state_T*)((scene_T*)scene_base->component_pane);
 
+    scene_base_draw_title_bar(scene_base);
+
     glEnable(GL_SCISSOR_TEST);
     glScissor((int)scene_base->component_pane->x, (int)(WINDOW_HEIGHT - scene_base->component_pane->y - scene_base->component_pane->height), (int)scene_base->component_pane->width, (int)scene_base->component_pane->height); 
     
@@ -57,8 +97,6 @@ void scene_base_draw(scene_base_T* scene_base)
     state_draw(state);
 
     glDisable(GL_SCISSOR_TEST);
-
-    scene_base_draw_title_bar(scene_base);
 
     modal_manager_draw(MODAL_MANAGER);
 }
@@ -124,4 +162,14 @@ void scene_base_draw_title_bar(scene_base_T* scene_base)
             state
         );
     }
+    
+    state_T* title_bar_state = (state_T*)((scene_T*)scene_base->component_pane_title_bar);
+
+    glEnable(GL_SCISSOR_TEST);
+    glScissor((int)scene_base->component_pane_title_bar->x, (int)(WINDOW_HEIGHT - scene_base->component_pane_title_bar->y - scene_base->component_pane_title_bar->height), (int)scene_base->component_pane_title_bar->width, (int)scene_base->component_pane_title_bar->height); 
+    
+    ((scene_T*)scene_base->component_pane_title_bar)->draw((scene_T*)scene_base->component_pane_title_bar);
+    state_draw(title_bar_state);
+
+    glDisable(GL_SCISSOR_TEST);
 }

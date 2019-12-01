@@ -2,6 +2,7 @@
 #define APOLLON_COMPONENT_BUTTON_H
 #include "actor_component.h"
 #include "focus_manager.h"
+#include <coelum/sprite.h>
 
 
 typedef struct COMPONENT_BUTTON_STRUCT
@@ -18,7 +19,9 @@ typedef struct COMPONENT_BUTTON_STRUCT
     unsigned int font_size;
     unsigned int font_spacing;
     unsigned int disabled;
-    void (*press)(struct COMPONENT_BUTTON_STRUCT* self);
+    unsigned int only_sprite;
+    sprite_T* sprite;
+    void (*press)(actor_T* self);
 } component_button_T;
 
 component_button_T* init_component_button(focus_manager_T* focus_manager, float x, float y, float z, char* text, void (*press)());

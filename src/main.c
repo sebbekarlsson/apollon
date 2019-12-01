@@ -30,6 +30,7 @@ sprite_T* SPRITE_BROKEN;
 sprite_T* SPRITE_PENCIL;
 sprite_T* SPRITE_ERASOR;
 sprite_T* SPRITE_ARROW_DOWN;
+sprite_T* SPRITE_BACK;
 
 
 void load_textures()
@@ -51,6 +52,7 @@ void load_textures()
     SPRITE_PENCIL = init_sprite_from_file("res/img/pencil_16.png", GL_RGBA, 0.0f, 16, 16);
     SPRITE_ERASOR = init_sprite_from_file("res/img/erasor.png", GL_RGBA, 0.0f, 16, 16);
     SPRITE_ARROW_DOWN = init_sprite_from_file("res/img/arrow.png", GL_RGBA, 0.0f, 16, 16);
+    SPRITE_BACK = init_sprite_from_file("res/img/back.png", GL_RGBA, 0.0f, 16, 16);
 }
 
 main_state_T* init_main_state()
