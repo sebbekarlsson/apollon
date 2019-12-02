@@ -37,4 +37,6 @@ void component_pane_draw(scene_T* self);
 actor_component_T* component_pane_add_component(component_pane_T* component_pane, actor_component_T* actor_component);
 
 void component_pane_adjust(component_pane_T* component_pane);
+
+unsigned int component_pane_has_visible_children(component_pane_T* component_pane);
 #endif

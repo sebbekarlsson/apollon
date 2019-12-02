@@ -159,7 +159,7 @@ static int compare(const void* a, const void* b)
 
 void component_pane_adjust(component_pane_T* component_pane)
 {
-    state_T* state = (state_T*)((scene_T*) component_pane);
+    //state_T* state = (state_T*)((scene_T*) component_pane);
 
     int padding = 4;
     int x = 0;
@@ -178,11 +178,11 @@ void component_pane_adjust(component_pane_T* component_pane)
         {
             actor_component_T* ac = (actor_component_T*) component_pane->components->items[i];
             actor_T* a = (actor_T*) ac;
-            actor_component_T* acp =
+            /*actor_component_T* acp =
                 (actor_component_T*) component_pane->components->items[
                 i > 0 ? i-1 : 0
-            ];
-            actor_T* ap = (actor_T*) acp;
+            ];*/
+            //actor_T* ap = (actor_T*) acp;
             a->z = component_pane->z + 0.2f;
 
             final_height += a->height + ac->margin_y + component_pane->child_margin_top;
@@ -310,12 +310,12 @@ void component_pane_adjust(component_pane_T* component_pane)
         component_pane_T* child_pane = (component_pane_T*) component_pane->rows->items[i];
         child_pane->z = component_pane->z + 0.2f;
 
-        actor_component_T* acp =
+        /*actor_component_T* acp =
             (actor_component_T*) component_pane->rows->items[
             i > 0 ? i-1 : 0
-        ];
+        ];*/
 
-        actor_T* ap = (actor_T*) acp;
+        //actor_T* ap = (actor_T*) acp;
 
         child_pane->height = child_pane->min_height != 0 ? child_pane->min_height : row_height;
         child_pane->height = child_pane->height > component_pane->height ? component_pane->height : child_pane->height;
@@ -327,4 +327,17 @@ void component_pane_adjust(component_pane_T* component_pane)
         row_height -= child_pane->height;
         y += child_pane->height;
     }
+}
+
+unsigned int component_pane_has_visible_children(component_pane_T* component_pane)
+{
+    for (int i = 0; i < component_pane->components->size; i++)
+    {
+        actor_component_T* ac = (actor_component_T*) component_pane->components->items[i];
+
+        if (ac->visible)
+            return 1;
+    }
+
+    return 0;
 }
