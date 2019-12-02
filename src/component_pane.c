@@ -15,6 +15,7 @@ component_pane_T* init_component_pane(state_T* state, focus_manager_T* focus_man
     component_pane->y = y;
     component_pane->z = 0.0f;
     component_pane->child_margin_top = 0;
+    component_pane->child_margin_left = 0;
     component_pane->width = width;
     component_pane->height = height;
     component_pane->state = state;
@@ -24,6 +25,9 @@ component_pane_T* init_component_pane(state_T* state, focus_manager_T* focus_man
     component_pane->rows = init_dynamic_list(sizeof(struct COMPONENT_PANE_STRUCT*));
     component_pane->cols = init_dynamic_list(sizeof(struct COMPONENT_PANE_STRUCT*));
     component_pane->bg_visible = 1;
+    component_pane->auto_width = 0;
+    component_pane->padding_left = 0;
+    component_pane->padding_right = 0;
 
     return component_pane;
 }
@@ -161,8 +165,7 @@ void component_pane_adjust(component_pane_T* component_pane)
 {
     //state_T* state = (state_T*)((scene_T*) component_pane);
 
-    int padding = 4;
-    int x = 0;
+    int x = component_pane->padding_left;
     int y = 0;
     int col_width = component_pane->width / (int)(component_pane->cols->size > 0 ? component_pane->cols->size : 1);
     int row_height = component_pane->height / (int)(component_pane->rows->size > 0 ? component_pane->rows->size : 1);
@@ -216,10 +219,15 @@ void component_pane_adjust(component_pane_T* component_pane)
     {
         int* heights = (void*)0;
         size_t heights_size = 0;
+        int computed_width = 0;
 
         for (int i = 0; i < component_pane->components->size; i++)
         {
             actor_component_T* ac = (actor_component_T*) component_pane->components->items[i];
+
+            if (!ac->visible)
+                continue;
+
             actor_component_T* acp =
                 (actor_component_T*) component_pane->components->items[
                 i > 0 ? i-1 : 0
@@ -242,25 +250,43 @@ void component_pane_adjust(component_pane_T* component_pane)
             qsort(heights, heights_size, sizeof(int), compare);
             int highest = heights_size ? heights[heights_size-1] : 0;
 
-            if (i != 0)
+            if (i > 0)
             {
                 x = ap->x + ap->width;
 
                 if (x > component_pane->x + component_pane->width)
                 {
-                    y += highest + acp->margin_y + component_pane->child_margin_top;
+                    y += highest;
                     x = 0;
                 }
             }
 
-            if (y < (component_pane->y + padding))
-                y -= (y - (component_pane->y + padding));
+            y += acp->margin_y + component_pane->child_margin_top;
 
-            if (x < (component_pane->x + padding))
-                x -= (x - (component_pane->x + padding));
+            if (y < component_pane->y)
+                y -= (y - component_pane->y);
+
+            if (x < (component_pane->x))
+                x -= (x - (component_pane->x));
 
             a->x = x;
             a->y = y;
+
+            if (i == 0)
+            {
+                a->x += component_pane->padding_left;
+            }
+            else
+            {
+                a->x += component_pane->child_margin_left;
+            }
+
+            computed_width = a->x;
+            
+            y = 0;
+
+            if (component_pane->auto_width)
+                component_pane->width = computed_width;
         }
 
         if (heights && heights_size)
@@ -268,6 +294,8 @@ void component_pane_adjust(component_pane_T* component_pane)
             free(heights);
             heights_size = 0;
         }
+
+       component_pane->width += component_pane->padding_right; 
     } 
     
     /** ==== adjust position of child columns === **/

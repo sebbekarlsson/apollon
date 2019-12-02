@@ -50,6 +50,12 @@ void component_button_tick(actor_T* self)
 
     component_button_T* component_button = (component_button_T*) self;
     component_button->alpha = component_button->disabled ? 0.6f : 1.0f;
+    
+    if (component_button->only_sprite && component_button->sprite != (void*)0)
+    {
+        self->width = component_button->sprite->width;
+        self->height = component_button->sprite->height;
+    }
 }
 
 void component_button_draw(actor_T* self)
