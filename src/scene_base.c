@@ -51,6 +51,11 @@ scene_base_T* scene_base_constructor(scene_base_T* scene_base, void (*refresh_st
     );
     scene_base->component_pane_title_bar->z = 2.6f;
     scene_base->component_pane_title_bar->bg_visible = 0;
+    scene_base->component_pane_title_bar->auto_width = 1;
+    scene_base->component_pane_title_bar->child_margin_top = 4;
+    scene_base->component_pane_title_bar->child_margin_left = 4;
+    scene_base->component_pane_title_bar->padding_left = 4;
+    scene_base->component_pane_title_bar->padding_right = 4;
     scene_base->component_button_back = init_component_button(
         scene_base->focus_manager, 0, 0, 0, (void*)0, component_button_back_press
     );

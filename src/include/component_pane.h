@@ -21,10 +21,14 @@ typedef struct COMPONENT_PANE_STRUCT
     int x;
     int y;
     int child_margin_top;
+    int child_margin_left;
     int min_height;
+    int padding_left;
+    int padding_right;
     float z;
     unsigned int centered;
     unsigned int bg_visible;
+    unsigned int auto_width;
     state_T* state;
 } component_pane_T;
 
