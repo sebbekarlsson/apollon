@@ -44,9 +44,9 @@ scene_base_T* scene_base_constructor(scene_base_T* scene_base, void (*refresh_st
     scene_base->component_pane_title_bar = init_component_pane(
       state,
       scene_base->focus_manager,
+      16.0f,  // x
       0.0f,
-      0.0f,
-      WINDOW_WIDTH,
+      24,  // width
       24
     );
     scene_base->component_pane_title_bar->z = 2.6f;
@@ -85,7 +85,6 @@ void scene_base_tick(scene_base_T* scene_base)
 
 void scene_base_draw(scene_base_T* scene_base)
 {
-    state_T* s = (state_T*) ((scene_T*)scene_base->component_pane);
     state_T* state = (state_T*)((scene_T*)scene_base->component_pane);
 
     scene_base_draw_title_bar(scene_base);
@@ -113,16 +112,19 @@ void scene_base_draw_title_bar(scene_base_T* scene_base)
     int font_spacing = 6;
     int text_width = (strlen(text) - 1) * (font_size + font_spacing);
     float padding = 2 * (font_size + font_spacing);
+    unsigned int has_buttons = component_pane_has_visible_children(scene_base->component_pane_title_bar);
 
     for (int i = 0; i < 6; i++)
     {
+       float first_endx = scene_base->component_pane_title_bar->x;
        float endx = ((WINDOW_WIDTH / 2) - (text_width / 2)) - padding;
 
+       // left
        draw_line(
            0,
            i * 4,
            0,
-           endx,
+           has_buttons ? first_endx : endx,
            i * 4,
            0,
            48,
@@ -131,6 +133,24 @@ void scene_base_draw_title_bar(scene_base_T* scene_base)
            state
         );
 
+       if (has_buttons)
+       {
+           // left after component_pane_title_bar
+           draw_line(
+               first_endx + scene_base->component_pane_title_bar->width,
+               i * 4,
+               0,
+               endx,
+               i * 4,
+               0,
+               48,
+               48,
+               48,
+               state
+            );
+        }
+
+        // right
         draw_line(
            padding + (WINDOW_WIDTH / 2) + (text_width / 2),
            i * 4,
