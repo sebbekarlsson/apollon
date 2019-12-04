@@ -110,7 +110,7 @@ void modal_draw(actor_T* self)
     );
 
     glEnable(GL_SCISSOR_TEST);
-    glScissor((int)modal->component_pane->x, (int)(WINDOW_HEIGHT - modal->component_pane->y - modal->component_pane->height), (int)modal->component_pane->width, (int)modal->component_pane->height); 
+    glScissor((int)modal->component_pane->x, (int)(RES_HEIGHT - modal->component_pane->y - modal->component_pane->height), (int)modal->component_pane->width, (int)modal->component_pane->height); 
     
     ((scene_T*)modal->component_pane)->draw((scene_T*)modal->component_pane);
     state_draw(modal_state);

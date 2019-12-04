@@ -36,8 +36,8 @@ scene_base_T* scene_base_constructor(scene_base_T* scene_base, void (*refresh_st
       scene_base->focus_manager,
       0.0f,
       0.0f,
-      WINDOW_WIDTH,
-      WINDOW_HEIGHT - (24)
+      RES_WIDTH,
+      RES_HEIGHT - (24)
     );
     scene_base->component_pane->y += 24;
 
@@ -95,7 +95,7 @@ void scene_base_draw(scene_base_T* scene_base)
     scene_base_draw_title_bar(scene_base);
 
     glEnable(GL_SCISSOR_TEST);
-    glScissor((int)scene_base->component_pane->x, (int)(WINDOW_HEIGHT - scene_base->component_pane->y - scene_base->component_pane->height), (int)scene_base->component_pane->width, (int)scene_base->component_pane->height); 
+    glScissor((int)scene_base->component_pane->x, (int)(RES_HEIGHT - scene_base->component_pane->y - scene_base->component_pane->height), (int)scene_base->component_pane->width, (int)scene_base->component_pane->height); 
     
     ((scene_T*)scene_base->component_pane)->draw((scene_T*)scene_base->component_pane);
     state_draw(state);
@@ -122,7 +122,7 @@ void scene_base_draw_title_bar(scene_base_T* scene_base)
     for (int i = 0; i < 6; i++)
     {
        float first_endx = scene_base->component_pane_title_bar->x;
-       float endx = ((WINDOW_WIDTH / 2) - (text_width / 2)) - padding;
+       float endx = ((RES_WIDTH / 2) - (text_width / 2)) - padding;
 
        // left
        draw_line(
@@ -157,10 +157,10 @@ void scene_base_draw_title_bar(scene_base_T* scene_base)
 
         // right
         draw_line(
-           padding + (WINDOW_WIDTH / 2) + (text_width / 2),
+           padding + (RES_WIDTH / 2) + (text_width / 2),
            i * 4,
            0,
-           WINDOW_WIDTH,
+           RES_WIDTH,
            i * 4,
            0,
            48,
@@ -174,7 +174,7 @@ void scene_base_draw_title_bar(scene_base_T* scene_base)
     {
         draw_text(
             text,
-            (WINDOW_WIDTH / 2) - (text_width / 2),
+            (RES_WIDTH / 2) - (text_width / 2),
             font_size + font_size,
             0,
             48,
@@ -191,7 +191,7 @@ void scene_base_draw_title_bar(scene_base_T* scene_base)
     state_T* title_bar_state = (state_T*)((scene_T*)scene_base->component_pane_title_bar);
 
     glEnable(GL_SCISSOR_TEST);
-    glScissor((int)scene_base->component_pane_title_bar->x, (int)(WINDOW_HEIGHT - scene_base->component_pane_title_bar->y - scene_base->component_pane_title_bar->height), (int)scene_base->component_pane_title_bar->width, (int)scene_base->component_pane_title_bar->height); 
+    glScissor((int)scene_base->component_pane_title_bar->x, (int)(RES_HEIGHT - scene_base->component_pane_title_bar->y - scene_base->component_pane_title_bar->height), (int)scene_base->component_pane_title_bar->width, (int)scene_base->component_pane_title_bar->height); 
     
     ((scene_T*)scene_base->component_pane_title_bar)->draw((scene_T*)scene_base->component_pane_title_bar);
     state_draw(title_bar_state);

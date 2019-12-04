@@ -70,7 +70,7 @@ void component_input_field_draw(actor_T* self)
             scroll = chars_off > 0 ? chars_off * (input_field->font_size + input_field->font_spacing) : 0;
 
             glEnable(GL_SCISSOR_TEST);
-            glScissor((int)self->x, (int)(WINDOW_HEIGHT - self->y - self->height), (int)self->width, (int)self->height); 
+            glScissor((int)self->x, (int)(RES_HEIGHT - self->y - self->height), (int)self->width, (int)self->height); 
             
             draw_text(
                 input_field->value,

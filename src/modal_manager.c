@@ -31,8 +31,8 @@ void modal_manager_draw(modal_manager_T* modal_manager)
             0.0f,
             0.0f,
             modal_manager->z,
-            WINDOW_WIDTH,
-            WINDOW_HEIGHT,
+            RES_WIDTH,
+            RES_HEIGHT,
             255,
             255,
             255,
@@ -58,8 +58,8 @@ modal_T* modal_manager_show_modal(modal_manager_T* modal_manager, const char* ti
     state_T* state = get_current_state();
 
     modal_T* modal = init_modal(
-        WINDOW_WIDTH / 2,
-        WINDOW_HEIGHT / 2,
+        RES_WIDTH / 2,
+        RES_HEIGHT / 2,
         (char*) title,
         (char*) text,
         state,

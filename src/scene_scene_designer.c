@@ -140,8 +140,8 @@ scene_scene_designer_T* init_scene_scene_designer()
     dynamic_list_append(state->actors, s_scene_designer->component_dropdown_list);
 
     s_scene_designer->actor_cursor = init_actor_cursor(
-        WINDOW_WIDTH / 2,
-        WINDOW_HEIGHT / 2,
+        RES_WIDTH / 2,
+        RES_HEIGHT / 2,
         0.0f
     );
 

@@ -39,7 +39,7 @@ select_list_option_T* select_list_register_option(select_list_T* select_list, ch
     float text_y_spacing = 44;
 
     actor_text_T* actor_text = init_actor_text(
-        (WINDOW_WIDTH / 2) - (((strlen(name)-1) * (text_size + text_spacing)) / 2),
+        (RES_WIDTH / 2) - (((strlen(name)-1) * (text_size + text_spacing)) / 2),
         select_list->options->size * text_y_spacing,
         0.0f,
         name,
@@ -72,7 +72,7 @@ select_list_option_T* select_list_register_option(select_list_T* select_list, ch
 
         if (strcmp(actor->type_name, "text") == 0)
         {
-            actor->y = (text_y_spacing / 2) + (((WINDOW_HEIGHT / 2) - ((nr_texts * text_y_spacing) / 2) + (i*text_y_spacing)));
+            actor->y = (text_y_spacing / 2) + (((RES_HEIGHT / 2) - ((nr_texts * text_y_spacing) / 2) + (i*text_y_spacing)));
 
             actor->y += 64;
         }

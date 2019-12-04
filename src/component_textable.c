@@ -116,7 +116,7 @@ void component_textable_draw_text_value(component_textable_T* self)
     int scroll = component_textable_calculate_scroll(self);
 
     glEnable(GL_SCISSOR_TEST);
-    glScissor((int)actor->x, (int)(WINDOW_HEIGHT - actor->y - actor->height), (int)actor->width, (int)actor->height);
+    glScissor((int)actor->x, (int)(RES_HEIGHT - actor->y - actor->height), (int)actor->width, (int)actor->height);
 
     int line = 0;
     char val[1024];

@@ -98,7 +98,7 @@ void component_pane_draw(scene_T* self)
     {
         component_pane_T* child_pane = (component_pane_T*) component_pane->rows->items[i];
         glEnable(GL_SCISSOR_TEST);
-        glScissor((int)child_pane->x, (int)(WINDOW_HEIGHT - child_pane->y - child_pane->height), (int)child_pane->width, (int)child_pane->height); 
+        glScissor((int)child_pane->x, (int)(RES_HEIGHT - child_pane->y - child_pane->height), (int)child_pane->width, (int)child_pane->height); 
     
         ((scene_T*)child_pane)->draw((scene_T*)child_pane);
         glDisable(GL_SCISSOR_TEST);
@@ -109,7 +109,7 @@ void component_pane_draw(scene_T* self)
     {
         component_pane_T* child_pane = (component_pane_T*) component_pane->cols->items[i];
         glEnable(GL_SCISSOR_TEST);
-        glScissor((int)child_pane->x, (int)(WINDOW_HEIGHT - child_pane->y - child_pane->height), (int)child_pane->width, (int)child_pane->height); 
+        glScissor((int)child_pane->x, (int)(RES_HEIGHT - child_pane->y - child_pane->height), (int)child_pane->width, (int)child_pane->height); 
     
         ((scene_T*)child_pane)->draw((scene_T*)child_pane);
         glDisable(GL_SCISSOR_TEST);
@@ -120,7 +120,7 @@ void component_pane_draw(scene_T* self)
     {
         component_pane_T* child_pane = (component_pane_T*) component_pane->rows->items[i];
         glEnable(GL_SCISSOR_TEST);
-        glScissor((int)child_pane->x, (int)(WINDOW_HEIGHT - child_pane->y - child_pane->height), (int)child_pane->width, (int)child_pane->height); 
+        glScissor((int)child_pane->x, (int)(RES_HEIGHT - child_pane->y - child_pane->height), (int)child_pane->width, (int)child_pane->height); 
     
         state_draw((state_T*)((scene_T*)child_pane));
         glDisable(GL_SCISSOR_TEST);
@@ -131,7 +131,7 @@ void component_pane_draw(scene_T* self)
     {
         component_pane_T* child_pane = (component_pane_T*) component_pane->cols->items[i];
         glEnable(GL_SCISSOR_TEST);
-        glScissor((int)child_pane->x, (int)(WINDOW_HEIGHT - child_pane->y - child_pane->height), (int)child_pane->width, (int)child_pane->height); 
+        glScissor((int)child_pane->x, (int)(RES_HEIGHT - child_pane->y - child_pane->height), (int)child_pane->width, (int)child_pane->height); 
     
         state_draw((state_T*)((scene_T*)child_pane));
         glDisable(GL_SCISSOR_TEST);
@@ -331,7 +331,7 @@ void component_pane_adjust(component_pane_T* component_pane)
     x = 0;
     y = 0;
 
-    row_height = WINDOW_HEIGHT;
+    row_height = RES_HEIGHT;
 
     for (int i = 0; i < component_pane->rows->size; i++)
     {

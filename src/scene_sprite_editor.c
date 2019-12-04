@@ -84,8 +84,8 @@ void scene_sprite_editor_refresh_state(scene_base_T* scene_base)
             s_sprite_editor->component_grids,
             init_component_grid(
                 ((scene_base_T*)s_sprite_editor)->focus_manager,
-                (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
-                (WINDOW_HEIGHT / 2) - ((16 * 16) / 2),
+                (RES_WIDTH / 2) - ((16 * 16) / 2),
+                (RES_HEIGHT / 2) - ((16 * 16) / 2),
                 0.0f,
                 16,
                 16,
@@ -270,8 +270,8 @@ void sprite_component_button_new_press()
         s_sprite_editor->component_grids,
         init_component_grid(
             ((scene_base_T*)s_sprite_editor)->focus_manager,
-            (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
-            (WINDOW_HEIGHT / 2) - ((16 * 16) / 2),
+            (RES_WIDTH / 2) - ((16 * 16) / 2),
+            (RES_HEIGHT / 2) - ((16 * 16) / 2),
             0.0f,
             16,
             16,
@@ -355,7 +355,7 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     right->child_margin_top = 8;
     component_pane_T* right_top = init_component_pane(state, scene_base->focus_manager, 0.0f, 0.0f, 0.0f, 0.0f);
     right_top->centered = 1;
-    right_top->min_height = WINDOW_HEIGHT - 160;
+    right_top->min_height = RES_HEIGHT - 160;
     right_top->child_margin_top = 8;
     component_pane_T* right_bottom = init_component_pane(state, scene_base->focus_manager, 0.0f, 0.0f, 0.0f, 0.0f);
     right_bottom->centered = 0;
@@ -367,8 +367,8 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     s_sprite_editor->component_grid = init_component_grid(
         scene_base->focus_manager,
-        (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
-        iy + (WINDOW_HEIGHT / 2) - ((16 * 16) / 2),
+        (RES_WIDTH / 2) - ((16 * 16) / 2),
+        iy + (RES_HEIGHT / 2) - ((16 * 16) / 2),
         0.0f,
         16,
         16,
@@ -387,8 +387,8 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     s_sprite_editor->component_grid_color_selector = init_component_grid(
         scene_base->focus_manager,
-        ((WINDOW_WIDTH / 2) - ((16 * 16) / 2)) + ((16 * 16) + 16),
-        iy + ((WINDOW_HEIGHT / 2) - ((16 * 16) / 2)),
+        ((RES_WIDTH / 2) - ((16 * 16) / 2)) + ((16 * 16) + 16),
+        iy + ((RES_HEIGHT / 2) - ((16 * 16) / 2)),
         0.0f,
         4,
         8,
@@ -408,8 +408,8 @@ scene_sprite_editor_T* init_scene_sprite_editor()
         s_sprite_editor->component_grids,
         init_component_grid(
             scene_base->focus_manager,
-            (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
-            iy + (WINDOW_HEIGHT / 2) - ((16 * 16) / 2),
+            (RES_WIDTH / 2) - ((16 * 16) / 2),
+            iy + (RES_HEIGHT / 2) - ((16 * 16) / 2),
             0.0f,
             16,
             16,
@@ -464,8 +464,8 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     s_sprite_editor->component_grid_color_mixer = init_component_grid(
         scene_base->focus_manager,
-        ((WINDOW_WIDTH / 2) - ((16 * 16) / 2)) + ((16 * 16) + 16),
-        iy + ((WINDOW_HEIGHT / 2) - ((16 * 16) / 2)) + ((16 * 8) + 16),
+        ((RES_WIDTH / 2) - ((16 * 16) / 2)) + ((16 * 16) + 16),
+        iy + ((RES_HEIGHT / 2) - ((16 * 16) / 2)) + ((16 * 8) + 16),
         0.0f,
         8,
         7,
@@ -484,8 +484,8 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     s_sprite_editor->component_grid_tool_selector = init_component_grid(
         scene_base->focus_manager,
-        ((WINDOW_WIDTH / 2) - ((16 * 16) / 2)) + ((16 * 16) + 16) + (4 * 16) + 16,
-        iy + ((WINDOW_HEIGHT / 2) - ((16 * 16) / 2)),
+        ((RES_WIDTH / 2) - ((16 * 16) / 2)) + ((16 * 16) + 16) + (4 * 16) + 16,
+        iy + ((RES_HEIGHT / 2) - ((16 * 16) / 2)),
         0.0f,
         1,
         2,
@@ -520,8 +520,8 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     s_sprite_editor->component_label_name = init_component_label(
         scene_base->focus_manager,
-        (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
-        iy + (WINDOW_HEIGHT / 2) - ((16 * 16) / 2) - 80,
+        (RES_WIDTH / 2) - ((16 * 16) / 2),
+        iy + (RES_HEIGHT / 2) - ((16 * 16) / 2) - 80,
         0.0f,
         "Name",
         COLOR_FG[0],
@@ -535,8 +535,8 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     s_sprite_editor->component_input_field_name = init_component_input_field(
         scene_base->focus_manager,
-        (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
-        iy + (WINDOW_HEIGHT / 2) - ((16 * 16) / 2) - 64,
+        (RES_WIDTH / 2) - ((16 * 16) / 2),
+        iy + (RES_HEIGHT / 2) - ((16 * 16) / 2) - 64,
         0.0f
     );
     component_pane_add_component(
@@ -548,8 +548,8 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     s_sprite_editor->component_button_save = init_component_button(
         scene_base->focus_manager,
-        (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
-        iy + (WINDOW_HEIGHT / 2) + ((16 * 16) / 2) + 16,
+        (RES_WIDTH / 2) - ((16 * 16) / 2),
+        iy + (RES_HEIGHT / 2) + ((16 * 16) / 2) + 16,
         0.0f,
         "Save",
         sprite_component_button_save_press
@@ -561,8 +561,8 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     s_sprite_editor->component_button_new = init_component_button(
         scene_base->focus_manager,
-        (WINDOW_WIDTH / 2) - ((16 * 16) / 2) + component_button_width + 16,
-        iy + (WINDOW_HEIGHT / 2) + ((16 * 16) / 2) + 16,
+        (RES_WIDTH / 2) - ((16 * 16) / 2) + component_button_width + 16,
+        iy + (RES_HEIGHT / 2) + ((16 * 16) / 2) + 16,
         0.0f,
         "New",
         sprite_component_button_new_press
@@ -574,8 +574,8 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     s_sprite_editor->component_button_delete = init_component_button(
         scene_base->focus_manager,
-        (WINDOW_WIDTH / 2) - ((16 * 16) / 2) + component_button_width + component_button_width + 16 + 16,
-        iy + (WINDOW_HEIGHT / 2) + ((16 * 16) / 2) + 16,
+        (RES_WIDTH / 2) - ((16 * 16) / 2) + component_button_width + component_button_width + 16 + 16,
+        iy + (RES_HEIGHT / 2) + ((16 * 16) / 2) + 16,
         0.0f,
         "Delete",
         sprite_component_button_delete_press
@@ -588,8 +588,8 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     int component_dropdown_list_sprite_width = 160;
     s_sprite_editor->component_label_current_sprite = init_component_label(
         scene_base->focus_manager,
-        ((WINDOW_WIDTH / 2) - ((16 * 16) / 2)) - (component_dropdown_list_sprite_width + 16),
-        iy + (WINDOW_HEIGHT / 2) - ((16 * 16) / 2) - (8 + 8),
+        ((RES_WIDTH / 2) - ((16 * 16) / 2)) - (component_dropdown_list_sprite_width + 16),
+        iy + (RES_HEIGHT / 2) - ((16 * 16) / 2) - (8 + 8),
         0.0f,
         "Sprite",
         COLOR_FG[0],
@@ -603,8 +603,8 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     s_sprite_editor->component_dropdown_list_sprite = init_component_dropdown_list(
         scene_base->focus_manager,
-        (((WINDOW_WIDTH / 2) - ((16 * 16) / 2))) - (component_dropdown_list_sprite_width + 16),
-        iy + (WINDOW_HEIGHT / 2) - ((16 * 16) / 2),
+        (((RES_WIDTH / 2) - ((16 * 16) / 2))) - (component_dropdown_list_sprite_width + 16),
+        iy + (RES_HEIGHT / 2) - ((16 * 16) / 2),
         0.0f,
         component_dropdown_list_sprite_press
     );
@@ -617,8 +617,8 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     s_sprite_editor->component_label_frame_delay = init_component_label(
         scene_base->focus_manager,
-        (((WINDOW_WIDTH / 2) - ((16 * 16) / 2))) - (component_dropdown_list_sprite_width + 16),
-        iy + (WINDOW_HEIGHT / 2) - ((16 * 16) / 2) + 64,
+        (((RES_WIDTH / 2) - ((16 * 16) / 2))) - (component_dropdown_list_sprite_width + 16),
+        iy + (RES_HEIGHT / 2) - ((16 * 16) / 2) + 64,
         0.0f,
         "Delay",
         COLOR_FG[0],
@@ -631,8 +631,8 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     );
     s_sprite_editor->component_input_field_frame_delay = init_component_input_field(
         scene_base->focus_manager,
-        (((WINDOW_WIDTH / 2) - ((16 * 16) / 2))) - (component_dropdown_list_sprite_width + 16),
-        iy + (WINDOW_HEIGHT / 2) - ((16 * 16) / 2) + 64 + 16,
+        (((RES_WIDTH / 2) - ((16 * 16) / 2))) - (component_dropdown_list_sprite_width + 16),
+        iy + (RES_HEIGHT / 2) - ((16 * 16) / 2) + 64 + 16,
         0.0f
     );
     component_pane_add_component(
@@ -841,7 +841,7 @@ void scene_sprite_editor_draw(scene_T* self)
 
                 draw_positioned_sprite(
                     s_sprite_editor->current_database_sprite->sprite,
-                    WINDOW_WIDTH - spr_preview_size - 8,
+                    RES_WIDTH - spr_preview_size - 8,
                     8,
                     0.0f,
                     spr_preview_size,
@@ -867,8 +867,8 @@ void scene_sprite_editor_goto_next(scene_sprite_editor_T* self)
             self->component_grids,
             init_component_grid(
                 ((scene_base_T*)self)->focus_manager,
-                (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
-                (WINDOW_HEIGHT / 2) - ((16 * 16) / 2),
+                (RES_WIDTH / 2) - ((16 * 16) / 2),
+                (RES_HEIGHT / 2) - ((16 * 16) / 2),
                 0.0f,
                 16,
                 16,
@@ -958,8 +958,8 @@ void scene_sprite_editor_load_component_grids_from_sprite(scene_sprite_editor_T*
 
         component_grid_T* component_grid = init_component_grid(
             ((scene_base_T*)s_sprite_editor)->focus_manager,
-            (WINDOW_WIDTH / 2) - ((16 * 16) / 2),
-            (WINDOW_HEIGHT / 2) - ((16 * 16) / 2),
+            (RES_WIDTH / 2) - ((16 * 16) / 2),
+            (RES_HEIGHT / 2) - ((16 * 16) / 2),
             0.0f,
             16,
             16,

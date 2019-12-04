@@ -31,7 +31,7 @@ scene_text_editor_T* init_scene_text_editor()
 
     s_text_editor->focus_manager = init_focus_manager();
 
-    s_text_editor->component_textarea = init_component_textarea(s_text_editor->focus_manager, 0.0f, 0.0f, WINDOW_WIDTH, WINDOW_HEIGHT);
+    s_text_editor->component_textarea = init_component_textarea(s_text_editor->focus_manager, 0.0f, 0.0f, RES_WIDTH, RES_HEIGHT);
     dynamic_list_append(state->actors, s_text_editor->component_textarea);
     dynamic_list_append(s_text_editor->focus_manager->components, (actor_component_T*) s_text_editor->component_textarea);
 
@@ -48,10 +48,10 @@ void scene_text_editor_tick(scene_T* self)
     go_back_on_escape();
 
     component_textable_T* component_textable = (component_textable_T*) s_text_editor->component_textarea;
-    component_textable->width = WINDOW_WIDTH - s_text_editor->line_bar_width;
+    component_textable->width = RES_WIDTH - s_text_editor->line_bar_width;
     ((actor_T*)component_textable)->x = s_text_editor->line_bar_width;
 
-    if (component_textable->caret_y >= state->camera->y + WINDOW_HEIGHT)
+    if (component_textable->caret_y >= state->camera->y + RES_HEIGHT)
         state->camera->y += 16; // font_size + font_spacing
 
     if (component_textable->caret_y < state->camera->y)
@@ -59,7 +59,7 @@ void scene_text_editor_tick(scene_T* self)
 
     focus_manager_tick(s_text_editor->focus_manager);
 
-    ((actor_T*)component_textable)->height = WINDOW_HEIGHT + state->camera->y;
+    ((actor_T*)component_textable)->height = RES_HEIGHT + state->camera->y;
 
     MAIN_STATE->text_editor_value = ((component_textable_T*)s_text_editor->component_textarea)->value;
 }
@@ -76,7 +76,7 @@ void scene_text_editor_draw(scene_T* self)
         0.0f,
         0.0f,
         s_text_editor->line_bar_width,
-        state->camera->y + WINDOW_HEIGHT,
+        state->camera->y + RES_HEIGHT,
         0, 0, 0,
         1.0f,
         state
