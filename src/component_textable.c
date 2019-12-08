@@ -50,8 +50,8 @@ component_textable_T* component_textable_constructor(
     component_textable->bg_b = 0;
     component_textable->caret_position = 0;
     component_textable->draw_caret = 1;
-    component_textable->font_size = 8;
-    component_textable->font_spacing = 8;
+    component_textable->font_size = 4;
+    component_textable->font_spacing = 4;
     component_textable->value = calloc(1, sizeof(char));
     component_textable->value[0] = '\0';
     component_textable->caret_x = 0;
@@ -127,11 +127,13 @@ void component_textable_draw_text_value(component_textable_T* self)
     if (val[0] == '\r')
         line += 1;
 
+    unsigned int padding_left = 8;
+
     while (ptr)
     {
         draw_text(
             ptr,
-            4 + (float)(-scroll + ((actor->x) + (int)self->font_size)),
+            padding_left + (float)(-scroll + ((actor->x) + (int)self->font_size)),
             actor->y + self->font_size + (line * (self->font_size + self->font_spacing)),
             actor->z + 0.1f,
             self->fg_r, self->fg_g, self->fg_b, // rgb
@@ -176,11 +178,11 @@ void component_textable_draw_caret(component_textable_T* self)
             if (self->draw_caret)
             {
                 draw_positioned_2D_mesh(
-                    self->caret_x - scroll,
+                    ((self->font_size + self->font_spacing) + self->caret_x) - scroll,
                     actor->y + (y * (self->font_size + self->font_spacing)),
                     actor->z + 0.3f,
                     4,
-                    (self->font_size * 2),
+                    self->font_size * 2,
                     self->fg_r,
                     self->fg_g,
                     self->fg_b,

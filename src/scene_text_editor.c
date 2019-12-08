@@ -87,19 +87,19 @@ void scene_text_editor_draw(scene_T* self)
     for (int i = 0; i < component_textable_get_number_of_lines((component_textable_T*) s_text_editor->component_textarea)+1; i++)
     {
         sprintf(text, "%d", i);
-        s_text_editor->line_bar_width = strlen(text) * (8 + 8);
+        s_text_editor->line_bar_width = strlen(text) * (4 + 4);
 
         draw_text(
             text,
             8,
-            12 + (i * (8 + 8)),
+            4 + (i * (4 + 4)),
             ((actor_T*)s_text_editor->component_textarea)->z + 0.1f,
             COLOR_FG[0],
             COLOR_FG[1],
             COLOR_FG[2],
             1.0f, // a
-            8,
-            8,
+            4,
+            4,
             0,
             state
         );
