@@ -5,7 +5,7 @@
 
 extern keyboard_state_T* KEYBOARD_STATE;
 extern mouse_state_T* MOUSE_STATE;
-extern GLFWwindow* window;
+extern window_state_T* WINDOW_STATE;
 
 
 focus_manager_T* init_focus_manager()
@@ -40,7 +40,7 @@ void focus_manager_tick(focus_manager_T* focus_manager)
 
     unsigned int click = 0;
     static int oldState = GLFW_RELEASE;
-    int newState = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+    int newState = glfwGetMouseButton(WINDOW_STATE->window, GLFW_MOUSE_BUTTON_LEFT);
     if (newState == GLFW_RELEASE && oldState == GLFW_PRESS)
     {
        click = 1;

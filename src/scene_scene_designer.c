@@ -17,7 +17,7 @@ extern database_T* DATABASE;
 extern main_state_T* MAIN_STATE;
 extern const float COLOR_FG[3];
 extern sprite_T* SPRITE_BROKEN;
-extern GLFWwindow* window;
+extern window_state_T* WINDOW_STATE;
 
 
 void _free_database_actor_instance(void* item)
@@ -168,7 +168,7 @@ void scene_scene_designer_tick(scene_T* self)
 
     unsigned int click = 0;
     static int oldState = GLFW_RELEASE;
-    int newState = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+    int newState = glfwGetMouseButton(WINDOW_STATE->window, GLFW_MOUSE_BUTTON_LEFT);
     if (newState == GLFW_RELEASE && oldState == GLFW_PRESS)
     {
        click = 1;
