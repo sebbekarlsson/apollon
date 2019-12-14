@@ -48,7 +48,7 @@ void press_run()
     char* leto_bin_path = 0;
 
     // TODO: move config parsing to separate file / function.
-    hermes_lexer_T* hermes_lexer = init_hermes_lexer(read_file("config.he"));
+    hermes_lexer_T* hermes_lexer = init_hermes_lexer(hermes_read_file("config.he"));
     hermes_parser_T* parser = init_hermes_parser(hermes_lexer);
     AST_T* scenes_node = hermes_parser_parse(parser, (void*) 0);
     runtime_T* runtime = init_runtime();
