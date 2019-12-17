@@ -1,3 +1,4 @@
 object config = {
-    string leto_bin = "/path/to/leto/bin"; 
+    string leto_bin = "/path/to/leto/bin";
+    int window_resizable = 0;
 };
