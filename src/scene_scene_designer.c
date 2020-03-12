@@ -167,13 +167,7 @@ void scene_scene_designer_tick(scene_T* self)
     ((actor_T*)actor_cursor)->y = ((int)MOUSE_STATE->y / 16) * 16;
 
     unsigned int click = 0;
-    static int oldState = GLFW_RELEASE;
-    int newState = glfwGetMouseButton(WINDOW_STATE->window, GLFW_MOUSE_BUTTON_LEFT);
-    if (newState == GLFW_RELEASE && oldState == GLFW_PRESS)
-    {
-       click = 1;
-    }
-    oldState = newState;
+    CHECK_MOUSE_CLICK(GLFW_MOUSE_BUTTON_LEFT);
 
     if (click)
     { // expand dropdown and make it visible

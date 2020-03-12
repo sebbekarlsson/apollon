@@ -39,13 +39,7 @@ void focus_manager_tick(focus_manager_T* focus_manager)
     focus_manager_sort_components(focus_manager);
 
     unsigned int click = 0;
-    static int oldState = GLFW_RELEASE;
-    int newState = glfwGetMouseButton(WINDOW_STATE->window, GLFW_MOUSE_BUTTON_LEFT);
-    if (newState == GLFW_RELEASE && oldState == GLFW_PRESS)
-    {
-       click = 1;
-    }
-    oldState = newState;
+    CHECK_MOUSE_CLICK(GLFW_MOUSE_BUTTON_LEFT);
 
     for (int i = 0; i < focus_manager->components->size; i++)
     {
