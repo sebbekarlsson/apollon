@@ -50,8 +50,8 @@ component_textable_T* component_textable_constructor(
     component_textable->bg_b = 0;
     component_textable->caret_position = 0;
     component_textable->draw_caret = 1;
-    component_textable->font_size = 4;
-    component_textable->font_spacing = 4;
+    component_textable->font_size = 6;
+    component_textable->font_spacing = 6;
     component_textable->value = calloc(1, sizeof(char));
     component_textable->value[0] = '\0';
     component_textable->caret_x = 0;

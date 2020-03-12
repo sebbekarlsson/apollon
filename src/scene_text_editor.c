@@ -68,6 +68,8 @@ void scene_text_editor_draw(scene_T* self)
 {
     state_T* state = (state_T*) self;
     scene_text_editor_T* s_text_editor = (scene_text_editor_T*) self;
+    component_textable_T* component_textable = (component_textable_T*) s_text_editor->component_textarea;
+    int font_size = component_textable->font_size;
 
     camera_bind(state->camera);
 
@@ -92,14 +94,14 @@ void scene_text_editor_draw(scene_T* self)
         draw_text(
             text,
             8,
-            4 + (i * (4 + 4)),
+            font_size + (i * (font_size + font_size)),
             ((actor_T*)s_text_editor->component_textarea)->z + 0.1f,
             COLOR_FG[0],
             COLOR_FG[1],
             COLOR_FG[2],
             1.0f, // a
-            4,
-            4,
+            font_size,
+            component_textable->font_spacing,
             0,
             state
         );
