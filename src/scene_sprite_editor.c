@@ -52,6 +52,7 @@ static void scene_sprite_editor_set_tool(scene_sprite_editor_T* s_sprite_editor,
 {
     s_sprite_editor->tool_index = tool_index;
     component_grid_unselect_all_cells(s_sprite_editor->component_grid_tool_selector);
+    s_sprite_editor->component_grid_tool_selector->cells[0][tool_index]->selected = 1;
 }
 
 void scene_sprite_editor_refresh_state(scene_base_T* scene_base)
@@ -653,6 +654,8 @@ scene_sprite_editor_T* init_scene_sprite_editor()
     s_sprite_editor->g = 0.0f;
     s_sprite_editor->b = 0.0f;
     s_sprite_editor->a = 1.0f;
+    
+    scene_sprite_editor_set_tool(s_sprite_editor, s_sprite_editor->tool_index);
 
     state_resort_actors(state);
 
@@ -782,8 +785,7 @@ void scene_sprite_editor_tick(scene_T* self)
 
         if (MOUSE_STATE->button_left)
         {
-            s_sprite_editor->tool_index = component_grid->cursor_y;
-            scene_sprite_editor_set_tool(s_sprite_editor, s_sprite_editor->tool_index);
+            scene_sprite_editor_set_tool(s_sprite_editor, component_grid->cursor_y);
         }
     }
 
