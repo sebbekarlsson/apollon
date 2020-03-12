@@ -3,6 +3,7 @@
 #include "include/etc.h"
 #include "include/modal.h"
 #include "include/modal_manager.h"
+#include "include/constants.h"
 #include <coelum/file_utils.h>
 #include <coelum/constants.h>
 #include <coelum/actor_text.h>
@@ -95,6 +96,10 @@ void scene_sprite_editor_refresh_state(scene_base_T* scene_base)
                 0,
                 "component_grid_canvas"
             )
+        );
+
+        component_dropdown_list_reset(
+            s_sprite_editor->component_dropdown_list_sprite        
         ); 
     }
 }
@@ -112,7 +117,9 @@ void scene_sprite_editor_delete_component_grids_reset_sprite_id(scene_sprite_edi
     if (s_sprite_editor->sprite_id != (void*) 0)
     { 
         free(s_sprite_editor->sprite_id);
-        s_sprite_editor->sprite_id = 0;
+        s_sprite_editor->sprite_id = (void*)0;
+
+        printf("RESET!!!!!!!!!!!!!!!!!!!!!!!!\n");
     }
 }
 
@@ -283,7 +290,7 @@ void sprite_component_button_new_press()
         )
     ); 
 
-    state_resort_actors(state);
+    REFRESH_STATE(state);
 }
 
 void sprite_component_button_delete_press()
@@ -320,8 +327,6 @@ void sprite_component_button_delete_press()
 
     database_delete_sprite_by_id(DATABASE, s_sprite_editor->sprite_id);
 
-    printf("It was deleted\n");
-
     scene_sprite_editor_delete_component_grids_reset_sprite_id(s_sprite_editor);
 
     REFRESH_STATE(s_sprite_editor);
@@ -349,14 +354,14 @@ scene_sprite_editor_T* init_scene_sprite_editor()
 
     component_pane_T* left = init_component_pane(state, scene_base->focus_manager, 0.0f, 0.0f, 0.0f, 0.0f);
     left->centered = 1;
-    left->child_margin_top = 8;
+    left->child_margin_top = COMPONENT_PANE_CHILD_MARGIN_TOP;
     component_pane_T* right = init_component_pane(state, scene_base->focus_manager, 0.0f, 0.0f, 0.0f, 0.0f);
     right->centered = 0;
     right->child_margin_top = 8;
     component_pane_T* right_top = init_component_pane(state, scene_base->focus_manager, 0.0f, 0.0f, 0.0f, 0.0f);
     right_top->centered = 1;
     right_top->min_height = RES_HEIGHT - 160;
-    right_top->child_margin_top = 8;
+    right_top->child_margin_top = COMPONENT_PANE_CHILD_MARGIN_TOP;
     component_pane_T* right_bottom = init_component_pane(state, scene_base->focus_manager, 0.0f, 0.0f, 0.0f, 0.0f);
     right_bottom->centered = 0;
     
@@ -817,7 +822,6 @@ void scene_sprite_editor_tick(scene_T* self)
 
 void scene_sprite_editor_draw(scene_T* self)
 {
-    state_T* state = (state_T*) self;
     scene_sprite_editor_T* s_sprite_editor = (scene_sprite_editor_T*) self;
 
     scene_base_draw((scene_base_T*) s_sprite_editor);
@@ -830,27 +834,6 @@ void scene_sprite_editor_draw(scene_T* self)
     s_sprite_editor->frame_index = realloc(s_sprite_editor->frame_index, (strlen(frame_index_template) + 256) * sizeof(char));
     sprintf(s_sprite_editor->frame_index, frame_index_template, (int)s_sprite_editor->component_grid_index, number_of_frames);
     s_sprite_editor->component_label_frame_index->text = s_sprite_editor->frame_index;
-
-    if (s_sprite_editor->sprite_id != (void*)0)
-    {
-        if (s_sprite_editor->current_database_sprite != (void*)0)
-        {
-            if (s_sprite_editor->current_database_sprite->sprite != (void*)0)
-            {
-                int spr_preview_size = 16;
-
-                draw_positioned_sprite(
-                    s_sprite_editor->current_database_sprite->sprite,
-                    RES_WIDTH - spr_preview_size - 8,
-                    8,
-                    0.0f,
-                    spr_preview_size,
-                    spr_preview_size,
-                    state
-                );
-            }
-        }
-    }
 }
 
 void scene_sprite_editor_goto_next(scene_sprite_editor_T* self)

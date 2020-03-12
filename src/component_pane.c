@@ -14,6 +14,8 @@ component_pane_T* init_component_pane(state_T* state, focus_manager_T* focus_man
     component_pane->x = x;
     component_pane->y = y;
     component_pane->z = 0.0f;
+
+    component_pane->child_margin_top = 0;
     component_pane->child_margin_top = 0;
     component_pane->child_margin_left = 0;
     component_pane->width = width;

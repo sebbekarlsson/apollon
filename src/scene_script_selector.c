@@ -2,6 +2,7 @@
 #include "include/etc.h"
 #include "include/main.h"
 #include "include/modal_manager.h"
+#include "include/constants.h"
 #include <coelum/current.h>
 #include <coelum/theatre.h>
 #include <athena/database.h>
@@ -179,7 +180,7 @@ scene_script_selector_T* init_scene_script_selector()
     s_script_selector->script_id = (void*) 0;
 
     scene_base->component_pane->centered = 1;
-    scene_base->component_pane->child_margin_top = 8;
+    scene_base->component_pane->child_margin_top = COMPONENT_PANE_CHILD_MARGIN_TOP;
 
     float margin = 64;
     float component_label_margin = 16; 

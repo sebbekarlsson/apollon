@@ -2,6 +2,7 @@
 #include "include/scene_scene_editor.h"
 #include "include/etc.h"
 #include "include/modal_manager.h"
+#include "include/constants.h"
 #include <coelum/input.h>
 #include <coelum/theatre.h>
 #include <coelum/current.h>
@@ -63,6 +64,10 @@ void scene_scene_editor_refresh_state(scene_base_T* scene_base)
         scene_scene_editor_clear_component_input_fields(s_scene_editor);
         s_scene_editor->component_button_design->disabled = 1;
         s_scene_editor->component_checkbox_main_scene->checked = 0;
+
+        component_dropdown_list_reset(
+            s_scene_editor->component_dropdown_list_scene
+        );
     }
 }
 
@@ -222,10 +227,10 @@ scene_scene_editor_T* init_scene_scene_editor()
     
     component_pane_T* left = init_component_pane(state, scene_base->focus_manager, 0.0f, 0.0f, 0.0f, 0.0f);
     left->centered = 1;
-    left->child_margin_top = 8;
+    left->child_margin_top = COMPONENT_PANE_CHILD_MARGIN_TOP;
     component_pane_T* right = init_component_pane(state, scene_base->focus_manager, 0.0f, 0.0f, 0.0f, 0.0f);
     right->centered = 1;
-    right->child_margin_top = 8;
+    right->child_margin_top =COMPONENT_PANE_CHILD_MARGIN_TOP;
     
     dynamic_list_append(scene_base->component_pane->cols, left);
     dynamic_list_append(scene_base->component_pane->cols, right);
