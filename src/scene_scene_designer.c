@@ -183,9 +183,9 @@ void scene_scene_designer_tick(scene_T* self)
         ((actor_T*)s_scene_designer->component_dropdown_list)->y = ((actor_T*)actor_cursor)->y;
         actor_component_T* component_dropdown_list_component = (actor_component_T*) s_scene_designer->component_dropdown_list;
 
-        component_dropdown_list_component->focused = 1;
+        component_dropdown_list_component->focused = !component_dropdown_list_component->focused;
         s_scene_designer->component_dropdown_list->expanded = 1;
-        ((actor_component_T*)s_scene_designer->component_dropdown_list)->visible = 1;
+        ((actor_component_T*)s_scene_designer->component_dropdown_list)->visible = !((actor_component_T*)s_scene_designer->component_dropdown_list)->visible;
     }
 
     if (KEYBOARD_STATE->keys[GLFW_KEY_DELETE] && !KEYBOARD_STATE->key_locks[GLFW_KEY_DELETE])
