@@ -332,6 +332,25 @@ void component_textable_handle_keyboard_input(component_textable_T* self)
         KEYBOARD_STATE->key_locks[GLFW_KEY_ENTER] = 1;
     }
 
+    if (KEYBOARD_STATE->keys[GLFW_KEY_TAB] && !KEYBOARD_STATE->key_locks[GLFW_KEY_TAB])
+    {
+        char* char_str = calloc(2, sizeof(char));
+        char_str[0] = ' ';
+        char_str[2] = '\0';
+
+        for (int i = 0; i < 4; i++)
+        {
+            self->value = realloc(self->value, (strlen(self->value) + strlen(char_str) + 1) * sizeof(char));
+            insert_substring(self->value, char_str, self->caret_position + 1);
+            self->caret_position += 1;
+        }
+
+        free(char_str);
+
+
+        KEYBOARD_STATE->key_locks[GLFW_KEY_TAB] = 1;
+    }
+
     if (KEYBOARD_STATE->keys[GLFW_KEY_LEFT] && !KEYBOARD_STATE->key_locks[GLFW_KEY_LEFT])
     {
         if (self->caret_position > 0)
