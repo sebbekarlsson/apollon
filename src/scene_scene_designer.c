@@ -127,6 +127,8 @@ scene_scene_designer_T* init_scene_scene_designer()
     s_scene_designer->focus_manager = init_focus_manager();
     s_scene_designer->clicked_x = 0;
     s_scene_designer->clicked_y = 0;
+    s_scene_designer->cam_x = 0.0f;
+    s_scene_designer->cam_y = 0.0f;
 
 
     // this one is starts as focused
@@ -163,16 +165,19 @@ void scene_scene_designer_tick(scene_T* self)
 
     focus_manager_tick(s_scene_designer->focus_manager);
 
-    ((actor_T*)actor_cursor)->x = ((int)MOUSE_STATE->x / 16) * 16;
-    ((actor_T*)actor_cursor)->y = ((int)MOUSE_STATE->y / 16) * 16;
+    float cam_x = s_scene_designer->cam_x;
+    float cam_y = s_scene_designer->cam_y;
+
+    ((actor_T*)actor_cursor)->x = (((int)MOUSE_STATE->x / 16) * 16) + (cam_x / RES_WIDTH);
+    ((actor_T*)actor_cursor)->y = (((int)MOUSE_STATE->y / 16) * 16) + (cam_y / RES_HEIGHT);
 
     unsigned int click = 0;
     CHECK_MOUSE_CLICK(GLFW_MOUSE_BUTTON_LEFT);
 
     if (click)
     { // expand dropdown and make it visible
-        s_scene_designer->clicked_x = ((actor_T*)actor_cursor)->x;
-        s_scene_designer->clicked_y = ((actor_T*)actor_cursor)->y;
+        s_scene_designer->clicked_x = (((int)MOUSE_STATE->x / 16) * 16) + cam_x;
+        s_scene_designer->clicked_y = (((int)MOUSE_STATE->y / 16) * 16) + cam_y;
         ((actor_T*)s_scene_designer->component_dropdown_list)->x = ((actor_T*)actor_cursor)->x;
         ((actor_T*)s_scene_designer->component_dropdown_list)->y = ((actor_T*)actor_cursor)->y;
         actor_component_T* component_dropdown_list_component = (actor_component_T*) s_scene_designer->component_dropdown_list;
@@ -204,6 +209,17 @@ void scene_scene_designer_tick(scene_T* self)
 
         KEYBOARD_STATE->key_locks[GLFW_KEY_DELETE] = 1;
     }
+
+
+    if (KEYBOARD_STATE->keys[GLFW_KEY_LEFT])
+        s_scene_designer->cam_x -= 1;
+    if (KEYBOARD_STATE->keys[GLFW_KEY_RIGHT])
+        s_scene_designer->cam_x += 1;
+
+    if (KEYBOARD_STATE->keys[GLFW_KEY_UP])
+        s_scene_designer->cam_y -= 1;
+    if (KEYBOARD_STATE->keys[GLFW_KEY_DOWN])
+        s_scene_designer->cam_y += 1;
 }
 
 void scene_scene_designer_draw(scene_T* self)
@@ -269,8 +285,8 @@ void scene_scene_designer_draw(scene_T* self)
 
         draw_positioned_sprite(
             sprite_to_be_drawn,
-            database_actor_instance->x,
-            database_actor_instance->y,
+            database_actor_instance->x - s_scene_designer->cam_x,
+            database_actor_instance->y - s_scene_designer->cam_y,
             database_actor_instance->z,
             16,
             16,

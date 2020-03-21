@@ -21,6 +21,8 @@ typedef struct SCENE_SCENE_DESIGNER_STRUCT
     char* coords_text;
     int clicked_x;
     int clicked_y;
+    float cam_x;
+    float cam_y;
 } scene_scene_designer_T;
 
 scene_scene_designer_T* init_scene_scene_designer();
