@@ -10,6 +10,7 @@
 
 extern keyboard_state_T* KEYBOARD_STATE;
 extern const float COLOR_CONTRAST[3];
+extern const float COLOR_FG[3];
 
 
 component_textable_T* component_textable_constructor(
@@ -40,6 +41,7 @@ component_textable_T* component_textable_constructor(
 
     actor->width = (float)width;
     actor->height = (float)height;
+    component_textable->line_bar_width = 24;
 
     component_textable->supports_multiple_lines = supports_multiple_lines;
     component_textable->fg_r = COLOR_CONTRAST[0];
@@ -96,8 +98,56 @@ void component_textable_draw(actor_T* self)
         state       
     );
 
+    component_textable_draw_line_numbers(component_textable);
     component_textable_draw_text_value(component_textable);
     component_textable_draw_caret(component_textable);
+}
+
+void component_textable_draw_line_numbers(component_textable_T* self)
+{
+    state_T* state = get_current_state();
+    int font_size = self->font_size;
+
+    camera_bind(state->camera);
+
+    draw_positioned_2D_mesh(
+        0.0f,
+        0.0f,
+        0.0f,
+        self->line_bar_width,
+        state->camera->y + RES_HEIGHT,
+        0, 0, 0,
+        1.0f,
+        state
+    );
+    
+    char* text = calloc(256, sizeof(char));
+    unsigned int nr_lines = component_textable_get_number_of_lines(self);
+
+    for (int i = 0; i < nr_lines + 1; i++)
+    {
+        sprintf(text, "%d", i);
+        self->line_bar_width = strlen(text) * (4 + 4);
+
+        draw_text(
+            text,
+            8,
+            font_size + (i * (font_size + font_size)),
+            ((actor_T*)self)->z + 0.1f,
+            COLOR_FG[0],
+            COLOR_FG[1],
+            COLOR_FG[2],
+            1.0f, // a
+            font_size,
+            self->font_spacing,
+            0,
+            state
+        );
+    }
+
+    free(text);
+
+    camera_unbind(state->camera);
 }
 
 void component_textable_draw_text_value(component_textable_T* self)
@@ -127,7 +177,7 @@ void component_textable_draw_text_value(component_textable_T* self)
     if (val[0] == '\r')
         line += 1;
 
-    unsigned int padding_left = 8;
+    int padding_left = self->line_bar_width + 4;
 
     while (ptr)
     {
@@ -162,11 +212,14 @@ void component_textable_draw_caret(component_textable_T* self)
     if (!actor_component->focused)
         return;
 
-    int scroll = component_textable_calculate_scroll(self);
-    int y = 0;
-    int x = 1;
+    int scroll = component_textable_calculate_scroll(self); 
+    size_t text_length = strlen(self->value);
+    unsigned int len = text_length > 0 ? text_length : 1;
 
-    for (int i = 0; i < strlen(self->value); i++)
+    int y = 0;
+    int x = (int)len != 1;
+
+    for (int i = 0; i < len; i++)
     {
         char c = self->value[i];
         
@@ -219,11 +272,7 @@ void component_textable_caret_blink(component_textable_T* self)
 
     if (time_spent >= 0.5f)
     {
-        if (self->draw_caret)
-            self->draw_caret = 0;
-        else
-            self->draw_caret = 1;
-
+        self->draw_caret = !self->draw_caret;
         gettimeofday(&self->timer, 0);
     }
 }
@@ -243,10 +292,13 @@ void component_textable_handle_keyboard_input(component_textable_T* self)
     {
         if (self->caret_position > 0)
         {
-            if (self->value[self->caret_position-1] == '\n')
+            if (self->caret_position >= 1)
             {
-                self->caret_position -= 1;
-                str_erase(&self->value, self->caret_position);
+                if (self->value[self->caret_position-1] == '\n')
+                {
+                    self->caret_position -= 1;
+                    str_erase(&self->value, self->caret_position);
+                }
             }
 
             if (self->caret_position > 0)
@@ -254,6 +306,11 @@ void component_textable_handle_keyboard_input(component_textable_T* self)
                 self->caret_position -= 1;
                 str_erase(&self->value, self->caret_position); 
             }
+        }
+        else
+        {
+            while (self->value[0] == 13 || self->value[0] == 10)
+                memmove(self->value, self->value+1, strlen(self->value));
         }
 
         KEYBOARD_STATE->key_locks[GLFW_KEY_BACKSPACE] = 1;

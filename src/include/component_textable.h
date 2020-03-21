@@ -19,6 +19,7 @@ typedef struct ACTOR_TEXTABLE
     int caret_y;
     int width;
     int height;
+    int line_bar_width;
     int fg_r;
     int fg_g;
     int fg_b;
@@ -41,6 +42,8 @@ component_textable_T* component_textable_constructor(
 void component_textable_tick(actor_T* self);
 
 void component_textable_draw(actor_T* self);
+
+void component_textable_draw_line_numbers(component_textable_T* self);
 
 void component_textable_draw_text_value(component_textable_T* self);
 
