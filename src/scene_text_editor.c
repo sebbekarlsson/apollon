@@ -7,7 +7,6 @@
 
 
 extern main_state_T* MAIN_STATE;
-extern const float COLOR_FG[3];
 
 
 static void scene_text_editor_load(void* s)
@@ -23,7 +22,7 @@ scene_text_editor_T* init_scene_text_editor()
 {
     scene_text_editor_T* s_text_editor = calloc(1, sizeof(struct SCENE_TEXT_EDITOR_STRUCT));
     scene_T* scene = (scene_T*) s_text_editor;
-    scene_constructor(scene, scene_text_editor_tick, scene_text_editor_draw, 2);
+    scene_constructor(scene, scene_text_editor_tick, (void*)0, 2);
     scene->load = scene_text_editor_load;
     state_T* state = (state_T*) scene;
 
@@ -34,8 +33,6 @@ scene_text_editor_T* init_scene_text_editor()
     s_text_editor->component_textarea = init_component_textarea(s_text_editor->focus_manager, 0.0f, 0.0f, RES_WIDTH, RES_HEIGHT);
     dynamic_list_append(state->actors, s_text_editor->component_textarea);
     dynamic_list_append(s_text_editor->focus_manager->components, (actor_component_T*) s_text_editor->component_textarea);
-
-    s_text_editor->line_bar_width = 24;
 
     return s_text_editor;
 }
@@ -48,8 +45,8 @@ void scene_text_editor_tick(scene_T* self)
     go_back_on_escape();
 
     component_textable_T* component_textable = (component_textable_T*) s_text_editor->component_textarea;
-    component_textable->width = RES_WIDTH - s_text_editor->line_bar_width;
-    ((actor_T*)component_textable)->x = s_text_editor->line_bar_width;
+    component_textable->width = RES_WIDTH - component_textable->line_bar_width;
+    ((actor_T*)component_textable)->x = component_textable->line_bar_width;
 
     if (component_textable->caret_y >= state->camera->y + RES_HEIGHT)
         state->camera->y += 16; // font_size + font_spacing
@@ -62,52 +59,4 @@ void scene_text_editor_tick(scene_T* self)
     ((actor_T*)component_textable)->height = RES_HEIGHT + state->camera->y;
 
     MAIN_STATE->text_editor_value = ((component_textable_T*)s_text_editor->component_textarea)->value;
-}
-
-void scene_text_editor_draw(scene_T* self)
-{
-    state_T* state = (state_T*) self;
-    scene_text_editor_T* s_text_editor = (scene_text_editor_T*) self;
-    component_textable_T* component_textable = (component_textable_T*) s_text_editor->component_textarea;
-    int font_size = component_textable->font_size;
-
-    camera_bind(state->camera);
-
-    draw_positioned_2D_mesh(
-        0.0f,
-        0.0f,
-        0.0f,
-        s_text_editor->line_bar_width,
-        state->camera->y + RES_HEIGHT,
-        0, 0, 0,
-        1.0f,
-        state
-    );
-    
-    char* text = calloc(256, sizeof(char));
-
-    for (int i = 0; i < component_textable_get_number_of_lines((component_textable_T*) s_text_editor->component_textarea)+1; i++)
-    {
-        sprintf(text, "%d", i);
-        s_text_editor->line_bar_width = strlen(text) * (4 + 4);
-
-        draw_text(
-            text,
-            8,
-            font_size + (i * (font_size + font_size)),
-            ((actor_T*)s_text_editor->component_textarea)->z + 0.1f,
-            COLOR_FG[0],
-            COLOR_FG[1],
-            COLOR_FG[2],
-            1.0f, // a
-            font_size,
-            component_textable->font_spacing,
-            0,
-            state
-        );
-    }
-
-    free(text);
-
-    camera_unbind(state->camera);
 }
