@@ -814,9 +814,9 @@ void scene_sprite_editor_tick(scene_T* self)
                 component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->b = 0;
             }
 
-            component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->r = (s_sprite_editor->r + component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->r);
-            component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->g = (s_sprite_editor->g + component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->g);
-            component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->b = (s_sprite_editor->b + component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->b);
+            component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->r = (int)(s_sprite_editor->r + component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->r) % 255;
+            component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->g = (int)(s_sprite_editor->g + component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->g) % 255;
+            component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->b = (int)(s_sprite_editor->b + component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->b) % 255;
             component_grid->cells[component_grid->cursor_x][component_grid->cursor_y]->a = 255;
         }
     }
